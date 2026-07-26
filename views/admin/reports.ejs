@@ -1,0 +1,220 @@
+<%- include('../partials/head') %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <h1>রিপোর্ট — <%= event.title %></h1>
+
+  <%# সারসংক্ষেপ পরিসংখ্যান %>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number"><%= report.totalRegistrations %></div>
+      <div class="stat-label">নিবন্ধন</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= report.paidCount %></div>
+      <div class="stat-label">পরিশোধিত</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= report.unpaidCount %></div>
+      <div class="stat-label">বাকি পেমেন্ট</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">€<%= report.totalExpenses.toLocaleString('en-US', {minimumFractionDigits:2}) %></div>
+      <div class="stat-label">মোট ব্যয়</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= report.pendingSubmissions %></div>
+      <div class="stat-label">অপেক্ষমাণ জমা</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= report.volunteerStats.approved %> / <%= report.volunteerStats.total %></div>
+      <div class="stat-label">অনুমোদিত স্বেচ্ছাসেবী</div>
+    </div>
+  </div>
+
+  <%# পরামর্শ %>
+  <% if (report.suggestions.length > 0) { %>
+  <div class="report-section">
+    <h2>পরামর্শ ও পর্যবেক্ষণ</h2>
+    <ul class="suggestion-list">
+      <% report.suggestions.forEach(s => { %>
+        <li><%= s %></li>
+      <% }) %>
+    </ul>
+  </div>
+  <% } %>
+
+  <%# নিবন্ধন প্রবণতা চার্ট %>
+  <div class="report-section">
+    <h2>নিবন্ধন প্রবণতা</h2>
+    <% if (report.registrationByDate.length === 0) { %>
+      <div class="empty-state"><p>এখনো কোনো নিবন্ধন নেই।</p></div>
+    <% } else { %>
+      <div class="chart-container">
+        <canvas id="regChart"></canvas>
+      </div>
+      <p class="chart-hint">বার = দৈনিক নিবন্ধন · লাইন = ৩-পর্যায়ের মুভিং অ্যাভারেজ · ড্যাশ = পূর্বাভাস</p>
+    <% } %>
+  </div>
+
+  <%# ব্যয় প্রবণতা চার্ট %>
+  <div class="report-section">
+    <h2>ব্যয় প্রবণতা</h2>
+    <% if (report.expenseByDate.length === 0) { %>
+      <div class="empty-state"><p>কোনো ব্যয় নথিভুক্ত নেই।</p></div>
+    <% } else { %>
+      <div class="chart-container">
+        <canvas id="expChart"></canvas>
+      </div>
+      <p class="chart-hint">বার = দৈনিক ব্যয় · লাইন = ৩-পর্যায়ের মুভিং অ্যাভারেজ · ড্যাশ = পূর্বাভাস</p>
+    <% } %>
+  </div>
+
+  <%# অংশগ্রহণকারী তালিকা %>
+  <div class="report-section">
+    <h2>নিবন্ধিত অংশগ্রহণকারী</h2>
+    <% if (report.registrations.length === 0) { %>
+      <div class="empty-state"><p>এখনো কোনো নিবন্ধন নেই।</p></div>
+    <% } else { %>
+      <table class="admin-table">
+        <thead><tr>
+          <th>#</th><th>নাম</th><th>ইমেইল</th><th>পেমেন্ট রেফ.</th><th>অবস্থা</th><th>নিবন্ধনের তারিখ</th>
+        </tr></thead>
+        <tbody>
+        <% report.registrations.forEach((reg, i) => { %>
+          <tr>
+            <td><%= i + 1 %></td>
+            <td><strong><%= reg.name %></strong></td>
+            <td><%= reg.email %></td>
+            <td><%= reg.payment_reference || '—' %></td>
+            <td><span class="badge <%= reg.is_paid ? 'badge-paid' : 'badge-pending' %>"><%= reg.is_paid ? 'পরিশোধিত' : 'বাকি' %></span></td>
+            <td><%= new Date(reg.created_at).toLocaleDateString('bn-BD') %></td>
+          </tr>
+        <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <%# ব্যয় তালিকা %>
+  <div class="report-section">
+    <h2>ব্যয়সমূহ</h2>
+    <% if (report.expenses.length === 0) { %>
+      <div class="empty-state"><p>কোনো ব্যয় নথিভুক্ত নেই।</p></div>
+    <% } else { %>
+      <table class="admin-table">
+        <thead><tr><th>বিবরণ</th><th>পরিমাণ</th><th>তারিখ</th></tr></thead>
+        <tbody>
+        <% report.expenses.forEach(exp => { %>
+          <tr>
+            <td><%= exp.description %></td>
+            <td>€<%= parseFloat(exp.amount).toLocaleString('en-US', {minimumFractionDigits:2}) %></td>
+            <td><%= new Date(exp.created_at).toLocaleDateString('bn-BD') %></td>
+          </tr>
+        <% }) %>
+          <tr class="total-row">
+            <td><strong>মোট</strong></td>
+            <td><strong>€<%= report.totalExpenses.toLocaleString('en-US', {minimumFractionDigits:2}) %></strong></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <%# স্বেচ্ছাসেবী বিভাজন %>
+  <div class="report-section">
+    <h2>স্বেচ্ছাসেবী</h2>
+    <div class="stats-grid stats-grid-sm">
+      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.total %></div><div class="stat-label">মোট</div></div>
+      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.approved %></div><div class="stat-label">অনুমোদিত</div></div>
+      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.pending %></div><div class="stat-label">অপেক্ষমাণ</div></div>
+      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.rejected %></div><div class="stat-label">প্রত্যাখ্যাত</div></div>
+    </div>
+  </div>
+
+  <%# ভোটের ফলাফল %>
+  <% if (report.pollResults.length > 0) { %>
+  <div class="report-section">
+    <h2>ভোটের ফলাফল</h2>
+    <% report.pollResults.forEach(poll => { %>
+      <div class="poll-result-block">
+        <h3><%= poll.question %> <small class="badge <%= poll.is_active ? 'badge-open' : 'badge-closed' %>"><%= poll.is_active ? 'সক্রিয়' : 'বন্ধ' %></small></h3>
+        <p class="poll-total-votes">মোট ভোট: <%= poll.totalVotes %></p>
+        <% poll.options.forEach(opt => { %>
+          <div class="poll-option-bar">
+            <span class="poll-opt-label"><%= opt.option_text %></span>
+            <div class="poll-bar-track">
+              <div class="poll-bar-fill" style="width: <%= opt.pct %>%"></div>
+            </div>
+            <span class="poll-opt-count"><%= opt.vote_count %> (<%= opt.pct %>%)</span>
+          </div>
+        <% }) %>
+      </div>
+    <% }) %>
+  </div>
+  <% } %>
+
+</main>
+
+<%- include('../partials/footer') %>
+
+<script>
+(function() {
+  <% if (report.registrationByDate.length > 0) { %>
+  const regLabels = <%- JSON.stringify(report.registrationByDate.map(r => r.date)) %>;
+  const regValues = <%- JSON.stringify(report.registrationByDate.map(r => r.count)) %>;
+  const regMA    = <%- JSON.stringify(report.regMovingAvg.map(r => r.avg)) %>;
+  const regFcLabels = <%- JSON.stringify(report.regForecast.map(r => r.date)) %>;
+  const regFcValues = <%- JSON.stringify(report.regForecast.map(r => r.value)) %>;
+
+  const allRegLabels = [...regLabels, ...regFcLabels];
+  const regBarData   = [...regValues, ...new Array(regFcLabels.length).fill(null)];
+  const regMAData    = [...regMA,     ...new Array(regFcLabels.length).fill(null)];
+  const regFcData    = [...new Array(regLabels.length - 1).fill(null), regMA[regMA.length - 1], ...regFcValues];
+
+  new Chart(document.getElementById('regChart'), {
+    data: {
+      labels: allRegLabels,
+      datasets: [
+        { type: 'bar',  label: 'নিবন্ধন', data: regBarData, backgroundColor: 'rgba(79,134,247,0.6)', borderColor: '#4f86f7', borderWidth: 1 },
+        { type: 'line', label: '৩-পর্যায়ের MA', data: regMAData, borderColor: '#f7a04f', borderWidth: 2, pointRadius: 3, fill: false, tension: 0.3 },
+        { type: 'line', label: 'পূর্বাভাস', data: regFcData, borderColor: '#e74c3c', borderWidth: 2, borderDash: [6,4], pointRadius: 3, fill: false, tension: 0.3 },
+      ],
+    },
+    options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
+  });
+  <% } %>
+
+  <% if (report.expenseByDate.length > 0) { %>
+  const expLabels = <%- JSON.stringify(report.expenseByDate.map(e => e.date)) %>;
+  const expValues = <%- JSON.stringify(report.expenseByDate.map(e => e.amount)) %>;
+  const expMA    = <%- JSON.stringify(report.expMovingAvg.map(e => e.avg)) %>;
+  const expFcLabels = <%- JSON.stringify(report.expForecast.map(e => e.date)) %>;
+  const expFcValues = <%- JSON.stringify(report.expForecast.map(e => e.value)) %>;
+
+  const allExpLabels = [...expLabels, ...expFcLabels];
+  const expBarData   = [...expValues, ...new Array(expFcLabels.length).fill(null)];
+  const expMAData    = [...expMA,     ...new Array(expFcLabels.length).fill(null)];
+  const expFcData    = [...new Array(expLabels.length - 1).fill(null), expMA[expMA.length - 1], ...expFcValues];
+
+  new Chart(document.getElementById('expChart'), {
+    data: {
+      labels: allExpLabels,
+      datasets: [
+        { type: 'bar',  label: 'ব্যয় (€)', data: expBarData, backgroundColor: 'rgba(231,76,60,0.5)', borderColor: '#e74c3c', borderWidth: 1 },
+        { type: 'line', label: '৩-পর্যায়ের MA', data: expMAData, borderColor: '#9b59b6', borderWidth: 2, pointRadius: 3, fill: false, tension: 0.3 },
+        { type: 'line', label: 'পূর্বাভাস', data: expFcData, borderColor: '#e67e22', borderWidth: 2, borderDash: [6,4], pointRadius: 3, fill: false, tension: 0.3 },
+      ],
+    },
+    options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } },
+  });
+  <% } %>
+})();
+</script>
+</body>
+</html>

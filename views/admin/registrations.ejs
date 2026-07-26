@@ -1,0 +1,57 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <div class="section-header">
+    <h1>নিবন্ধনসমূহ — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/registrations/new" class="btn btn-primary">+ ম্যানুয়ালি যোগ করুন</a>
+  </div>
+
+  <div class="reg-summary">
+    <span><strong><%= registrations.length %></strong> মোট</span>
+    <span><strong><%= registrations.filter(r=>r.is_paid).length %></strong> পরিশোধিত</span>
+    <span><strong><%= registrations.filter(r=>!r.is_paid).length %></strong> অপেক্ষমাণ</span>
+  </div>
+
+  <% if (registrations.length === 0) { %>
+    <div class="empty-state"><p>এখনো কোনো নিবন্ধন নেই।</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>নাম</th><th>ইমেইল</th><th>পেমেন্ট রেফারেন্স</th><th>অবস্থা</th><th>নিবন্ধিত</th><th>কার্যক্রম</th>
+      </tr></thead>
+      <tbody>
+      <% registrations.forEach(reg => { %>
+        <tr>
+          <td><%= reg.name %></td>
+          <td><%= reg.email %></td>
+          <td><%= reg.payment_reference || '—' %></td>
+          <td>
+            <span class="badge <%= reg.is_paid ? 'badge-paid' : 'badge-pending' %>">
+              <%= reg.is_paid ? 'পরিশোধিত' : 'অপেক্ষমাণ' %>
+            </span>
+          </td>
+          <td><%= new Date(reg.created_at).toLocaleDateString('bn-BD') %></td>
+          <td class="action-cell">
+            <form action="/admin/registrations/<%= reg.id %>/toggle-paid" method="POST" style="display:inline">
+              <button type="submit" class="btn btn-sm <%= reg.is_paid ? 'btn-outline' : 'btn-success' %>">
+                <%= reg.is_paid ? 'অপরিশোধিত করুন' : 'পরিশোধিত করুন' %>
+              </button>
+            </form>
+            <form action="/admin/registrations/<%= reg.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই নিবন্ধন মুছে ফেলবেন?')">
+              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

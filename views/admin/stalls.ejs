@@ -1,0 +1,53 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <div class="section-header">
+    <h1>স্টলসমূহ — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/stalls/new" class="btn btn-primary">+ নতুন স্টল</a>
+  </div>
+
+  <% if (stalls.length === 0) { %>
+    <div class="empty-state"><p>কোনো স্টল কনফিগার করা হয়নি।</p></div>
+  <% } else { %>
+    <div class="stalls-summary">
+      <span><strong><%= stalls.length %></strong> মোট</span>
+      <span><strong><%= stalls.filter(s=>s.is_occupied).length %></strong> দখলকৃত</span>
+      <span><strong><%= stalls.filter(s=>!s.is_occupied).length %></strong> খালি</span>
+    </div>
+    <table class="admin-table">
+      <thead><tr>
+        <th>স্টলের নাম</th><th>অবস্থান</th><th>বরাদ্দ</th><th>অবস্থা</th><th>কার্যক্রম</th>
+      </tr></thead>
+      <tbody>
+      <% stalls.forEach(stall => { %>
+        <tr>
+          <td><strong><%= stall.stall_name %></strong><% if(stall.description) { %><br><small><%= stall.description %></small><% } %></td>
+          <td><%= stall.location_info || '—' %></td>
+          <td>
+            <% if (stall.assigned_to_name) { %>
+              <%= stall.assigned_to_name %>
+              <% if (stall.assigned_to_email) { %><br><small><%= stall.assigned_to_email %></small><% } %>
+              <% if (stall.assigned_to_phone) { %><br><small><%= stall.assigned_to_phone %></small><% } %>
+            <% } else { %>—<% } %>
+          </td>
+          <td><span class="badge <%= stall.is_occupied ? 'badge-closed' : 'badge-open' %>"><%= stall.is_occupied ? 'দখলকৃত' : 'খালি' %></span></td>
+          <td class="action-cell">
+            <a href="/admin/stalls/<%= stall.id %>/edit" class="btn btn-sm">সম্পাদনা/বরাদ্দ</a>
+            <form action="/admin/stalls/<%= stall.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই স্টল মুছে ফেলবেন?')">
+              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

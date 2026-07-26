@@ -1,0 +1,38 @@
+<%- include('../partials/head') %>
+<body>
+<%- include('../partials/nav-public') %>
+
+<main class="container">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h1>নিবন্ধন নিশ্চিত!</h1>
+    <p>ধন্যবাদ, <strong><%= registration.name %></strong>!</p>
+    <p>আপনি <strong><%= event.title %></strong>-এ নিবন্ধিত হয়েছেন।</p>
+
+    <div class="qr-section">
+      <h2>আপনার প্রবেশ QR কোড</h2>
+      <p>প্রবেশদ্বারে এটি দেখান। একটি কপি <strong><%= registration.email %></strong>-এ পাঠানো হয়েছে।</p>
+      <img src="<%= qrDataUrl %>" alt="প্রবেশ QR কোড" class="qr-code-img">
+      <p class="qr-hint">সহজ অ্যাক্সেসের জন্য QR কোডটি স্ক্রিনশট বা প্রিন্ট করুন।</p>
+    </div>
+
+    <div class="registration-details">
+      <h3>নিবন্ধন বিবরণ</h3>
+      <table class="detail-table">
+        <tr><td>নাম</td><td><%= registration.name %></td></tr>
+        <tr><td>ইমেইল</td><td><%= registration.email %></td></tr>
+        <tr><td>ইভেন্ট</td><td><%= event.title %></td></tr>
+        <tr><td>তারিখ</td><td><%= new Date(event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></td></tr>
+        <% if (event.location) { %><tr><td>স্থান</td><td><%= event.location %></td></tr><% } %>
+        <tr><td>পেমেন্ট অবস্থা</td><td><span class="badge <%= registration.is_paid ? 'badge-paid' : 'badge-pending' %>"><%= registration.is_paid ? 'পরিশোধিত' : 'যাচাই অপেক্ষমাণ' %></span></td></tr>
+        <% if (registration.payment_reference) { %><tr><td>পেমেন্ট রেফারেন্স</td><td><%= registration.payment_reference %></td></tr><% } %>
+      </table>
+    </div>
+
+    <a href="/" class="btn btn-outline">ইভেন্টসমূহে ফিরুন</a>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

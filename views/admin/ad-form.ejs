@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <h1><%= ad ? 'বিজ্ঞাপন সম্পাদনা' : 'নতুন বিজ্ঞাপন' %></h1>
+
+  <form action="<%= ad ? `/admin/ads/${ad.id}/edit` : '/admin/ads/new' %>" method="POST" enctype="multipart/form-data" class="admin-form">
+    <div class="form-group">
+      <label for="title">শিরোনাম *</label>
+      <input type="text" id="title" name="title" required value="<%= ad ? ad.title : '' %>" placeholder="যেমন: স্পনসর ব্যানার">
+    </div>
+    <div class="form-group">
+      <label for="description">বিবরণ</label>
+      <textarea id="description" name="description" rows="2"><%= ad ? (ad.description || '') : '' %></textarea>
+    </div>
+    <div class="form-group">
+      <label for="link_url">লিংক (ক্লিক করলে যাবে)</label>
+      <input type="url" id="link_url" name="link_url" value="<%= ad ? (ad.link_url || '') : '' %>" placeholder="https://example.com">
+    </div>
+    <div class="form-group">
+      <label for="image">ছবি <% if (ad && ad.image_url) { %>(বর্তমান ছবি আছে — নতুন আপলোড করলে বদলাবে)<% } %></label>
+      <% if (ad && ad.image_url) { %>
+        <div style="margin-bottom:8px"><img src="<%= ad.image_url %>" style="max-width:300px;border-radius:6px;"></div>
+      <% } %>
+      <input type="file" id="image" name="image" accept="image/*">
+    </div>
+    <div class="form-group">
+      <label for="sort_order">প্রদর্শন ক্রম (ছোট = আগে)</label>
+      <input type="number" id="sort_order" name="sort_order" value="<%= ad ? ad.sort_order : 0 %>" min="0">
+    </div>
+    <% if (ad) { %>
+    <div class="form-group">
+      <label><input type="checkbox" name="is_active" value="on" <%= ad.is_active ? 'checked' : '' %>> সক্রিয় রাখুন</label>
+    </div>
+    <% } %>
+    <button type="submit" class="btn btn-primary"><%= ad ? 'পরিবর্তন সংরক্ষণ' : 'বিজ্ঞাপন তৈরি করুন' %></button>
+    <a href="/admin/ads" class="btn btn-outline">বাতিল</a>
+  </form>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <h1>ড্যাশবোর্ড</h1>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number"><%= stats.totalEvents %></div>
+      <div class="stat-label">মোট ইভেন্ট</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= stats.activeEvents %></div>
+      <div class="stat-label">সক্রিয় ইভেন্ট</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= stats.totalRegistrations %></div>
+      <div class="stat-label">মোট নিবন্ধন</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= stats.paidRegistrations %></div>
+      <div class="stat-label">পরিশোধিত</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <h2>ইভেন্টসমূহ</h2>
+    <div style="display:flex;gap:8px;align-items:center">
+      <a href="/admin/events/new" class="btn btn-primary">+ নতুন ইভেন্ট</a>
+      <form action="/admin/seed" method="POST" onsubmit="return confirm('পরীক্ষামূলক ডেটা যোগ করবেন? (৩টি ইভেন্ট, ২০০ নিবন্ধন, ৫০ খরচ, ২০ স্টল, ১৫ স্বেচ্ছাসেবী প্রতিটিতে)')">
+        <button type="submit" class="btn btn-outline">টেস্ট ডেটা লোড করুন</button>
+      </form>
+    </div>
+  </div>
+
+  <% if (stats.eventStats.length === 0) { %>
+    <div class="empty-state"><p>এখনো কোনো ইভেন্ট নেই। <a href="/admin/events/new">প্রথম ইভেন্ট তৈরি করুন।</a></p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>ইভেন্ট</th><th>তারিখ</th><th>অবস্থা</th><th>নিবন্ধন</th><th>কার্যক্রম</th>
+      </tr></thead>
+      <tbody>
+      <% stats.eventStats.forEach(event => { %>
+        <tr>
+          <td><strong><%= event.title %></strong></td>
+          <td><%= new Date(event.event_date).toLocaleDateString('bn-BD') %></td>
+          <td>
+            <% if (event.is_active) { %><span class="badge badge-open">সক্রিয়</span><% } else { %><span class="badge badge-closed">নিষ্ক্রিয়</span><% } %>
+          </td>
+          <td><%= event.paidCount %> পরিশোধিত / <%= event.regCount %> মোট</td>
+          <td class="action-cell">
+            <a href="/admin/events/<%= event.id %>/edit" class="btn btn-sm">সম্পাদনা</a>
+            <a href="/admin/events/<%= event.id %>/submissions" class="btn btn-sm">সাবমিশন</a>
+            <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-sm">নিবন্ধন</a>
+            <a href="/admin/events/<%= event.id %>/expenses" class="btn btn-sm">খরচ</a>
+            <a href="/admin/events/<%= event.id %>/reports" class="btn btn-sm">রিপোর্ট</a>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <h1>নিবন্ধন যোগ করুন — <%= event.title %></h1>
+
+  <%
+    const now = new Date();
+    const eventDate = new Date(event.event_date);
+    let activeTier = null;
+    let activeTierLabel = null;
+    let activePrice = null;
+    if (event.price_early_bird && event.early_bird_deadline && now <= new Date(event.early_bird_deadline)) {
+      activeTier = 'early_bird'; activeTierLabel = 'আর্লি বার্ড'; activePrice = event.price_early_bird;
+    } else if (event.price_mid && now <= new Date(eventDate.getTime() - 60 * 60 * 1000)) {
+      activeTier = 'mid'; activeTierLabel = 'মিড'; activePrice = event.price_mid;
+    } else if (event.price_onspot) {
+      activeTier = 'onspot'; activeTierLabel = 'অন-স্পট'; activePrice = event.price_onspot;
+    }
+  %>
+
+  <% if (activeTier && activePrice) { %>
+    <div class="ticket-price-banner" style="margin-bottom:1.5rem">
+      <span class="ticket-tier-label">বর্তমান মূল্য: <%= activeTierLabel %></span>
+      <span class="ticket-price">€<%= parseFloat(activePrice).toFixed(2) %></span>
+    </div>
+  <% } %>
+
+  <form action="/admin/events/<%= event.id %>/registrations/new" method="POST" class="admin-form">
+    <% if (activeTier) { %>
+      <input type="hidden" name="ticket_type" value="<%= activeTier %>">
+      <input type="hidden" name="ticket_price" value="<%= activePrice %>">
+    <% } %>
+    <div class="form-group">
+      <label for="name">পূর্ণ নাম *</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="email">ইমেইল *</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="payment_reference">পেমেন্ট রেফারেন্স</label>
+      <input type="text" id="payment_reference" name="payment_reference">
+    </div>
+    <button type="submit" class="btn btn-primary">নিবন্ধন যোগ করুন</button>
+    <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-outline">বাতিল</a>
+  </form>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <div class="section-header">
+    <h1>বিজ্ঞাপন</h1>
+    <a href="/admin/ads/new" class="btn btn-primary">+ নতুন বিজ্ঞাপন</a>
+  </div>
+
+  <% if (ads.length === 0) { %>
+    <div class="empty-state"><p>কোনো বিজ্ঞাপন যোগ করা হয়নি।</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>বিজ্ঞাপন</th><th>লিংক</th><th>ক্রম</th><th>অবস্থা</th><th>কার্যক্রম</th>
+      </tr></thead>
+      <tbody>
+      <% ads.forEach(ad => { %>
+        <tr>
+          <td>
+            <% if (ad.image_url) { %>
+              <img src="<%= ad.image_url %>" alt="<%= ad.title %>" style="width:80px;height:50px;object-fit:cover;border-radius:4px;margin-bottom:4px;display:block;">
+            <% } %>
+            <strong><%= ad.title %></strong>
+            <% if (ad.description) { %><br><small><%= ad.description %></small><% } %>
+          </td>
+          <td><% if (ad.link_url) { %><a href="<%= ad.link_url %>" target="_blank" style="word-break:break-all"><%= ad.link_url %></a><% } else { %>—<% } %></td>
+          <td><%= ad.sort_order %></td>
+          <td><span class="badge <%= ad.is_active ? 'badge-open' : 'badge-closed' %>"><%= ad.is_active ? 'সক্রিয়' : 'নিষ্ক্রিয়' %></span></td>
+          <td class="action-cell">
+            <a href="/admin/ads/<%= ad.id %>/edit" class="btn btn-sm">সম্পাদনা</a>
+            <form action="/admin/ads/<%= ad.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('বিজ্ঞাপনটি মুছে ফেলবেন?')">
+              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

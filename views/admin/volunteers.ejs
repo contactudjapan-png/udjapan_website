@@ -1,0 +1,58 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <div class="section-header">
+    <h1>স্বেচ্ছাসেবী — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/volunteers/new" class="btn btn-primary">+ নতুন স্বেচ্ছাসেবী</a>
+  </div>
+
+  <% if (volunteers.length === 0) { %>
+    <div class="empty-state"><p>এখনো কোনো স্বেচ্ছাসেবী নিবন্ধন নেই।</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>অবস্থা</th><th>কাজ</th><th>কার্যক্রম</th>
+      </tr></thead>
+      <tbody>
+      <% volunteers.forEach(vol => { %>
+        <tr>
+          <td><%= vol.name %></td>
+          <td><%= vol.email %></td>
+          <td><%= vol.phone || '—' %></td>
+          <td>
+            <span class="badge badge-<%= vol.status %>">
+              <% if (vol.status === 'pending') { %>অপেক্ষমাণ<% } else if (vol.status === 'approved') { %>অনুমোদিত<% } else { %>প্রত্যাখ্যাত<% } %>
+            </span>
+          </td>
+          <td><%= vol.assigned_task || '—' %></td>
+          <td class="action-cell action-cell--wrap">
+            <% if (vol.status === 'pending') { %>
+              <form action="/admin/volunteers/<%= vol.id %>/approve" method="POST" style="display:inline">
+                <button type="submit" class="btn btn-sm btn-success">অনুমোদন</button>
+              </form>
+              <form action="/admin/volunteers/<%= vol.id %>/reject" method="POST" style="display:inline">
+                <button type="submit" class="btn btn-sm btn-outline">প্রত্যাখ্যান</button>
+              </form>
+            <% } %>
+            <form action="/admin/volunteers/<%= vol.id %>/assign-task" method="POST" class="task-assign-form">
+              <input type="text" name="task" value="<%= vol.assigned_task || '' %>" placeholder="কাজ নির্ধারণ..." class="inline-input">
+              <button type="submit" class="btn btn-sm">নির্ধারণ</button>
+            </form>
+            <form action="/admin/volunteers/<%= vol.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('স্বেচ্ছাসেবী সরাবেন?')">
+              <button type="submit" class="btn btn-sm btn-danger">সরান</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

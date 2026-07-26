@@ -1,0 +1,46 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <h1>নতুন ভোট — <%= event.title %></h1>
+
+  <form action="/admin/events/<%= event.id %>/polls/new" method="POST" class="admin-form">
+    <div class="form-group">
+      <label for="question">ভোটের প্রশ্ন *</label>
+      <input type="text" id="question" name="question" required placeholder="যেমন: কোন পরিবেশনাটি আপনার সবচেয়ে ভালো লেগেছে?">
+    </div>
+    <div class="form-group">
+      <label>বিকল্পসমূহ (সর্বোচ্চ ৬টি)</label>
+      <div id="options-container">
+        <input type="text" name="options" placeholder="বিকল্প ১" class="option-input" required>
+        <input type="text" name="options" placeholder="বিকল্প ২" class="option-input" required>
+        <input type="text" name="options" placeholder="বিকল্প ৩ (ঐচ্ছিক)" class="option-input">
+        <input type="text" name="options" placeholder="বিকল্প ৪ (ঐচ্ছিক)" class="option-input">
+      </div>
+      <button type="button" id="add-option" class="btn btn-sm btn-outline" style="margin-top:8px">+ বিকল্প যোগ করুন</button>
+    </div>
+    <button type="submit" class="btn btn-primary">ভোট তৈরি করুন</button>
+    <a href="/admin/events/<%= event.id %>/polls" class="btn btn-outline">বাতিল</a>
+  </form>
+</main>
+
+<script>
+document.getElementById('add-option').addEventListener('click', function() {
+  const container = document.getElementById('options-container');
+  const count = container.querySelectorAll('input').length + 1;
+  if (count > 6) return;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.name = 'options';
+  input.placeholder = `বিকল্প ${count} (ঐচ্ছিক)`;
+  input.className = 'option-input';
+  container.appendChild(input);
+});
+</script>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

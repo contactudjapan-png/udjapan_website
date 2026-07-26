@@ -1,0 +1,30 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <h1>নতুন স্বেচ্ছাসেবী — <%= event.title %></h1>
+
+  <form action="/admin/events/<%= event.id %>/volunteers/new" method="POST" class="admin-form">
+    <div class="form-group">
+      <label for="name">নাম *</label>
+      <input type="text" id="name" name="name" required placeholder="পূর্ণ নাম">
+    </div>
+    <div class="form-group">
+      <label for="email">ইমেইল *</label>
+      <input type="email" id="email" name="email" required placeholder="email@example.com">
+    </div>
+    <div class="form-group">
+      <label for="phone">ফোন</label>
+      <input type="tel" id="phone" name="phone" placeholder="+81 90 1234 5678">
+    </div>
+    <button type="submit" class="btn btn-primary">স্বেচ্ছাসেবী যোগ করুন</button>
+    <a href="/admin/events/<%= event.id %>/volunteers" class="btn btn-outline">বাতিল</a>
+  </form>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

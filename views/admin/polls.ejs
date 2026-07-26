@@ -1,0 +1,52 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <div class="section-header">
+    <h1>ভোটসমূহ — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/polls/new" class="btn btn-primary">+ নতুন ভোট</a>
+  </div>
+
+  <% if (polls.length === 0) { %>
+    <div class="empty-state"><p>এখনো কোনো ভোট তৈরি হয়নি।</p></div>
+  <% } else { %>
+    <% polls.forEach(poll => { %>
+      <div class="poll-admin-card">
+        <div class="poll-header">
+          <h2><%= poll.question %></h2>
+          <div class="poll-actions">
+            <span class="badge <%= poll.is_active ? 'badge-open' : 'badge-closed' %>">
+              <%= poll.is_active ? 'সক্রিয়' : 'নিষ্ক্রিয়' %>
+            </span>
+            <form action="/admin/polls/<%= poll.id %>/toggle" method="POST" style="display:inline">
+              <button type="submit" class="btn btn-sm">
+                <%= poll.is_active ? 'নিষ্ক্রিয় করুন' : 'সক্রিয় করুন' %>
+              </button>
+            </form>
+            <form action="/admin/polls/<%= poll.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই ভোট মুছে ফেলবেন?')">
+              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+            </form>
+          </div>
+        </div>
+        <table class="admin-table">
+          <thead><tr><th>বিকল্প</th><th>ভোট</th></tr></thead>
+          <tbody>
+          <% poll.options.forEach(opt => { %>
+            <tr>
+              <td><%= opt.option_text %></td>
+              <td><%= opt.vote_count || 0 %></td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% }) %>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<%- include('../partials/head') %>
+<body class="event-page" <% if (event.banner_url) { %>style="background-image: url('<%= event.banner_url %>'); background-size: cover; background-attachment: fixed; background-position: center;"<% } %>>
+<div class="event-overlay">
+<%- include('../partials/nav-public') %>
+<%- include('../partials/flash') %>
+
+<main class="container">
+  <div class="event-detail-card">
+    <h1><%= event.title %></h1>
+    <div class="event-info">
+      <p><strong>তারিখ:</strong> <%= new Date(event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></p>
+      <% if (event.location) { %><p><strong>স্থান:</strong> <%= event.location %></p><% } %>
+      <% if (event.max_capacity) { %><p><strong>ধারণক্ষমতা:</strong> <%= registrationCount %> / <%= event.max_capacity %> নিবন্ধিত</p><% } %>
+    </div>
+
+    <% if (event.description) { %>
+      <div class="event-description"><%- event.description.replace(/\n/g, '<br>') %></div>
+    <% } %>
+
+    <div class="event-actions-row">
+      <a href="/event/<%= event.id %>/polls" class="btn btn-outline">ভোট দেখুন</a>
+    </div>
+
+    <% if (event.registration_open) { %>
+      <div class="registration-section">
+        <h2>পেমেন্ট তথ্য জমা দিন</h2>
+        <p class="section-hint">জমা দেওয়ার পরে, অ্যাডমিন আপনার পেমেন্ট যাচাই করবেন এবং ইমেইলে আপনার প্রবেশ QR কোড পাঠাবেন।</p>
+
+        <%
+          const now = new Date();
+          const eventDate = new Date(event.event_date);
+          let activeTier = null;
+          let activeTierLabel = null;
+          let activePrice = null;
+          if (event.price_early_bird && event.early_bird_deadline && now <= new Date(event.early_bird_deadline)) {
+            activeTier = 'early_bird';
+            activeTierLabel = 'আর্লি বার্ড';
+            activePrice = event.price_early_bird;
+          } else if (event.price_mid && now <= new Date(eventDate.getTime() - 60 * 60 * 1000)) {
+            activeTier = 'mid';
+            activeTierLabel = 'মিড';
+            activePrice = event.price_mid;
+          } else if (event.price_onspot) {
+            activeTier = 'onspot';
+            activeTierLabel = 'অন-স্পট';
+            activePrice = event.price_onspot;
+          }
+        %>
+        <% if (activeTier && activePrice) { %>
+          <div class="ticket-price-banner">
+            <span class="ticket-tier-label"><%= activeTierLabel %></span>
+            <span class="ticket-price">€<%= parseFloat(activePrice).toFixed(2) %></span>
+          </div>
+          <% if (activeTier === 'early_bird' && event.early_bird_deadline) { %>
+            <p class="ticket-deadline">আর্লি বার্ড শেষ: <strong><%= new Date(event.early_bird_deadline).toLocaleDateString('bn-BD', {month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}) %></strong></p>
+          <% } else if (activeTier === 'mid' && event.mid_deadline) { %>
+            <p class="ticket-deadline">মিড মূল্য শেষ: <strong><%= new Date(event.mid_deadline).toLocaleDateString('bn-BD', {month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}) %></strong></p>
+          <% } %>
+        <% } else if (event.price_early_bird || event.price_mid || event.price_onspot) { %>
+          <div class="ticket-tiers">
+            <% if (event.price_early_bird) { %><div class="tier-row"><span>আর্লি বার্ড</span><span>€<%= parseFloat(event.price_early_bird).toFixed(2) %></span><% if(event.early_bird_deadline){%><small>পর্যন্ত <%= new Date(event.early_bird_deadline).toLocaleDateString('bn-BD') %></small><%}%></div><% } %>
+            <% if (event.price_mid) { %><div class="tier-row"><span>মিড</span><span>€<%= parseFloat(event.price_mid).toFixed(2) %></span><% if(event.mid_deadline){%><small>পর্যন্ত <%= new Date(event.mid_deadline).toLocaleDateString('bn-BD') %></small><%}%></div><% } %>
+            <% if (event.price_onspot) { %><div class="tier-row"><span>অন-স্পট</span><span>€<%= parseFloat(event.price_onspot).toFixed(2) %></span></div><% } %>
+          </div>
+        <% } %>
+
+        <div class="paypal-section">
+          <h3>ধাপ ১: PayPal-এ পেমেন্ট করুন</h3>
+          <% if (event.paypal_qr_url) { %>
+            <p>প্রথমে নিচের QR কোডটি স্ক্যান করে PayPal পেমেন্ট সম্পন্ন করুন।</p>
+            <img src="<%= event.paypal_qr_url %>" alt="PayPal QR কোড" class="paypal-qr-img">
+          <% } else { %>
+            <div class="paypal-placeholder">
+              <p>PayPal পেমেন্ট QR এখানে প্রদর্শিত হবে। পেমেন্ট বিবরণের জন্য আয়োজকের সাথে যোগাযোগ করুন।</p>
+            </div>
+          <% } %>
+        </div>
+
+        <h3>ধাপ ২: আপনার তথ্য জমা দিন</h3>
+        <form action="/event/<%= event.id %>/register" method="POST" class="register-form">
+          <% if (activeTier) { %>
+            <input type="hidden" name="ticket_type" value="<%= activeTier %>">
+            <input type="hidden" name="ticket_price" value="<%= activePrice %>">
+          <% } %>
+          <div class="form-group">
+            <label for="name">পূর্ণ নাম *</label>
+            <input type="text" id="name" name="name" required placeholder="আপনার পূর্ণ নাম">
+          </div>
+          <div class="form-group">
+            <label for="email">ইমেইল ঠিকানা *</label>
+            <input type="email" id="email" name="email" required placeholder="your@email.com">
+          </div>
+          <div class="form-group">
+            <label for="payment_reference">পেমেন্ট রেফারেন্স</label>
+            <input type="text" id="payment_reference" name="payment_reference" placeholder="লেনদেন আইডি বা পেমেন্টকারীর নাম">
+            <small>আপনার PayPal লেনদেন আইডি বা পেমেন্টে ব্যবহৃত নাম লিখুন</small>
+          </div>
+          <button type="submit" class="btn btn-primary">জমা দিন</button>
+        </form>
+      </div>
+    <% } else { %>
+      <div class="registration-closed">
+        <p>এই ইভেন্টের জন্য সাবমিশন বর্তমানে বন্ধ।</p>
+      </div>
+    <% } %>
+
+    <div class="volunteer-section">
+      <h2>স্বেচ্ছাসেবক হতে চান?</h2>
+      <form action="/event/<%= event.id %>/volunteer" method="POST" class="register-form">
+        <div class="form-group">
+          <label for="vol_name">নাম *</label>
+          <input type="text" id="vol_name" name="name" required placeholder="আপনার নাম">
+        </div>
+        <div class="form-group">
+          <label for="vol_email">ইমেইল *</label>
+          <input type="email" id="vol_email" name="email" required placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label for="vol_phone">ফোন (ঐচ্ছিক)</label>
+          <input type="tel" id="vol_phone" name="phone" placeholder="+880 1XXX XXXXXX">
+        </div>
+        <button type="submit" class="btn btn-outline">স্বেচ্ছাসেবক হিসেবে নাম দিন</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>
+</div>
+</body>
+</html>

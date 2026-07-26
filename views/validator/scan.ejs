@@ -1,0 +1,35 @@
+<%- include('../partials/head') %>
+<body>
+<%- include('../partials/nav-public') %>
+
+<main class="container">
+  <div class="scanner-card">
+    <h1>QR Code Validator</h1>
+    <p>Point the camera at an attendee's QR code to check their registration.</p>
+
+    <div id="scanner-container">
+      <div id="reader"></div>
+    </div>
+
+    <div id="result-box" class="result-box result-box--hidden">
+      <div id="result-icon" class="result-icon"></div>
+      <div id="result-content"></div>
+      <button id="scan-again" class="btn btn-outline" onclick="resetScanner()">Scan Another</button>
+    </div>
+
+    <div id="manual-entry">
+      <p class="or-divider">— or enter token manually —</p>
+      <form id="manual-form" class="manual-form">
+        <input type="text" id="manual-token" placeholder="Paste QR token here" class="manual-input">
+        <button type="submit" class="btn btn-outline">Validate</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="/js/scanner.js"></script>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

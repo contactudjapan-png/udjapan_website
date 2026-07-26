@@ -1,0 +1,35 @@
+<%- include('../partials/head') %>
+<body>
+<%- include('../partials/nav-public') %>
+
+<main class="container">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h1>সাবমিশন গৃহীত হয়েছে!</h1>
+    <p>ধন্যবাদ, <strong><%= submission.name %></strong>!</p>
+    <p><strong><%= event.title %></strong>-এর জন্য আপনার পেমেন্ট বিবরণ জমা দেওয়া হয়েছে।</p>
+
+    <div class="info-box">
+      <p>অ্যাডমিন আপনার পেমেন্ট যাচাই করবেন এবং নিবন্ধন নিশ্চিত করবেন। নিশ্চিত হওয়ার পর, <strong><%= submission.email %></strong>-এ আপনার প্রবেশ QR কোড পাঠানো হবে।</p>
+    </div>
+
+    <div class="registration-details">
+      <h3>সাবমিশন বিবরণ</h3>
+      <table class="detail-table">
+        <tr><td>নাম</td><td><%= submission.name %></td></tr>
+        <tr><td>ইমেইল</td><td><%= submission.email %></td></tr>
+        <tr><td>ইভেন্ট</td><td><%= event.title %></td></tr>
+        <tr><td>তারিখ</td><td><%= new Date(event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></td></tr>
+        <% if (event.location) { %><tr><td>স্থান</td><td><%= event.location %></td></tr><% } %>
+        <% if (submission.payment_reference) { %><tr><td>পেমেন্ট রেফারেন্স</td><td><%= submission.payment_reference %></td></tr><% } %>
+        <tr><td>অবস্থা</td><td><span class="badge badge-pending">যাচাই অপেক্ষমাণ</span></td></tr>
+      </table>
+    </div>
+
+    <a href="/" class="btn btn-outline">ইভেন্টসমূহে ফিরুন</a>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

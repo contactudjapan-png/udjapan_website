@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <div class="section-header">
+    <h1>ইভেন্টসমূহ</h1>
+    <a href="/admin/events/new" class="btn btn-primary">+ নতুন ইভেন্ট</a>
+  </div>
+
+  <% if (events.length === 0) { %>
+    <div class="empty-state"><p>এখনো কোনো ইভেন্ট নেই।</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>শিরোনাম</th><th>তারিখ</th><th>সক্রিয়</th><th>সাবমিশন</th><th>কার্যক্রম</th>
+      </tr></thead>
+      <tbody>
+      <% events.forEach(event => { %>
+        <tr>
+          <td><strong><%= event.title %></strong></td>
+          <td><%= new Date(event.event_date).toLocaleDateString('bn-BD') %></td>
+          <td><%= event.is_active ? '✓' : '✗' %></td>
+          <td><%= event.registration_open ? 'খোলা' : 'বন্ধ' %></td>
+          <td class="action-cell">
+            <a href="/admin/events/<%= event.id %>/edit" class="btn btn-sm">সম্পাদনা</a>
+            <a href="/admin/events/<%= event.id %>/submissions" class="btn btn-sm">সাবমিশন</a>
+            <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-sm">নিবন্ধন</a>
+            <a href="/admin/events/<%= event.id %>/expenses" class="btn btn-sm">খরচ</a>
+            <a href="/admin/events/<%= event.id %>/reports" class="btn btn-sm">রিপোর্ট</a>
+            <form action="/admin/events/<%= event.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই ইভেন্ট মুছে ফেলবেন?')">
+              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

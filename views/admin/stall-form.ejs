@@ -1,0 +1,46 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <h1><%= stall ? 'স্টল সম্পাদনা' : 'নতুন স্টল' %> — <%= event.title %></h1>
+
+  <form action="<%= stall ? `/admin/stalls/${stall.id}/edit` : `/admin/events/${event.id}/stalls/new` %>" method="POST" class="admin-form">
+    <div class="form-group">
+      <label for="stall_name">স্টলের নাম *</label>
+      <input type="text" id="stall_name" name="stall_name" required value="<%= stall ? stall.stall_name : '' %>">
+    </div>
+    <div class="form-group">
+      <label for="description">বিবরণ</label>
+      <textarea id="description" name="description" rows="3"><%= stall ? (stall.description || '') : '' %></textarea>
+    </div>
+    <div class="form-group">
+      <label for="location_info">অবস্থান / স্পট</label>
+      <input type="text" id="location_info" name="location_info" value="<%= stall ? (stall.location_info || '') : '' %>" placeholder="যেমন: এলাকা ক, বুথ ৩">
+    </div>
+
+    <h2>বরাদ্দ</h2>
+    <div class="form-group">
+      <label for="assigned_to_name">বিক্রেতা / ব্যক্তির নাম</label>
+      <input type="text" id="assigned_to_name" name="assigned_to_name" value="<%= stall ? (stall.assigned_to_name || '') : '' %>">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="assigned_to_email">ইমেইল</label>
+        <input type="email" id="assigned_to_email" name="assigned_to_email" value="<%= stall ? (stall.assigned_to_email || '') : '' %>">
+      </div>
+      <div class="form-group">
+        <label for="assigned_to_phone">ফোন</label>
+        <input type="tel" id="assigned_to_phone" name="assigned_to_phone" value="<%= stall ? (stall.assigned_to_phone || '') : '' %>">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary"><%= stall ? 'পরিবর্তন সংরক্ষণ' : 'স্টল তৈরি করুন' %></button>
+    <a href="/admin/events/<%= event.id %>/stalls" class="btn btn-outline">বাতিল</a>
+  </form>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

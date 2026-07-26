@@ -1,0 +1,107 @@
+<%- include('../partials/head') %>
+<body class="home-page">
+<%- include('../partials/nav-public') %>
+<%- include('../partials/flash') %>
+
+<% const _event = locals.currentEvent || null; %>
+<% const _ads = locals.ads || []; %>
+<% const _others = locals.otherEvents || []; %>
+
+<% if (!_event) { %>
+  <main class="container" style="padding:80px 20px;text-align:center">
+    <h1 style="color:#888">শীঘ্রই আসছে</h1>
+    <p style="color:#aaa">নতুন ইভেন্টের জন্য অপেক্ষা করুন।</p>
+  </main>
+<% } else { %>
+
+<!-- ── Hero Banner ─────────────────────────────────── -->
+<section class="home-hero" <% if (_event.banner_url) { %>style="background-image: url('<%= _event.banner_url %>')"<% } %>>
+  <div class="home-hero-overlay"></div>
+  <div class="home-hero-content">
+    <p class="home-hero-label">আসন্ন ইভেন্ট</p>
+    <h1 class="home-hero-title"><%= _event.title %></h1>
+    <div class="home-hero-meta">
+      <span>📅 <%= new Date(_event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+      <% if (_event.location) { %><span>📍 <%= _event.location %></span><% } %>
+    </div>
+    <% if (_event.registration_open) { %>
+      <a href="/event/<%= _event.id %>" class="btn btn-primary btn-hero">নিবন্ধন করুন</a>
+    <% } else { %>
+      <span class="badge badge-closed btn-hero-badge">নিবন্ধন বন্ধ</span>
+    <% } %>
+  </div>
+</section>
+
+<!-- ── About ──────────────────────────────────────── -->
+<% if (_event.description) { %>
+<section class="home-about">
+  <div class="container">
+    <h2>ইভেন্ট সম্পর্কে</h2>
+    <p><%= _event.description %></p>
+  </div>
+</section>
+<% } %>
+
+<!-- ── Advertisements ─────────────────────────────── -->
+<% if (_ads.length > 0) { %>
+<section class="home-ads">
+  <div class="container">
+    <h2 class="home-ads-title">স্পনসর ও বিজ্ঞাপন</h2>
+    <div class="ads-grid">
+      <% _ads.forEach(ad => { %>
+        <% if (ad.link_url) { %>
+          <a href="<%= ad.link_url %>" target="_blank" rel="noopener" class="ad-card">
+        <% } else { %>
+          <div class="ad-card">
+        <% } %>
+          <% if (ad.image_url) { %>
+            <img src="<%= ad.image_url %>" alt="<%= ad.title %>" class="ad-card-img">
+          <% } else { %>
+            <div class="ad-card-placeholder">বিজ্ঞাপন</div>
+          <% } %>
+          <div class="ad-card-body">
+            <strong><%= ad.title %></strong>
+            <% if (ad.description) { %><p><%= ad.description %></p><% } %>
+          </div>
+        <% if (ad.link_url) { %></a><% } else { %></div><% } %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ── Other Events ───────────────────────────────── -->
+<% if (_others.length > 0) { %>
+<section class="home-other-events">
+  <div class="container">
+    <h2>অন্যান্য ইভেন্ট</h2>
+    <div class="events-grid">
+      <% _others.forEach(ev => { %>
+        <a href="/event/<%= ev.id %>" class="event-card">
+          <% if (ev.banner_url) { %>
+            <div class="event-card-banner" style="background-image: url('<%= ev.banner_url %>')"></div>
+          <% } else { %>
+            <div class="event-card-banner event-card-banner--placeholder"></div>
+          <% } %>
+          <div class="event-card-body">
+            <h2><%= ev.title %></h2>
+            <p class="event-meta">📅 <%= new Date(ev.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+            <% if (ev.location) { %><p class="event-meta">📍 <%= ev.location %></p><% } %>
+            <% if (!ev.registration_open) { %>
+              <span class="badge badge-closed">নিবন্ধন বন্ধ</span>
+            <% } else { %>
+              <span class="badge badge-open">নিবন্ধন খোলা</span>
+            <% } %>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% } %>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

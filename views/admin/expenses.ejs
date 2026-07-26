@@ -1,0 +1,47 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <div class="section-header">
+    <h1>খরচসমূহ — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/expenses/new" class="btn btn-primary">+ খরচ যোগ করুন</a>
+  </div>
+
+  <div class="total-banner">মোট খরচ: <strong>€<%= total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) %></strong></div>
+
+  <% if (expenses.length === 0) { %>
+    <div class="empty-state"><p>কোনো খরচ নথিভুক্ত হয়নি।</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>বিবরণ</th><th>পরিমাণ</th><th>রসিদ</th><th>তারিখ</th><th>কার্যক্রম</th>
+      </tr></thead>
+      <tbody>
+      <% expenses.forEach(exp => { %>
+        <tr>
+          <td><%= exp.description %></td>
+          <td>€<%= parseFloat(exp.amount).toLocaleString('en-US', {minimumFractionDigits:2}) %></td>
+          <td>
+            <% if (exp.receipt_url) { %>
+              <a href="<%= exp.receipt_url %>" target="_blank" class="btn btn-sm">দেখুন</a>
+            <% } else { %>—<% } %>
+          </td>
+          <td><%= new Date(exp.created_at).toLocaleDateString('bn-BD') %></td>
+          <td>
+            <form action="/admin/expenses/<%= exp.id %>/delete" method="POST" onsubmit="return confirm('এই খরচ মুছে ফেলবেন?')">
+              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

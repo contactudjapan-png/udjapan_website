@@ -1,0 +1,43 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <div class="section-header">
+    <h1>Submissions — <%= event.title %></h1>
+  </div>
+
+  <% if (submissions.length === 0) { %>
+    <div class="empty-state"><p>No pending submissions.</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>Name</th><th>Email</th><th>Payment Reference</th><th>Submitted</th><th>Actions</th>
+      </tr></thead>
+      <tbody>
+      <% submissions.forEach(sub => { %>
+        <tr>
+          <td><strong><%= sub.name %></strong></td>
+          <td><%= sub.email %></td>
+          <td><%= sub.payment_reference || '—' %></td>
+          <td><%= new Date(sub.created_at).toLocaleDateString('bn-BD') %></td>
+          <td class="action-cell">
+            <form action="/admin/submissions/<%= sub.id %>/approve" method="POST" style="display:inline" onsubmit="return confirm('<%= sub.name %>-এর জন্য নিবন্ধন অনুমোদন করবেন?')">
+              <button type="submit" class="btn btn-sm btn-success">অনুমোদন</button>
+            </form>
+            <form action="/admin/submissions/<%= sub.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই সাবমিশন মুছে ফেলবেন?')">
+              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

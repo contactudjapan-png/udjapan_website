@@ -1,0 +1,137 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <% if (event) { %>
+    <%- include('../partials/event-subnav') %>
+  <% } %>
+
+  <h1><%= event ? 'ইভেন্ট সম্পাদনা' : 'নতুন ইভেন্ট' %></h1>
+
+  <form action="<%= event ? `/admin/events/${event.id}/edit` : '/admin/events/new' %>" method="POST" class="admin-form">
+    <div class="form-group">
+      <label for="title">ইভেন্টের শিরোনাম *</label>
+      <input type="text" id="title" name="title" required value="<%= event ? event.title : '' %>">
+    </div>
+    <div class="form-group">
+      <label for="description">বিবরণ</label>
+      <textarea id="description" name="description" rows="5"><%= event ? event.description : '' %></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="event_date">তারিখ ও সময় *</label>
+        <input type="datetime-local" id="event_date" name="event_date" required
+          value="<%= event && event.event_date ? event.event_date.substring(0,16) : '' %>">
+      </div>
+      <div class="form-group">
+        <label for="max_capacity">সর্বোচ্চ ধারণক্ষমতা</label>
+        <input type="number" id="max_capacity" name="max_capacity" min="1"
+          value="<%= event ? (event.max_capacity || '') : '' %>">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="location">স্থান</label>
+      <input type="text" id="location" name="location" value="<%= event ? (event.location || '') : '' %>" placeholder="ভেন্যুর নাম, ঠিকানা">
+    </div>
+
+    <hr>
+    <h2>টিকিট মূল্য</h2>
+    <p class="section-hint">খালি রাখলে মূল্য প্রদর্শিত হবে না। প্রতিটি স্তর তার নির্ধারিত সময়সীমা পর্যন্ত সক্রিয় থাকে।</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="price_early_bird">আর্লি বার্ড মূল্য (€)</label>
+        <input type="number" id="price_early_bird" name="price_early_bird" min="0" step="0.01"
+          value="<%= event ? (event.price_early_bird || '') : '' %>" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label for="early_bird_deadline">আর্লি বার্ড সময়সীমা</label>
+        <input type="datetime-local" id="early_bird_deadline" name="early_bird_deadline"
+          value="<%= event && event.early_bird_deadline ? event.early_bird_deadline.substring(0,16) : '' %>">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="price_mid">মিড মূল্য (€)</label>
+        <input type="number" id="price_mid" name="price_mid" min="0" step="0.01"
+          value="<%= event ? (event.price_mid || '') : '' %>" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label for="mid_deadline">মিড সময়সীমা</label>
+        <input type="datetime-local" id="mid_deadline" name="mid_deadline"
+          value="<%= event && event.mid_deadline ? event.mid_deadline.substring(0,16) : '' %>">
+        <small>আর্লি বার্ড সময়সীমার পর থেকে এই তারিখ পর্যন্ত মিড মূল্য প্রযোজ্য। এরপর অন-স্পট মূল্য কার্যকর হয়।</small>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="price_onspot">অন-স্পট মূল্য (€)</label>
+        <input type="number" id="price_onspot" name="price_onspot" min="0" step="0.01"
+          value="<%= event ? (event.price_onspot || '') : '' %>" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label>&nbsp;</label>
+        <p style="padding-top:0.5rem;font-size:0.85rem;color:var(--text-muted)">মিড সময়সীমার পর থেকে ইভেন্ট শেষ পর্যন্ত অন-স্পট মূল্য প্রযোজ্য।</p>
+      </div>
+    </div>
+    <hr>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" name="is_active" <%= event && event.is_active ? 'checked' : '' %>>
+          ইভেন্ট সক্রিয় (সাইটে দৃশ্যমান)
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" name="registration_open" <%= event && event.registration_open ? 'checked' : '' %>>
+          সাবমিশন উন্মুক্ত
+        </label>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary"><%= event ? 'পরিবর্তন সংরক্ষণ' : 'ইভেন্ট তৈরি করুন' %></button>
+    <a href="/admin/events" class="btn btn-outline">বাতিল</a>
+  </form>
+
+  <% if (event) { %>
+    <hr>
+    <div class="upload-section">
+      <h2>ব্যানার ছবি</h2>
+      <% if (event.banner_url) { %>
+        <img src="<%= event.banner_url %>" alt="ব্যানার" class="preview-img">
+      <% } %>
+      <form action="/admin/events/<%= event.id %>/banner" method="POST" enctype="multipart/form-data">
+        <div class="form-row form-row--align">
+          <input type="file" name="banner" accept="image/*" required>
+          <button type="submit" class="btn btn-outline">ব্যানার আপলোড</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="upload-section">
+      <h2>PayPal QR কোড</h2>
+      <% if (event.paypal_qr_url) { %>
+        <img src="<%= event.paypal_qr_url %>" alt="PayPal QR" class="preview-img preview-img--qr">
+      <% } %>
+      <form action="/admin/events/<%= event.id %>/paypal-qr" method="POST" enctype="multipart/form-data">
+        <div class="form-row form-row--align">
+          <input type="file" name="paypal_qr" accept="image/*" required>
+          <button type="submit" class="btn btn-outline">PayPal QR আপলোড</button>
+        </div>
+      </form>
+    </div>
+
+    <hr>
+    <div class="danger-zone">
+      <h2>বিপদ অঞ্চল</h2>
+      <form action="/admin/events/<%= event.id %>/delete" method="POST" onsubmit="return confirm('এই ইভেন্ট এবং এর সমস্ত ডেটা স্থায়ীভাবে মুছে ফেলবেন?')">
+        <button type="submit" class="btn btn-danger">ইভেন্ট মুছুন</button>
+      </form>
+    </div>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

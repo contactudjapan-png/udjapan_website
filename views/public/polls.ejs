@@ -1,0 +1,41 @@
+<%- include('../partials/head') %>
+<body>
+<%- include('../partials/nav-public') %>
+<%- include('../partials/flash') %>
+
+<main class="container">
+  <div class="page-header">
+    <a href="/event/<%= event.id %>" class="back-link">← ইভেন্টে ফিরুন</a>
+    <h1>ভোট — <%= event.title %></h1>
+  </div>
+
+  <% if (polls.length === 0) { %>
+    <div class="empty-state"><p>বর্তমানে কোনো সক্রিয় ভোট নেই।</p></div>
+  <% } else { %>
+    <% polls.forEach(poll => { %>
+      <div class="poll-card">
+        <h2><%= poll.question %></h2>
+        <form action="/event/<%= event.id %>/polls/<%= poll.id %>/vote" method="POST" class="poll-form">
+          <div class="form-group">
+            <label>আপনার ইমেইল (পুনরায় ভোট রোধ করতে)</label>
+            <input type="email" name="voter_email" required placeholder="your@email.com">
+          </div>
+          <div class="poll-options">
+            <% poll.options.forEach(opt => { %>
+              <label class="poll-option">
+                <input type="radio" name="option_id" value="<%= opt.id %>" required>
+                <span><%= opt.option_text %></span>
+                <span class="vote-count"><%= opt.vote_count || 0 %> ভোট</span>
+              </label>
+            <% }) %>
+          </div>
+          <button type="submit" class="btn btn-primary">ভোট দিন</button>
+        </form>
+      </div>
+    <% }) %>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>
