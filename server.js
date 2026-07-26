@@ -54,6 +54,20 @@ app.use((req, res, next) => {
   next();
 });
 
+// Storage proxy — serves private bucket files via signed URLs
+app.get('/storage/:bucket/*', async (req, res) => {
+  try {
+    const db = require('./config/db');
+    const bucket = req.params.bucket;
+    const filePath = req.params[0];
+    const { data, error } = await db.storage.from(bucket).createSignedUrl(filePath, 3600);
+    if (error || !data?.signedUrl) return res.status(404).send('Not found');
+    res.redirect(data.signedUrl);
+  } catch (err) {
+    res.status(500).send('Storage error');
+  }
+});
+
 // Routes
 const publicRouter = require('./routes/public');
 const adminRouter = require('./routes/admin');

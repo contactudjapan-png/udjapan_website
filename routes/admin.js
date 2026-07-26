@@ -502,7 +502,7 @@ router.post('/ads/new', upload.single('image'), async (req, res, next) => {
       const { data, error } = await db.storage.from('ads').upload(
         `${Date.now()}-${req.file.originalname}`, req.file.buffer, { contentType: req.file.mimetype }
       );
-      if (!error) image_url = db.storage.from('ads').getPublicUrl(data.path).data.publicUrl;
+      if (!error) image_url = `/storage/ads/${data.path}`;
     }
     await advertisementService.createAd({ ...req.body, image_url });
     req.flash('success', 'বিজ্ঞাপন তৈরি হয়েছে।');
@@ -525,7 +525,7 @@ router.post('/ads/:id/edit', upload.single('image'), async (req, res, next) => {
       const { data, error } = await db.storage.from('ads').upload(
         `${Date.now()}-${req.file.originalname}`, req.file.buffer, { contentType: req.file.mimetype }
       );
-      if (!error) image_url = db.storage.from('ads').getPublicUrl(data.path).data.publicUrl;
+      if (!error) image_url = `/storage/ads/${data.path}`;
     }
     await advertisementService.updateAd(req.params.id, { ...req.body, image_url });
     req.flash('success', 'বিজ্ঞাপন আপডেট হয়েছে।');

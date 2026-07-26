@@ -85,8 +85,7 @@ async function uploadFileToBucket(bucket, filePath, buffer, mimetype) {
     upsert: true,
   });
   if (error) throw new Error(error.message);
-  const { data: urlData } = db.storage.from(bucket).getPublicUrl(filePath);
-  return urlData.publicUrl;
+  return `/storage/${bucket}/${filePath}`;
 }
 
 module.exports = {
