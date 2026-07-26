@@ -178,15 +178,16 @@ router.post('/registrations/:id/toggle-paid', async (req, res, next) => {
   try {
     const reg = await registrationService.togglePaid(req.params.id);
     req.flash('success', `Payment status set to ${reg.is_paid ? 'Paid' : 'Unpaid'}.`);
-    res.redirect('back');
+    res.redirect(`/admin/events/${reg.event_id}/registrations`);
   } catch (err) { next(err); }
 });
 
 router.post('/registrations/:id/delete', async (req, res, next) => {
   try {
+    const reg = await registrationService.getRegistrationById(req.params.id);
     await registrationService.deleteRegistration(req.params.id);
     req.flash('success', 'Registration deleted.');
-    res.redirect('back');
+    res.redirect(`/admin/events/${reg.event_id}/registrations`);
   } catch (err) { next(err); }
 });
 
@@ -221,9 +222,10 @@ router.post('/events/:id/expenses/new', upload.single('receipt'), async (req, re
 
 router.post('/expenses/:id/delete', async (req, res, next) => {
   try {
+    const { data: expense } = await db.from('expenses').select('event_id').eq('id', req.params.id).single();
     await expenseService.deleteExpense(req.params.id);
     req.flash('success', 'Expense deleted.');
-    res.redirect('back');
+    res.redirect(expense ? `/admin/events/${expense.event_id}/expenses` : '/admin');
   } catch (err) { next(err); }
 });
 
@@ -259,16 +261,17 @@ router.post('/events/:id/polls/new', async (req, res, next) => {
 
 router.post('/polls/:id/toggle', async (req, res, next) => {
   try {
-    await pollService.togglePoll(req.params.id);
-    res.redirect('back');
+    const poll = await pollService.togglePoll(req.params.id);
+    res.redirect(`/admin/events/${poll.event_id}/polls`);
   } catch (err) { next(err); }
 });
 
 router.post('/polls/:id/delete', async (req, res, next) => {
   try {
+    const poll = await pollService.getPollById(req.params.id);
     await pollService.deletePoll(req.params.id);
     req.flash('success', 'Poll deleted.');
-    res.redirect('back');
+    res.redirect(`/admin/events/${poll.event_id}/polls`);
   } catch (err) { next(err); }
 });
 
@@ -352,33 +355,34 @@ router.post('/events/:id/volunteers/new', async (req, res, next) => {
 
 router.post('/volunteers/:id/approve', async (req, res, next) => {
   try {
-    await volunteerService.updateVolunteerStatus(req.params.id, 'approved');
+    const vol = await volunteerService.updateVolunteerStatus(req.params.id, 'approved');
     req.flash('success', 'Volunteer approved.');
-    res.redirect('back');
+    res.redirect(`/admin/events/${vol.event_id}/volunteers`);
   } catch (err) { next(err); }
 });
 
 router.post('/volunteers/:id/reject', async (req, res, next) => {
   try {
-    await volunteerService.updateVolunteerStatus(req.params.id, 'rejected');
+    const vol = await volunteerService.updateVolunteerStatus(req.params.id, 'rejected');
     req.flash('success', 'Volunteer rejected.');
-    res.redirect('back');
+    res.redirect(`/admin/events/${vol.event_id}/volunteers`);
   } catch (err) { next(err); }
 });
 
 router.post('/volunteers/:id/assign-task', async (req, res, next) => {
   try {
-    await volunteerService.assignTask(req.params.id, req.body.task);
+    const vol = await volunteerService.assignTask(req.params.id, req.body.task);
     req.flash('success', 'Task assigned.');
-    res.redirect('back');
+    res.redirect(`/admin/events/${vol.event_id}/volunteers`);
   } catch (err) { next(err); }
 });
 
 router.post('/volunteers/:id/delete', async (req, res, next) => {
   try {
+    const vol = await volunteerService.getVolunteerById(req.params.id);
     await volunteerService.deleteVolunteer(req.params.id);
     req.flash('success', 'Volunteer removed.');
-    res.redirect('back');
+    res.redirect(`/admin/events/${vol.event_id}/volunteers`);
   } catch (err) { next(err); }
 });
 
