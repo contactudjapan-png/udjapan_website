@@ -76,6 +76,14 @@
       </div>
     </div>
     <hr>
+    <h2>স্বেচ্ছাসেবী কাজের তালিকা</h2>
+    <div class="form-group">
+      <label for="vol_task_types">কাজের বিকল্পসমূহ (প্রতি লাইনে একটি)</label>
+      <textarea id="vol_task_types" name="vol_task_types" rows="5" placeholder="রেজিস্ট্রেশন ডেস্ক&#10;মঞ্চ ব্যবস্থাপনা&#10;স্টল তদারকি&#10;নিরাপত্তা&#10;খাদ্য বিতরণ"><%= event ? (event.vol_task_types || '') : '' %></textarea>
+      <small>স্বেচ্ছাসেবী কাজ নির্ধারণের সময় এই তালিকা থেকে ড্রপডাউনে দেখাবে।</small>
+    </div>
+
+    <hr>
     <h2>স্টল পর্যবেক্ষণ ধরন</h2>
     <div class="form-group">
       <label for="stall_obs_types">ড্রপডাউন বিকল্পসমূহ (প্রতি লাইনে একটি)</label>
