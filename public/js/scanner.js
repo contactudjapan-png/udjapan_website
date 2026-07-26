@@ -52,10 +52,11 @@ function escapeHtml(str) {
 }
 
 function extractToken(url) {
-  // If it's a full URL like http://host/api/validate/TOKEN, extract TOKEN
+  // If it's a full URL like https://host/api/validate/TOKEN, extract TOKEN
   try {
-    const u = new URL(url);
-    const parts = u.pathname.split('/');
+    const withScheme = url.includes('://') ? url : `https://${url}`;
+    const u = new URL(withScheme);
+    const parts = u.pathname.split('/').filter(Boolean);
     return parts[parts.length - 1];
   } catch {
     return url; // treat as raw token
