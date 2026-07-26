@@ -41,38 +41,38 @@
     <p class="section-hint">খালি রাখলে মূল্য প্রদর্শিত হবে না। প্রতিটি স্তর তার নির্ধারিত সময়সীমা পর্যন্ত সক্রিয় থাকে।</p>
     <div class="form-row">
       <div class="form-group">
-        <label for="price_early_bird">আর্লি বার্ড মূল্য (€)</label>
+        <label for="price_early_bird">হলদে বউ মূল্য (€)</label>
         <input type="number" id="price_early_bird" name="price_early_bird" min="0" step="0.01"
           value="<%= event ? (event.price_early_bird || '') : '' %>" placeholder="0.00">
       </div>
       <div class="form-group">
-        <label for="early_bird_deadline">আর্লি বার্ড সময়সীমা</label>
+        <label for="early_bird_deadline">হলদে বউ সময়সীমা</label>
         <input type="datetime-local" id="early_bird_deadline" name="early_bird_deadline"
           value="<%= event && event.early_bird_deadline ? event.early_bird_deadline.substring(0,16) : '' %>">
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label for="price_mid">মিড মূল্য (€)</label>
+        <label for="price_mid">নীলকণ্ঠ মূল্য (€)</label>
         <input type="number" id="price_mid" name="price_mid" min="0" step="0.01"
           value="<%= event ? (event.price_mid || '') : '' %>" placeholder="0.00">
       </div>
       <div class="form-group">
-        <label for="mid_deadline">মিড সময়সীমা</label>
+        <label for="mid_deadline">নীলকণ্ঠ সময়সীমা</label>
         <input type="datetime-local" id="mid_deadline" name="mid_deadline"
           value="<%= event && event.mid_deadline ? event.mid_deadline.substring(0,16) : '' %>">
-        <small>আর্লি বার্ড সময়সীমার পর থেকে এই তারিখ পর্যন্ত মিড মূল্য প্রযোজ্য। এরপর অন-স্পট মূল্য কার্যকর হয়।</small>
+        <small>হলদে বউ সময়সীমার পর থেকে এই তারিখ পর্যন্ত নীলকণ্ঠ মূল্য প্রযোজ্য। এরপর কোকিলা মূল্য কার্যকর হয়।</small>
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label for="price_onspot">অন-স্পট মূল্য (€)</label>
+        <label for="price_onspot">কোকিলা মূল্য (€)</label>
         <input type="number" id="price_onspot" name="price_onspot" min="0" step="0.01"
           value="<%= event ? (event.price_onspot || '') : '' %>" placeholder="0.00">
       </div>
       <div class="form-group">
         <label>&nbsp;</label>
-        <p style="padding-top:0.5rem;font-size:0.85rem;color:var(--text-muted)">মিড সময়সীমার পর থেকে ইভেন্ট শেষ পর্যন্ত অন-স্পট মূল্য প্রযোজ্য।</p>
+        <p style="padding-top:0.5rem;font-size:0.85rem;color:var(--text-muted)">নীলকণ্ঠ সময়সীমার পর থেকে ইভেন্ট শেষ পর্যন্ত কোকিলা মূল্য প্রযোজ্য।</p>
       </div>
     </div>
     <hr>

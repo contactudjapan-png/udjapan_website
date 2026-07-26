@@ -14,11 +14,11 @@
     let activeTierLabel = null;
     let activePrice = null;
     if (event.price_early_bird && event.early_bird_deadline && now <= new Date(event.early_bird_deadline)) {
-      activeTier = 'early_bird'; activeTierLabel = 'আর্লি বার্ড'; activePrice = event.price_early_bird;
+      activeTier = 'early_bird'; activeTierLabel = 'হলদে বউ'; activePrice = event.price_early_bird;
     } else if (event.price_mid && now <= new Date(eventDate.getTime() - 60 * 60 * 1000)) {
-      activeTier = 'mid'; activeTierLabel = 'মিড'; activePrice = event.price_mid;
+      activeTier = 'mid'; activeTierLabel = 'নীলকণ্ঠ'; activePrice = event.price_mid;
     } else if (event.price_onspot) {
-      activeTier = 'onspot'; activeTierLabel = 'অন-স্পট'; activePrice = event.price_onspot;
+      activeTier = 'onspot'; activeTierLabel = 'কোকিলা'; activePrice = event.price_onspot;
     }
   %>
 
