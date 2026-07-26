@@ -15,7 +15,10 @@ async function getRegistrationById(id) {
 
 async function getRegistrationByToken(token) {
   const { data, error } = await db.from('registrations').select('*').eq('qr_token', token).single();
-  if (error) return null;
+  if (error) {
+    if (error.code !== 'PGRST116') console.error('[getRegistrationByToken] DB error:', error.message);
+    return null;
+  }
   return data;
 }
 

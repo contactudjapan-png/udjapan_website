@@ -6,7 +6,10 @@ const eventService = require('../services/eventService');
 // Validate QR token — returns JSON
 router.get('/validate/:token', async (req, res) => {
   try {
-    const registration = await registrationService.getRegistrationByToken(req.params.token);
+    const token = req.params.token;
+    console.log('[validate] token:', token);
+    const registration = await registrationService.getRegistrationByToken(token);
+    console.log('[validate] found:', !!registration, registration ? registration.id : null);
     if (!registration) {
       return res.json({ valid: false, message: 'Invalid QR code' });
     }
