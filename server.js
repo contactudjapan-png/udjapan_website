@@ -55,11 +55,11 @@ app.use((req, res, next) => {
 });
 
 // Storage proxy — serves private bucket files via signed URLs
-app.get('/storage/:bucket/*', async (req, res) => {
+app.get('/storage/:bucket/:filePath(*)', async (req, res) => {
   try {
     const db = require('./config/db');
     const bucket = req.params.bucket;
-    const filePath = req.params[0];
+    const filePath = req.params.filePath;
     const { data, error } = await db.storage.from(bucket).createSignedUrl(filePath, 3600);
     if (error || !data?.signedUrl) return res.status(404).send('Not found');
     res.redirect(data.signedUrl);
