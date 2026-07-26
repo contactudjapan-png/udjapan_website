@@ -110,6 +110,11 @@ router.get('/stalls', requireStallAccess, async (req, res, next) => {
 router.post('/stalls/observations', requireStallAccess, async (req, res, next) => {
   try {
     const { stall_id, event_id, observation_type, notes } = req.body;
+    const { data: event } = await db.from('events').select('is_active').eq('id', event_id).single();
+    if (!event || !event.is_active) {
+      req.flash('error', 'এই ইভেন্ট আর সক্রিয় নেই।');
+      return res.redirect('/validate/stalls');
+    }
     const submittedBy = req.session.volunteerUser?.email || req.session.adminUser?.email;
     await stallObservationService.createObservation(stall_id, event_id, submittedBy, observation_type, notes);
     req.flash('success', 'পর্যবেক্ষণ জমা হয়েছে।');
