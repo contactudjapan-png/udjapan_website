@@ -25,20 +25,14 @@ router.get('/login', (req, res) => {
   res.render('admin/login', { title: 'Admin Login' });
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', (req, res) => {
   const { email, password } = req.body;
-  try {
-    const { data, error } = await db.auth.signInWithPassword({ email, password });
-    if (error || !data?.user) {
-      req.flash('error', error?.message || 'Invalid credentials');
-      return res.redirect('/admin/login');
-    }
-    req.session.adminUser = { id: data.user.id, email: data.user.email };
-    res.redirect('/admin');
-  } catch (err) {
-    req.flash('error', 'Login failed.');
-    res.redirect('/admin/login');
+  if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+    req.session.adminUser = { email };
+    return res.redirect('/admin');
   }
+  req.flash('error', 'Invalid credentials');
+  res.redirect('/admin/login');
 });
 
 router.post('/logout', (req, res) => {
