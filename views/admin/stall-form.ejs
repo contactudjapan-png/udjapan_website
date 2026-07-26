@@ -36,6 +36,12 @@
         <input type="tel" id="assigned_to_phone" name="assigned_to_phone" value="<%= stall ? (stall.assigned_to_phone || '') : '' %>">
       </div>
     </div>
+    <hr>
+    <div class="form-group">
+      <label for="notes">পর্যবেক্ষণ নোট</label>
+      <textarea id="notes" name="notes" rows="4" placeholder="স্টল পরিদর্শনের নোট, সমস্যা বা মন্তব্য..."><%= stall ? (stall.notes || '') : '' %></textarea>
+    </div>
+
     <button type="submit" class="btn btn-primary"><%= stall ? 'পরিবর্তন সংরক্ষণ' : 'স্টল তৈরি করুন' %></button>
     <a href="/admin/events/<%= event.id %>/stalls" class="btn btn-outline">বাতিল</a>
   </form>
