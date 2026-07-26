@@ -24,4 +24,15 @@ router.get('/validate/:token', async (req, res) => {
   }
 });
 
+// Keepalive — weekly cron hits this to prevent Supabase from pausing
+router.get('/keepalive', async (req, res) => {
+  try {
+    const db = require('../config/db');
+    await db.from('events').select('id').limit(1);
+    res.json({ ok: true, ts: new Date().toISOString() });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 module.exports = router;
