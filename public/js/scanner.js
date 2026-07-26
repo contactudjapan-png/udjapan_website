@@ -116,5 +116,8 @@ document.getElementById('manual-form').addEventListener('submit', function(e) {
   validateToken(extracted);
 });
 
+// Scan again button
+document.getElementById('scan-again').addEventListener('click', resetScanner);
+
 // Start scanner on load
 startScanner();
