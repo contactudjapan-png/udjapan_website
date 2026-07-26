@@ -207,22 +207,43 @@ a:hover { text-decoration: underline; }
   padding: 0.6rem 1.4rem;
 }
 
+/* ─── Home – Body Layout ─────────────────────────────────────────────────────── */
+.home-body {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 2rem;
+  align-items: start;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.home-main { min-width: 0; }
+
 /* ─── Home – About ───────────────────────────────────────────────────────────── */
 .home-about {
-  padding: 2.5rem 0;
+  padding: 1.5rem;
   background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
 }
 .home-about h2 { margin-bottom: 0.75rem; }
-.home-about p { color: var(--text-muted); line-height: 1.8; max-width: 700px; }
+.home-about p { color: var(--text-muted); line-height: 1.8; }
 
-/* ─── Home – Advertisements ──────────────────────────────────────────────────── */
-.home-ads {
-  padding: 2.5rem 0;
-  background: #fafaf8;
-  border-bottom: 1px solid var(--border);
+/* ─── Home – Sidebar Ads ─────────────────────────────────────────────────────── */
+.home-sidebar {
+  position: sticky;
+  top: calc(var(--nav-h) + 1rem);
 }
-.home-ads-title { margin-bottom: 1.25rem; }
+
+.sidebar-ads-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
 .ads-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -256,7 +277,7 @@ a:hover { text-decoration: underline; }
 .ad-card-body p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
 
 /* ─── Home – Other Events ────────────────────────────────────────────────────── */
-.home-other-events { padding: 2.5rem 0; }
+.home-other-events { }
 .home-other-events h2 { margin-bottom: 1.25rem; }
 
 /* ─── Home – Event Cards ─────────────────────────────────────────────────────── */
@@ -728,6 +749,11 @@ small { color: var(--text-muted); font-size: 0.8rem; }
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .home-body { grid-template-columns: 1fr; }
+  .home-sidebar { position: static; }
+}
+
 @media (max-width: 640px) {
   .form-row { grid-template-columns: 1fr; }
   .events-grid { grid-template-columns: 1fr; }
