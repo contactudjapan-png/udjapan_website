@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const session = require('express-session');
-const flash = require('connect-flash');
+const cookieSession = require('cookie-session');
 const helmet = require('helmet');
 const path = require('path');
 const crypto = require('crypto');
@@ -35,21 +34,26 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Session
-app.use(session({
+// Session — cookie-based, persists across serverless invocations
+app.use(cookieSession({
+  name: 'udjsess',
   secret: process.env.SESSION_SECRET || 'fallback-secret',
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 },
+  maxAge: 24 * 60 * 60 * 1000,
+  httpOnly: true,
+  sameSite: 'lax',
 }));
 
-// Flash messages
-app.use(flash());
-
-// Global template locals
+// Flash middleware (replaces connect-flash)
 app.use((req, res, next) => {
-  res.locals.success = req.flash('success');
-  res.locals.error = req.flash('error');
+  const flash = req.session._flash || {};
+  req.session._flash = {};
+  req.flash = (type, msg) => {
+    if (!req.session._flash) req.session._flash = {};
+    if (!req.session._flash[type]) req.session._flash[type] = [];
+    req.session._flash[type].push(msg);
+  };
+  res.locals.success = flash.success || [];
+  res.locals.error = flash.error || [];
   res.locals.adminUser = req.session.adminUser || null;
   next();
 });

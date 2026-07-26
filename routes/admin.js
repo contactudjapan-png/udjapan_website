@@ -84,9 +84,21 @@ router.get('/events/:id/edit', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-router.post('/events/:id/edit', async (req, res, next) => {
+router.post('/events/:id/edit', upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'paypal_qr', maxCount: 1 }]), async (req, res, next) => {
   try {
     await eventService.updateEvent(req.params.id, req.body);
+    if (req.files?.banner?.[0]) {
+      const f = req.files.banner[0];
+      const ext = path.extname(f.originalname).toLowerCase();
+      const url = await eventService.uploadFileToBucket('banners', `${req.params.id}/banner${ext}`, f.buffer, f.mimetype);
+      await eventService.updateBannerUrl(req.params.id, url);
+    }
+    if (req.files?.paypal_qr?.[0]) {
+      const f = req.files.paypal_qr[0];
+      const ext = path.extname(f.originalname).toLowerCase();
+      const url = await eventService.uploadFileToBucket('paypal-qr', `${req.params.id}/paypal-qr${ext}`, f.buffer, f.mimetype);
+      await eventService.updatePaypalQrUrl(req.params.id, url);
+    }
     req.flash('success', 'Event updated.');
     res.redirect(`/admin/events/${req.params.id}/edit`);
   } catch (err) {

@@ -10,7 +10,7 @@
 
   <h1><%= event ? 'ইভেন্ট সম্পাদনা' : 'নতুন ইভেন্ট' %></h1>
 
-  <form action="<%= event ? `/admin/events/${event.id}/edit` : '/admin/events/new' %>" method="POST" class="admin-form">
+  <form action="<%= event ? `/admin/events/${event.id}/edit` : '/admin/events/new' %>" method="POST" enctype="multipart/form-data" class="admin-form">
     <div class="form-group">
       <label for="title">ইভেন্টের শিরোনাম *</label>
       <input type="text" id="title" name="title" required value="<%= event ? event.title : '' %>">
@@ -90,38 +90,31 @@
         </label>
       </div>
     </div>
+    <% if (event) { %>
+    <hr>
+    <div class="form-row">
+      <div class="form-group">
+        <label>ব্যানার ছবি</label>
+        <% if (event.banner_url) { %>
+          <img src="<%= event.banner_url %>" alt="ব্যানার" class="preview-img">
+        <% } %>
+        <input type="file" name="banner" accept="image/*">
+      </div>
+      <div class="form-group">
+        <label>PayPal QR কোড</label>
+        <% if (event.paypal_qr_url) { %>
+          <img src="<%= event.paypal_qr_url %>" alt="PayPal QR" class="preview-img preview-img--qr">
+        <% } %>
+        <input type="file" name="paypal_qr" accept="image/*">
+      </div>
+    </div>
+    <% } %>
+
     <button type="submit" class="btn btn-primary"><%= event ? 'পরিবর্তন সংরক্ষণ' : 'ইভেন্ট তৈরি করুন' %></button>
     <a href="/admin/events" class="btn btn-outline">বাতিল</a>
   </form>
 
   <% if (event) { %>
-    <hr>
-    <div class="upload-section">
-      <h2>ব্যানার ছবি</h2>
-      <% if (event.banner_url) { %>
-        <img src="<%= event.banner_url %>" alt="ব্যানার" class="preview-img">
-      <% } %>
-      <form action="/admin/events/<%= event.id %>/banner" method="POST" enctype="multipart/form-data">
-        <div class="form-row form-row--align">
-          <input type="file" name="banner" accept="image/*" required>
-          <button type="submit" class="btn btn-outline">ব্যানার আপলোড</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="upload-section">
-      <h2>PayPal QR কোড</h2>
-      <% if (event.paypal_qr_url) { %>
-        <img src="<%= event.paypal_qr_url %>" alt="PayPal QR" class="preview-img preview-img--qr">
-      <% } %>
-      <form action="/admin/events/<%= event.id %>/paypal-qr" method="POST" enctype="multipart/form-data">
-        <div class="form-row form-row--align">
-          <input type="file" name="paypal_qr" accept="image/*" required>
-          <button type="submit" class="btn btn-outline">PayPal QR আপলোড</button>
-        </div>
-      </form>
-    </div>
-
     <hr>
     <div class="danger-zone">
       <h2>বিপদ অঞ্চল</h2>
