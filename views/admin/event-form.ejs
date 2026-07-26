@@ -76,6 +76,14 @@
       </div>
     </div>
     <hr>
+    <h2>স্টল পর্যবেক্ষণ ধরন</h2>
+    <div class="form-group">
+      <label for="stall_obs_types">ড্রপডাউন বিকল্পসমূহ (প্রতি লাইনে একটি)</label>
+      <textarea id="stall_obs_types" name="stall_obs_types" rows="5" placeholder="পরিচ্ছন্নতা&#10;সরঞ্জাম&#10;স্টক&#10;নিরাপত্তা&#10;অন্যান্য"><%= event ? (event.stall_obs_types || '') : '' %></textarea>
+      <small>স্টল ভেন্ডররা এই তালিকা থেকে পর্যবেক্ষণের ধরন বেছে নেবেন।</small>
+    </div>
+
+    <hr>
     <div class="form-row">
       <div class="form-group">
         <label class="checkbox-label">

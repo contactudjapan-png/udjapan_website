@@ -1,0 +1,20 @@
+<%- include('../partials/head') %>
+<body class="login-page">
+
+<main class="login-container">
+  <div class="login-card">
+    <h1 class="login-title">স্টল পোর্টাল</h1>
+    <p style="text-align:center;color:var(--text-muted);margin-bottom:1.5rem">Stall vendors only</p>
+    <%- include('../partials/flash') %>
+    <form action="/stalls/login" method="POST" class="login-form">
+      <div class="form-group">
+        <label for="email">Your Email</label>
+        <input type="email" id="email" name="email" required autofocus placeholder="your@email.com">
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Log In</button>
+    </form>
+  </div>
+</main>
+
+</body>
+</html>

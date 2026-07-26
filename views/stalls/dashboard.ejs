@@ -1,0 +1,74 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-public') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <div class="section-header">
+    <h1>স্টল ড্যাশবোর্ড</h1>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <span style="color:var(--text-muted)"><%= user.name %></span>
+      <a href="/validate" class="btn btn-outline" style="font-size:0.85rem;padding:0.3rem 0.8rem">← QR Scanner</a>
+      <form action="/validate/logout" method="POST">
+        <button type="submit" class="btn btn-outline" style="font-size:0.85rem;padding:0.3rem 0.8rem">Log Out</button>
+      </form>
+    </div>
+  </div>
+
+  <% stalls.forEach(stall => { %>
+    <div class="card" style="margin-bottom:2rem">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem">
+        <div>
+          <h2 style="margin:0 0 0.25rem"><%= stall.stall_name %></h2>
+          <p style="margin:0;color:var(--text-muted)"><%= stall.event ? stall.event.title : '' %><% if (stall.location_info) { %> &mdash; <%= stall.location_info %><% } %></p>
+        </div>
+      </div>
+
+      <hr>
+
+      <h3>নতুন পর্যবেক্ষণ</h3>
+      <form action="/validate/stalls/observations" method="POST" class="admin-form" style="max-width:500px">
+        <input type="hidden" name="stall_id" value="<%= stall.id %>">
+        <input type="hidden" name="event_id" value="<%= stall.event_id %>">
+        <div class="form-group">
+          <label for="obs_type_<%= stall.id %>">ধরন</label>
+          <select id="obs_type_<%= stall.id %>" name="observation_type" required>
+            <option value="">— বেছে নিন —</option>
+            <% if (stall.event && stall.event.stall_obs_types) {
+                stall.event.stall_obs_types.split('\n').map(s => s.trim()).filter(Boolean).forEach(opt => { %>
+              <option value="<%= opt %>"><%= opt %></option>
+            <% }) } %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="notes_<%= stall.id %>">নোট</label>
+          <textarea id="notes_<%= stall.id %>" name="notes" rows="3" placeholder="বিস্তারিত লিখুন..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">পর্যবেক্ষণ জমা দিন</button>
+      </form>
+
+      <% if (stall.observations && stall.observations.length > 0) { %>
+        <hr>
+        <h3>পর্যবেক্ষণ ইতিহাস</h3>
+        <table class="admin-table">
+          <thead><tr><th>সময়</th><th>ধরন</th><th>নোট</th></tr></thead>
+          <tbody>
+          <% stall.observations.forEach(obs => { %>
+            <tr>
+              <td style="white-space:nowrap"><%= new Date(obs.created_at).toLocaleString('bn-BD') %></td>
+              <td><%= obs.observation_type %></td>
+              <td><%= obs.notes || '—' %></td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p style="color:var(--text-muted);margin-top:1rem">এখনো কোনো পর্যবেক্ষণ নেই।</p>
+      <% } %>
+    </div>
+  <% }) %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

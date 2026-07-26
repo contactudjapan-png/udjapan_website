@@ -3,3 +3,5 @@ node_modules/
 *.log
 public/uploads/
 .vercel
+memory/
+supabase_seed.sql

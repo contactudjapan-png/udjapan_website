@@ -10,7 +10,7 @@
         <button type="submit" class="btn btn-outline" style="font-size:0.85rem;padding:0.3rem 0.8rem">Log Out</button>
       </form>
     </div>
-    <p>Logged in as <strong><%= user.name || user.email %></strong></p>
+    <p>Logged in as <strong><%= user.name || user.email %></strong><% if (hasStallAccess) { %> &mdash; <a href="/validate/stalls">স্টল পর্যবেক্ষণ →</a><% } %></p>
     <p>Point the camera at an attendee's QR code to check their registration.</p>
 
     <div id="scanner-container">
