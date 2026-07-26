@@ -369,6 +369,14 @@ router.post('/volunteers/:id/reject', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+router.post('/volunteers/:id/pending', async (req, res, next) => {
+  try {
+    const vol = await volunteerService.updateVolunteerStatus(req.params.id, 'pending');
+    req.flash('success', 'Volunteer set to pending.');
+    res.redirect(`/admin/events/${vol.event_id}/volunteers`);
+  } catch (err) { next(err); }
+});
+
 router.post('/volunteers/:id/assign-task', async (req, res, next) => {
   try {
     const vol = await volunteerService.assignTask(req.params.id, req.body.task);

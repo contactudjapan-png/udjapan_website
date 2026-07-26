@@ -38,6 +38,10 @@
                 <form action="/admin/volunteers/<%= vol.id %>/reject" method="POST">
                   <button type="submit" class="btn btn-sm btn-outline">প্রত্যাখ্যান</button>
                 </form>
+              <% } else { %>
+                <form action="/admin/volunteers/<%= vol.id %>/pending" method="POST">
+                  <button type="submit" class="btn btn-sm btn-outline">অপেক্ষমাণ করুন</button>
+                </form>
               <% } %>
               <form action="/admin/volunteers/<%= vol.id %>/delete" method="POST" onsubmit="return confirm('স্বেচ্ছাসেবী সরাবেন?')">
                 <button type="submit" class="btn btn-sm btn-danger">সরান</button>
