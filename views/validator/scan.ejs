@@ -4,7 +4,13 @@
 
 <main class="container">
   <div class="scanner-card">
-    <h1>QR Code Validator</h1>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+      <h1 style="margin:0">QR Code Validator</h1>
+      <form action="/validate/logout" method="POST">
+        <button type="submit" class="btn btn-outline" style="font-size:0.85rem;padding:0.3rem 0.8rem">Log Out</button>
+      </form>
+    </div>
+    <p>Logged in as <strong><%= user.name || user.email %></strong></p>
     <p>Point the camera at an attendee's QR code to check their registration.</p>
 
     <div id="scanner-container">
