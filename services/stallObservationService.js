@@ -6,13 +6,14 @@ async function getObservationsByStall(stallId) {
   return data;
 }
 
-async function createObservation(stallId, eventId, submittedBy, observationType, notes) {
+async function createObservation(stallId, eventId, submittedBy, observationType, notes, rating) {
   const { data, error } = await db.from('stall_observations').insert({
     stall_id: stallId,
     event_id: eventId,
     submitted_by: submittedBy,
     observation_type: observationType,
     notes: notes || '',
+    rating: rating ? parseInt(rating) : null,
   }).select().single();
   if (error) throw new Error(error.message);
   return data;

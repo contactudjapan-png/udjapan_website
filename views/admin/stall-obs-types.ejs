@@ -1,0 +1,21 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <h1>স্টল পর্যবেক্ষণ ধরন</h1>
+  <p style="color:var(--text-muted)">এই তালিকা সকল ইভেন্টের স্টল পর্যবেক্ষণ ফর্মে ড্রপডাউনে দেখাবে।</p>
+
+  <form action="/admin/settings/stall-obs-types" method="POST" class="admin-form" style="max-width:480px">
+    <div class="form-group">
+      <label for="stall_obs_types">পর্যবেক্ষণের ধরনসমূহ (প্রতি লাইনে একটি)</label>
+      <textarea id="stall_obs_types" name="stall_obs_types" rows="10"><%= stallObsTypes %></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">সংরক্ষণ করুন</button>
+  </form>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

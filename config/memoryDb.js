@@ -234,7 +234,9 @@ class MemoryDB {
       poll_options: [],
       poll_votes: [],
       stalls: [],
+      stall_observations: [],
       volunteers: [],
+      app_settings: [],
       email_log: [],
       advertisements: [],
     };

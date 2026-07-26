@@ -40,8 +40,6 @@ async function createEvent(eventData) {
     banner_url: null,
     paypal_qr_url: null,
     ...parsePricingFields(eventData),
-    stall_obs_types: eventData.stall_obs_types || null,
-    vol_task_types: eventData.vol_task_types || null,
   };
   const { data, error } = await db.from('events').insert(payload).select().single();
   if (error) throw new Error(error.message);
@@ -58,8 +56,6 @@ async function updateEvent(id, eventData) {
     is_active: eventData.is_active === 'on' || eventData.is_active === true,
     registration_open: eventData.registration_open === 'on' || eventData.registration_open === true,
     ...parsePricingFields(eventData),
-    stall_obs_types: eventData.stall_obs_types || null,
-    vol_task_types: eventData.vol_task_types || null,
   };
   const { data, error } = await db.from('events').update(payload).eq('id', id).select().single();
   if (error) throw new Error(error.message);

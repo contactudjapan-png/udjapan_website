@@ -17,6 +17,7 @@ const reportService = require('../services/reportService');
 const submissionService = require('../services/submissionService');
 const importService = require('../services/importService');
 const advertisementService = require('../services/advertisementService');
+const settingsService = require('../services/settingsService');
 
 // ─── Auth ───────────────────────────────────────────────────────────────────
 
@@ -334,7 +335,40 @@ router.get('/events/:id/volunteers', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
     const volunteers = await volunteerService.getVolunteersByEvent(req.params.id);
-    res.render('admin/volunteers', { title: `Volunteers — ${event.title}`, event, volunteers });
+    const volTaskTypes = await settingsService.getVolTaskTypes();
+    res.render('admin/volunteers', { title: `Volunteers — ${event.title}`, event, volunteers, volTaskTypes });
+  } catch (err) { next(err); }
+});
+
+// ─── Volunteer task type settings ────────────────────────────────────────────
+
+router.get('/settings/volunteer-tasks', async (req, res, next) => {
+  try {
+    const volTaskTypes = await settingsService.getVolTaskTypes();
+    res.render('admin/volunteer-tasks', { title: 'স্বেচ্ছাসেবী কাজের তালিকা', volTaskTypes });
+  } catch (err) { next(err); }
+});
+
+router.post('/settings/volunteer-tasks', async (req, res, next) => {
+  try {
+    await settingsService.setVolTaskTypes((req.body.vol_task_types || '').trim());
+    req.flash('success', 'কাজের তালিকা সংরক্ষিত হয়েছে।');
+    res.redirect('/admin/settings/volunteer-tasks');
+  } catch (err) { next(err); }
+});
+
+router.get('/settings/stall-obs-types', async (req, res, next) => {
+  try {
+    const stallObsTypes = await settingsService.getStallObsTypes();
+    res.render('admin/stall-obs-types', { title: 'স্টল পর্যবেক্ষণ ধরন', stallObsTypes });
+  } catch (err) { next(err); }
+});
+
+router.post('/settings/stall-obs-types', async (req, res, next) => {
+  try {
+    await settingsService.setStallObsTypes((req.body.stall_obs_types || '').trim());
+    req.flash('success', 'পর্যবেক্ষণ ধরন সংরক্ষিত হয়েছে।');
+    res.redirect('/admin/settings/stall-obs-types');
   } catch (err) { next(err); }
 });
 

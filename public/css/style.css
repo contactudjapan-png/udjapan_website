@@ -768,3 +768,14 @@ small { color: var(--text-muted); font-size: 0.8rem; }
   .inline-form { flex-direction: column; }
   .inline-input { width: 100%; }
 }
+
+
+/* ─── Star Rating ────────────────────────────────────────────────────────────── */
+.star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 2px; margin: 0.25rem 0; }
+.star-rating input[type="radio"] { display: none; }
+.star-rating label { font-size: 1.6rem; color: #ddd; cursor: pointer; line-height: 1; padding: 0 1px; transition: color 0.1s; }
+.star-rating input:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label { color: #f5b301; }
+.star-display { color: #f5b301; font-size: 1rem; letter-spacing: 1px; }
+.star-display .empty { color: #ddd; }

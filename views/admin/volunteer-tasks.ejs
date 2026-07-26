@@ -1,0 +1,21 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <h1>স্বেচ্ছাসেবী কাজের তালিকা</h1>
+  <p style="color:var(--text-muted)">এই তালিকা সকল ইভেন্টের স্বেচ্ছাসেবী নিয়োগে ব্যবহৃত হবে।</p>
+
+  <form action="/admin/settings/volunteer-tasks" method="POST" class="admin-form" style="max-width:480px">
+    <div class="form-group">
+      <label for="vol_task_types">কাজের বিকল্পসমূহ (প্রতি লাইনে একটি)</label>
+      <textarea id="vol_task_types" name="vol_task_types" rows="12"><%= volTaskTypes %></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">সংরক্ষণ করুন</button>
+  </form>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

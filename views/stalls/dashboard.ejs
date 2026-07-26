@@ -15,13 +15,13 @@
     </div>
   </div>
 
+  <% const obsTypeOptions = stallObsTypes ? stallObsTypes.split('\n').map(s => s.trim()).filter(Boolean) : []; %>
+
   <% stalls.forEach(stall => { %>
     <div class="card" style="margin-bottom:2rem">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem">
-        <div>
-          <h2 style="margin:0 0 0.25rem"><%= stall.stall_name %></h2>
-          <p style="margin:0;color:var(--text-muted)"><%= stall.event ? stall.event.title : '' %><% if (stall.location_info) { %> &mdash; <%= stall.location_info %><% } %></p>
-        </div>
+      <div>
+        <h2 style="margin:0 0 0.25rem"><%= stall.stall_name %></h2>
+        <p style="margin:0;color:var(--text-muted)"><%= stall.event ? stall.event.title : '' %><% if (stall.location_info) { %> &mdash; <%= stall.location_info %><% } %></p>
       </div>
 
       <hr>
@@ -30,16 +30,29 @@
       <form action="/validate/stalls/observations" method="POST" class="admin-form" style="max-width:500px">
         <input type="hidden" name="stall_id" value="<%= stall.id %>">
         <input type="hidden" name="event_id" value="<%= stall.event_id %>">
+
+        <% if (obsTypeOptions.length > 0) { %>
         <div class="form-group">
           <label for="obs_type_<%= stall.id %>">ধরন</label>
           <select id="obs_type_<%= stall.id %>" name="observation_type" required>
             <option value="">— বেছে নিন —</option>
-            <% if (stall.event && stall.event.stall_obs_types) {
-                stall.event.stall_obs_types.split('\n').map(s => s.trim()).filter(Boolean).forEach(opt => { %>
+            <% obsTypeOptions.forEach(opt => { %>
               <option value="<%= opt %>"><%= opt %></option>
-            <% }) } %>
+            <% }) %>
           </select>
         </div>
+        <% } %>
+
+        <div class="form-group">
+          <label>রেটিং (১–১০)</label>
+          <div class="star-rating">
+            <% for (let i = 10; i >= 1; i--) { %>
+              <input type="radio" name="rating" id="s<%= stall.id %>_<%= i %>" value="<%= i %>" required>
+              <label for="s<%= stall.id %>_<%= i %>">★</label>
+            <% } %>
+          </div>
+        </div>
+
         <div class="form-group">
           <label for="notes_<%= stall.id %>">নোট</label>
           <textarea id="notes_<%= stall.id %>" name="notes" rows="3" placeholder="বিস্তারিত লিখুন..."></textarea>
@@ -51,12 +64,20 @@
         <hr>
         <h3>পর্যবেক্ষণ ইতিহাস</h3>
         <table class="admin-table">
-          <thead><tr><th>সময়</th><th>ধরন</th><th>নোট</th></tr></thead>
+          <thead><tr><th>সময়</th><th>ধরন</th><th>রেটিং</th><th>নোট</th></tr></thead>
           <tbody>
           <% stall.observations.forEach(obs => { %>
             <tr>
               <td style="white-space:nowrap"><%= new Date(obs.created_at).toLocaleString('bn-BD') %></td>
-              <td><%= obs.observation_type %></td>
+              <td><%= obs.observation_type || '—' %></td>
+              <td>
+                <% if (obs.rating) { %>
+                  <span class="star-display">
+                    <% for (let i = 1; i <= 10; i++) { %><span class="<%= i <= obs.rating ? '' : 'empty' %>">★</span><% } %>
+                  </span>
+                  <span style="font-size:0.8rem;color:var(--text-muted)"> <%= obs.rating %>/১০</span>
+                <% } else { %>—<% } %>
+              </td>
               <td><%= obs.notes || '—' %></td>
             </tr>
           <% }) %>

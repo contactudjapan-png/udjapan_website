@@ -2,10 +2,23 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const stallObservationService = require('../services/stallObservationService');
+const registrationService = require('../services/registrationService');
+const emailService = require('../services/emailService');
+const eventService = require('../services/eventService');
+const settingsService = require('../services/settingsService');
 
 function requireValidator(req, res, next) {
   if (req.session.adminUser || req.session.volunteerUser) return next();
   res.redirect('/validate/login');
+}
+
+function requireRegistrationAccess(req, res, next) {
+  if (req.session.adminUser) return next();
+  const tasks = (req.session.volunteerUser?.tasks || []).map(t => (t || '').toLowerCase());
+  const hasRegTask = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
+  if (hasRegTask) return next();
+  req.flash('error', 'আপনার নিবন্ধনের অনুমতি নেই।');
+  res.redirect('/validate');
 }
 
 function requireStallAccess(req, res, next) {
@@ -68,9 +81,73 @@ router.use(requireValidator);
 
 router.get('/', (req, res) => {
   const user = req.session.volunteerUser || req.session.adminUser;
-  const tasks = req.session.volunteerUser?.tasks || [];
-  const hasStallAccess = req.session.adminUser || tasks.some(t => (t || '').toLowerCase().includes('স্টল') || (t || '').toLowerCase().includes('stall'));
-  res.render('validator/scan', { title: 'QR Validator', user, hasStallAccess });
+  const tasks = (req.session.volunteerUser?.tasks || []).map(t => (t || '').toLowerCase());
+  const hasStallAccess = req.session.adminUser || tasks.some(t => t.includes('স্টল') || t.includes('stall'));
+  const hasRegAccess = req.session.adminUser || tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
+  res.render('validator/scan', { title: 'QR Validator', user, hasStallAccess, hasRegAccess });
+});
+
+// ── On-site registration (registration-desk volunteers only) ──────────────────
+
+router.get('/register', requireRegistrationAccess, async (req, res, next) => {
+  try {
+    let events;
+    if (req.session.adminUser) {
+      const { data } = await db.from('events').select('*').eq('is_active', true).eq('registration_open', true);
+      events = data || [];
+    } else {
+      const eventIds = req.session.volunteerUser.event_ids;
+      const { data } = await db.from('events').select('*').eq('is_active', true).eq('registration_open', true).in('id', eventIds);
+      events = data || [];
+    }
+    if (events.length === 1) return res.redirect(`/validate/register/${events[0].id}`);
+    const user = req.session.volunteerUser || req.session.adminUser;
+    res.render('validator/register', { title: 'নিবন্ধন', user, events, event: null });
+  } catch (err) { next(err); }
+});
+
+router.get('/register/:eventId', requireRegistrationAccess, async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.eventId);
+    if (!event || !event.is_active) {
+      req.flash('error', 'ইভেন্টটি পাওয়া যায়নি।');
+      return res.redirect('/validate/register');
+    }
+    if (!req.session.adminUser) {
+      if (!req.session.volunteerUser.event_ids.includes(event.id)) {
+        req.flash('error', 'আপনি এই ইভেন্টে নিযুক্ত নন।');
+        return res.redirect('/validate');
+      }
+    }
+    const user = req.session.volunteerUser || req.session.adminUser;
+    res.render('validator/register', { title: 'নিবন্ধন', user, events: [], event });
+  } catch (err) { next(err); }
+});
+
+router.post('/register/:eventId', requireRegistrationAccess, async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.eventId);
+    if (!event || !event.is_active) {
+      req.flash('error', 'ইভেন্টটি সক্রিয় নেই।');
+      return res.redirect('/validate/register');
+    }
+    const { name, email, payment_reference } = req.body;
+    if (!name || !email) {
+      req.flash('error', 'নাম এবং ইমেইল আবশ্যক।');
+      return res.redirect(`/validate/register/${event.id}`);
+    }
+    const registration = await registrationService.createRegistration(event.id, {
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      payment_reference: (payment_reference || '').trim(),
+    });
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    emailService.sendRegistrationConfirmation(registration, event, baseUrl).catch(err => {
+      console.error('[Email] Failed:', err.message);
+    });
+    req.flash('success', `${name.trim()} সফলভাবে নিবন্ধিত হয়েছে। QR কোড ইমেইলে পাঠানো হয়েছে।`);
+    res.redirect(`/validate/register/${event.id}`);
+  } catch (err) { next(err); }
 });
 
 // ── Stall observations (stall-duty volunteers only) ───────────────────────────
@@ -103,20 +180,21 @@ router.get('/stalls', requireStallAccess, async (req, res, next) => {
     }
 
     const user = req.session.volunteerUser || req.session.adminUser;
-    res.render('stalls/dashboard', { title: 'স্টল পর্যবেক্ষণ', user, stalls: stallData });
+    const stallObsTypes = await settingsService.getStallObsTypes();
+    res.render('stalls/dashboard', { title: 'স্টল পর্যবেক্ষণ', user, stalls: stallData, stallObsTypes });
   } catch (err) { next(err); }
 });
 
 router.post('/stalls/observations', requireStallAccess, async (req, res, next) => {
   try {
-    const { stall_id, event_id, observation_type, notes } = req.body;
+    const { stall_id, event_id, observation_type, notes, rating } = req.body;
     const { data: event } = await db.from('events').select('is_active').eq('id', event_id).single();
     if (!event || !event.is_active) {
       req.flash('error', 'এই ইভেন্ট আর সক্রিয় নেই।');
       return res.redirect('/validate/stalls');
     }
     const submittedBy = req.session.volunteerUser?.email || req.session.adminUser?.email;
-    await stallObservationService.createObservation(stall_id, event_id, submittedBy, observation_type, notes);
+    await stallObservationService.createObservation(stall_id, event_id, submittedBy, observation_type, notes, rating);
     req.flash('success', 'পর্যবেক্ষণ জমা হয়েছে।');
     res.redirect('/validate/stalls');
   } catch (err) { next(err); }
