@@ -8,7 +8,6 @@
     <h1>অন-সাইট নিবন্ধন</h1>
     <div style="display:flex;align-items:center;gap:1rem">
       <span style="color:var(--text-muted)"><%= user.name || user.email %></span>
-      <a href="/validate" class="btn btn-outline" style="font-size:0.85rem;padding:0.3rem 0.8rem">← QR Scanner</a>
       <form action="/validate/logout" method="POST">
         <button type="submit" class="btn btn-outline" style="font-size:0.85rem;padding:0.3rem 0.8rem">Log Out</button>
       </form>

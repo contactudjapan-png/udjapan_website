@@ -5,13 +5,13 @@
 <main class="container">
   <div class="scanner-card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
-      <h1 style="margin:0">QR Code Validator</h1>
+      <h1 style="margin:0">QR যাচাইকারী</h1>
       <form action="/validate/logout" method="POST">
         <button type="submit" class="btn btn-outline" style="font-size:0.85rem;padding:0.3rem 0.8rem">Log Out</button>
       </form>
     </div>
-    <p>Logged in as <strong><%= user.name || user.email %></strong><% if (hasRegAccess) { %> &mdash; <a href="/validate/register">নিবন্ধন →</a><% } %><% if (hasStallAccess) { %> &mdash; <a href="/validate/stalls">স্টল পর্যবেক্ষণ →</a><% } %></p>
-    <p>Point the camera at an attendee's QR code to check their registration.</p>
+    <p style="color:var(--text-muted);margin-top:0">স্বাগতম, <strong><%= user.name || user.email %></strong></p>
+    <p>অ্যাটেন্ডির QR কোড ক্যামেরায় ধরুন বা নিচে টোকেন লিখুন।</p>
 
     <div id="scanner-container">
       <div id="reader"></div>

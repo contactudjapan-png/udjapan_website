@@ -33,8 +33,16 @@ function requireStallAccess(req, res, next) {
 // ── Login ────────────────────────────────────────────────────────────────────
 
 router.get('/login', (req, res) => {
-  if (req.session.adminUser || req.session.volunteerUser) return res.redirect('/validate');
-  res.render('validator/login', { title: 'Volunteer Login' });
+  if (req.session.adminUser) return res.redirect('/validate');
+  if (req.session.volunteerUser) {
+    const tasks = (req.session.volunteerUser.tasks || []).map(t => (t || '').toLowerCase());
+    const hasStall = tasks.some(t => t.includes('স্টল') || t.includes('stall'));
+    const hasReg = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
+    if (hasStall && !hasReg) return res.redirect('/validate/stalls');
+    if (hasReg && !hasStall) return res.redirect('/validate/register');
+    return res.redirect('/validate');
+  }
+  res.render('validator/login', { title: 'Volunteer Corner' });
 });
 
 router.post('/login', async (req, res) => {
@@ -57,12 +65,17 @@ router.post('/login', async (req, res) => {
     }
     const activeEventIds = new Set(activeEvents.map(e => e.id));
     const activeVolunteers = volunteers.filter(v => activeEventIds.has(v.event_id));
+    const tasks = activeVolunteers.map(v => (v.assigned_task || '').toLowerCase());
+    const hasStall = tasks.some(t => t.includes('স্টল') || t.includes('stall'));
+    const hasReg = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
     req.session.volunteerUser = {
       email,
       name: activeVolunteers[0].name,
       tasks: activeVolunteers.map(v => v.assigned_task || ''),
       event_ids: activeVolunteers.map(v => v.event_id),
     };
+    if (hasStall && !hasReg) return res.redirect('/validate/stalls');
+    if (hasReg && !hasStall) return res.redirect('/validate/register');
     res.redirect('/validate');
   } catch (err) {
     req.flash('error', 'Login error. Please try again.');
