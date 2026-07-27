@@ -16,7 +16,10 @@
 <% } else { %>
 
 <!-- ── Hero Banner ─────────────────────────────────── -->
-<section class="home-hero" <% if (_event.banner_url) { %>style="background-image: url('<%= _event.banner_url %>')"<% } %>>
+<section class="home-hero <%= _event.banner_url ? '' : 'home-hero--no-banner' %>">
+  <% if (_event.banner_url) { %>
+    <img src="<%= _event.banner_url %>" alt="<%= _event.title %>" class="home-hero-img">
+  <% } %>
   <div class="home-hero-overlay"></div>
   <div class="home-hero-content">
     <p class="home-hero-label">আসন্ন ইভেন্ট</p>

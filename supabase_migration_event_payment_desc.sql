@@ -1,0 +1,2 @@
+ALTER TABLE events
+  ADD COLUMN IF NOT EXISTS payment_description TEXT NOT NULL DEFAULT '';

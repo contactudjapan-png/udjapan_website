@@ -69,6 +69,10 @@ function toBerlinInput(dateStr) {
   <div class="admin-form-section" style="margin-top:2rem">
     <h2>পেমেন্ট তথ্য</h2>
     <form action="/admin/events/<%= event.id %>/edit/payment" method="POST" enctype="multipart/form-data" class="admin-form">
+      <div class="form-group">
+        <label for="payment_description">পেমেন্ট নির্দেশনা</label>
+        <textarea id="payment_description" name="payment_description" rows="4" placeholder="পেমেন্ট সম্পর্কিত নির্দেশনা বা বার্তা (পাবলিক পেজে ফর্মের উপরে দেখাবে)"><%= event.payment_description || '' %></textarea>
+      </div>
       <p class="section-hint">খালি রাখলে মূল্য প্রদর্শিত হবে না। প্রতিটি স্তর তার নির্ধারিত সময়সীমা পর্যন্ত সক্রিয় থাকে।</p>
       <div class="form-row">
         <div class="form-group">

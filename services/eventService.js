@@ -63,6 +63,7 @@ async function updateEvent(id, eventData) {
 async function updateEventPayment(id, eventData) {
   const payload = {
     registration_open: eventData.registration_open === 'on' || eventData.registration_open === true,
+    payment_description: eventData.payment_description || '',
     ...parsePricingFields(eventData),
   };
   const { data, error } = await db.from('events').update(payload).eq('id', id).select().single();
