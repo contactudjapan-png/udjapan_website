@@ -51,6 +51,20 @@
       <button type="submit" class="btn btn-outline">স্বেচ্ছাসেবক হিসেবে নাম দিন</button>
     </form>
   </div>
+
+  <% if (approvedVolunteers && approvedVolunteers.length >= 3) { %>
+  <div style="margin-top:3rem">
+    <h2 style="font-size:1.1rem;margin-bottom:1rem">আমাদের স্বেচ্ছাসেবক দল</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:0.75rem;max-width:640px">
+      <% approvedVolunteers.forEach(v => { %>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;min-width:140px">
+          <div style="font-weight:600;font-size:0.9rem"><%= v.name %></div>
+          <div style="font-size:0.78rem;color:var(--text-muted)"><%= v.assigned_task %></div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
 </main>
 
 <%- include('../partials/footer') %>

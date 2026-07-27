@@ -24,6 +24,12 @@ const getMusicTaskNames = () => getSetting('music_task_names');
 const setMusicTaskNames = (v) => setSetting('music_task_names', v);
 const getCompetitionTaskNames = () => getSetting('competition_task_names');
 const setCompetitionTaskNames = (v) => setSetting('competition_task_names', v);
+const getAnchorTaskNames = () => getSetting('anchor_task_names');
+const setAnchorTaskNames = (v) => setSetting('anchor_task_names', v);
+const getPerformerTaskNames = () => getSetting('performer_task_names');
+const setPerformerTaskNames = (v) => setSetting('performer_task_names', v);
+const getControlRoomTaskNames = () => getSetting('control_room_task_names');
+const setControlRoomTaskNames = (v) => setSetting('control_room_task_names', v);
 const getStallObsTypes = () => getSetting('stall_obs_types');
 const setStallObsTypes = (v) => setSetting('stall_obs_types', v);
 const getExpenseCategories = () => getSetting('expense_categories');
@@ -33,9 +39,9 @@ const setIncomeCategories = (v) => setSetting('income_categories', v);
 
 // Combined list for dropdown (all roles)
 async function getAllTaskGroups() {
-  const [stall, reg, qr, music, competition] = await Promise.all([getStallTaskNames(), getRegTaskNames(), getQRTaskNames(), getMusicTaskNames(), getCompetitionTaskNames()]);
+  const [stall, reg, qr, music, competition, anchor, performer, controlRoom] = await Promise.all([getStallTaskNames(), getRegTaskNames(), getQRTaskNames(), getMusicTaskNames(), getCompetitionTaskNames(), getAnchorTaskNames(), getPerformerTaskNames(), getControlRoomTaskNames()]);
   const toList = s => (s || '').split('\n').map(t => t.trim()).filter(Boolean);
-  return { stall: toList(stall), reg: toList(reg), qr: toList(qr), music: toList(music), competition: toList(competition) };
+  return { stall: toList(stall), reg: toList(reg), qr: toList(qr), music: toList(music), competition: toList(competition), anchor: toList(anchor), performer: toList(performer), controlRoom: toList(controlRoom) };
 }
 
 module.exports = {
@@ -44,6 +50,9 @@ module.exports = {
   getQRTaskNames, setQRTaskNames,
   getMusicTaskNames, setMusicTaskNames,
   getCompetitionTaskNames, setCompetitionTaskNames,
+  getAnchorTaskNames, setAnchorTaskNames,
+  getPerformerTaskNames, setPerformerTaskNames,
+  getControlRoomTaskNames, setControlRoomTaskNames,
   getStallObsTypes, setStallObsTypes,
   getExpenseCategories, setExpenseCategories,
   getIncomeCategories, setIncomeCategories,

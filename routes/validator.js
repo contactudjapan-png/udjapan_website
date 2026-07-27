@@ -22,6 +22,9 @@ function getVolunteerRedirect(session) {
   if (roles.stall) return '/validate/stalls';
   if (roles.music) return '/validate/instruments';
   if (roles.competition) return '/validate/competitions';
+  if (roles.anchor) return '/validate/instruments';
+  if (roles.performer) return '/validate/instruments';
+  if (roles.controlRoom) return '/validate/instruments';
   return '/validate/no-access';
 }
 
@@ -45,7 +48,8 @@ function requireStallAccess(req, res, next) {
 
 function requireMusicAccess(req, res, next) {
   if (req.session.adminUser) return next();
-  if (req.session.volunteerUser?.roles?.music) return next();
+  const roles = req.session.volunteerUser?.roles || {};
+  if (roles.music || roles.anchor || roles.performer || roles.controlRoom) return next();
   res.redirect(getVolunteerRedirect(req.session));
 }
 
@@ -98,7 +102,10 @@ router.post('/login', async (req, res) => {
     const hasQR = volunteerTasks.some(t => taskGroups.qr.includes(t));
     const hasMusic = volunteerTasks.some(t => taskGroups.music.includes(t));
     const hasCompetition = volunteerTasks.some(t => (taskGroups.competition || []).includes(t));
-    if (!hasStall && !hasReg && !hasQR && !hasMusic && !hasCompetition) {
+    const hasAnchor = volunteerTasks.some(t => (taskGroups.anchor || []).includes(t));
+    const hasPerformer = volunteerTasks.some(t => (taskGroups.performer || []).includes(t));
+    const hasControlRoom = volunteerTasks.some(t => (taskGroups.controlRoom || []).includes(t));
+    if (!hasStall && !hasReg && !hasQR && !hasMusic && !hasCompetition && !hasAnchor && !hasPerformer && !hasControlRoom) {
       req.session.volunteerUser = null;
       return res.redirect('/validate/no-access');
     }
@@ -107,7 +114,7 @@ router.post('/login', async (req, res) => {
       name: activeVolunteers[0].name,
       tasks: volunteerTasks,
       event_ids: activeVolunteers.map(v => v.event_id),
-      roles: { stall: hasStall, reg: hasReg, qr: hasQR, music: hasMusic, competition: hasCompetition },
+      roles: { stall: hasStall, reg: hasReg, qr: hasQR, music: hasMusic, competition: hasCompetition, anchor: hasAnchor, performer: hasPerformer, controlRoom: hasControlRoom },
     };
     res.redirect(getVolunteerRedirect(req.session));
   } catch (err) {

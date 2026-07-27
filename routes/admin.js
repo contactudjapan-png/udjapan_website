@@ -431,6 +431,9 @@ router.get('/settings/volunteer-tasks', async (req, res, next) => {
       ...taskGroups.qr.map(n => ({ name: n, role: 'qr' })),
       ...taskGroups.music.map(n => ({ name: n, role: 'music' })),
       ...(taskGroups.competition || []).map(n => ({ name: n, role: 'competition' })),
+      ...(taskGroups.anchor || []).map(n => ({ name: n, role: 'anchor' })),
+      ...(taskGroups.performer || []).map(n => ({ name: n, role: 'performer' })),
+      ...(taskGroups.controlRoom || []).map(n => ({ name: n, role: 'controlRoom' })),
     ];
     res.render('admin/volunteer-tasks', { title: 'স্বেচ্ছাসেবী কাজের তালিকা', tasks });
   } catch (err) { next(err); }
@@ -440,7 +443,7 @@ router.post('/settings/volunteer-tasks', async (req, res, next) => {
   try {
     const names = [].concat(req.body.task_name || []);
     const roles = [].concat(req.body.task_role || []);
-    const grouped = { stall: [], reg: [], qr: [], music: [], competition: [] };
+    const grouped = { stall: [], reg: [], qr: [], music: [], competition: [], anchor: [], performer: [], controlRoom: [] };
     names.forEach((name, i) => {
       const role = roles[i];
       if (grouped[role] && name.trim()) grouped[role].push(name.trim());
@@ -451,6 +454,9 @@ router.post('/settings/volunteer-tasks', async (req, res, next) => {
       settingsService.setQRTaskNames(grouped.qr.join('\n')),
       settingsService.setMusicTaskNames(grouped.music.join('\n')),
       settingsService.setCompetitionTaskNames(grouped.competition.join('\n')),
+      settingsService.setAnchorTaskNames(grouped.anchor.join('\n')),
+      settingsService.setPerformerTaskNames(grouped.performer.join('\n')),
+      settingsService.setControlRoomTaskNames(grouped.controlRoom.join('\n')),
     ]);
     req.flash('success', 'কাজের তালিকা সংরক্ষিত হয়েছে।');
     res.redirect('/admin/settings/volunteer-tasks');

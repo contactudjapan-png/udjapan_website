@@ -88,7 +88,7 @@
               </form>
             </div>
             <form action="/admin/volunteers/<%= vol.id %>/assign-task" method="POST" class="task-assign-form">
-              <% const hasAnyTasks = taskGroups && (taskGroups.stall.length || taskGroups.reg.length || taskGroups.qr.length || (taskGroups.music && taskGroups.music.length) || (taskGroups.competition && taskGroups.competition.length)); %>
+              <% const hasAnyTasks = taskGroups && (taskGroups.stall.length || taskGroups.reg.length || taskGroups.qr.length || (taskGroups.music && taskGroups.music.length) || (taskGroups.competition && taskGroups.competition.length) || (taskGroups.anchor && taskGroups.anchor.length) || (taskGroups.performer && taskGroups.performer.length) || (taskGroups.controlRoom && taskGroups.controlRoom.length)); %>
               <% if (hasAnyTasks) { %>
                 <select name="task" class="inline-input">
                   <option value="">— কাজ বেছে নিন —</option>
@@ -115,6 +115,21 @@
                   <% if (taskGroups.competition && taskGroups.competition.length) { %>
                   <optgroup label="প্রতিযোগিতা">
                     <% taskGroups.competition.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
+                  </optgroup>
+                  <% } %>
+                  <% if (taskGroups.anchor && taskGroups.anchor.length) { %>
+                  <optgroup label="উপস্থাপনা">
+                    <% taskGroups.anchor.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
+                  </optgroup>
+                  <% } %>
+                  <% if (taskGroups.performer && taskGroups.performer.length) { %>
+                  <optgroup label="সংগীতশিল্পী ও পরিবেশক">
+                    <% taskGroups.performer.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
+                  </optgroup>
+                  <% } %>
+                  <% if (taskGroups.controlRoom && taskGroups.controlRoom.length) { %>
+                  <optgroup label="কন্ট্রোল রুম">
+                    <% taskGroups.controlRoom.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
                   </optgroup>
                   <% } %>
                 </select>
