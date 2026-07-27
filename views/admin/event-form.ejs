@@ -51,12 +51,22 @@ function toBerlinInput(dateStr) {
         </label>
       </div>
       <% if (event) { %>
-      <div class="form-group">
-        <label>ব্যানার ছবি</label>
-        <% if (event.banner_url) { %>
-          <img src="<%= event.banner_url %>" alt="ব্যানার" class="preview-img">
-        <% } %>
-        <input type="file" name="banner" accept="image/*">
+      <div class="form-row">
+        <div class="form-group">
+          <label>ব্যানার ছবি</label>
+          <% if (event.banner_url) { %>
+            <img src="<%= event.banner_url %>" alt="ব্যানার" class="preview-img">
+          <% } %>
+          <input type="file" name="banner" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>পপআপ ছবি</label>
+          <% if (event.popup_image_url) { %>
+            <img src="<%= event.popup_image_url %>" alt="পপআপ" class="preview-img">
+          <% } %>
+          <input type="file" name="popup_image" accept="image/*">
+          <small>হোম পেজে লোডে পপআপ হিসেবে দেখাবে। খালি রাখলে পপআপ নেই।</small>
+        </div>
       </div>
       <% } %>
       <button type="submit" class="btn btn-primary"><%= event ? 'তথ্য সংরক্ষণ' : 'ইভেন্ট তৈরি করুন' %></button>
@@ -116,14 +126,6 @@ function toBerlinInput(dateStr) {
           <img src="<%= event.paypal_qr_url %>" alt="PayPal QR" class="preview-img preview-img--qr">
         <% } %>
         <input type="file" name="paypal_qr" accept="image/*">
-      </div>
-      <div class="form-group">
-        <label>পপআপ বিজ্ঞাপন ছবি</label>
-        <% if (event.popup_image_url) { %>
-          <img src="<%= event.popup_image_url %>" alt="পপআপ" class="preview-img">
-        <% } %>
-        <input type="file" name="popup_image" accept="image/*">
-        <small>হোম পেজে পেজ লোডে পপআপ হিসেবে দেখাবে। খালি রাখলে পপআপ দেখাবে না।</small>
       </div>
       <div class="form-group">
         <label class="checkbox-label">
