@@ -135,7 +135,7 @@ router.get('/event/:id/volunteer', async (req, res, next) => {
     const event = await eventService.getEventById(req.params.id);
     const settingsService = require('../services/settingsService');
     const taskGroups = await settingsService.getAllTaskGroups();
-    const allTasks = [...taskGroups.stall, ...taskGroups.reg, ...taskGroups.qr].filter((t, i, a) => a.indexOf(t) === i);
+    const allTasks = [...taskGroups.stall, ...taskGroups.reg, ...taskGroups.qr, ...(taskGroups.music || [])].filter((t, i, a) => a.indexOf(t) === i);
     const durations = ['30 min', '1 hr', '1.5 hr', '2 hr', '3 hr', '4 hr', '5 hr', '6 hr', '7 hr', '8 hr', 'Full day'];
     res.render('public/volunteer', { title: `স্বেচ্ছাসেবক — ${event.title}`, event, allTasks, durations });
   } catch (err) {
