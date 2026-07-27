@@ -12,37 +12,36 @@ function requireValidator(req, res, next) {
   res.redirect('/validate/login');
 }
 
+function getVolunteerRedirect(session) {
+  if (session.adminUser) return '/validate';
+  const tasks = (session.volunteerUser?.tasks || []).map(t => (t || '').toLowerCase());
+  const hasStall = tasks.some(t => t.includes('স্টল') || t.includes('stall'));
+  const hasReg = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
+  const hasQR = tasks.some(t => t.includes('qr') || t.includes('যাচাই') || t.includes('validation') || t.includes('scanner'));
+  if (hasStall && !hasReg && !hasQR) return '/validate/stalls';
+  if (hasReg && !hasStall && !hasQR) return '/validate/register';
+  return '/validate';
+}
+
 function requireRegistrationAccess(req, res, next) {
   if (req.session.adminUser) return next();
   const tasks = (req.session.volunteerUser?.tasks || []).map(t => (t || '').toLowerCase());
-  const hasRegTask = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
-  if (hasRegTask) return next();
-  req.flash('error', 'আপনার নিবন্ধনের অনুমতি নেই।');
-  res.redirect('/validate');
+  if (tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'))) return next();
+  res.redirect(getVolunteerRedirect(req.session));
 }
 
 function requireStallAccess(req, res, next) {
   if (req.session.adminUser) return next();
   const tasks = (req.session.volunteerUser?.tasks || []).map(t => (t || '').toLowerCase());
-  const hasStallTask = tasks.some(t => t.includes('স্টল') || t.includes('stall'));
-  if (hasStallTask) return next();
-  req.flash('error', 'আপনার স্টল পর্যবেক্ষণের অনুমতি নেই।');
-  res.redirect('/validate');
+  if (tasks.some(t => t.includes('স্টল') || t.includes('stall'))) return next();
+  res.redirect(getVolunteerRedirect(req.session));
 }
 
 // ── Login ────────────────────────────────────────────────────────────────────
 
 router.get('/login', (req, res) => {
-  if (req.session.adminUser) return res.redirect('/validate');
-  if (req.session.volunteerUser) {
-    const tasks = (req.session.volunteerUser.tasks || []).map(t => (t || '').toLowerCase());
-    const hasStall = tasks.some(t => t.includes('স্টল') || t.includes('stall'));
-    const hasReg = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
-    if (hasStall && !hasReg) return res.redirect('/validate/stalls');
-    if (hasReg && !hasStall) return res.redirect('/validate/register');
-    return res.redirect('/validate');
-  }
-  res.render('validator/login', { title: 'Volunteer Corner' });
+  if (req.session.adminUser || req.session.volunteerUser) return res.redirect(getVolunteerRedirect(req.session));
+  res.render('validator/login', { title: 'স্বেচ্ছাসেবী কর্নার' });
 });
 
 router.post('/login', async (req, res) => {
@@ -68,14 +67,20 @@ router.post('/login', async (req, res) => {
     const tasks = activeVolunteers.map(v => (v.assigned_task || '').toLowerCase());
     const hasStall = tasks.some(t => t.includes('স্টল') || t.includes('stall'));
     const hasReg = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
+    const hasQR = tasks.some(t => t.includes('qr') || t.includes('যাচাই') || t.includes('validation') || t.includes('scanner'));
+    const hasAnyTask = tasks.some(t => t.trim() !== '');
+    if (!hasAnyTask) {
+      req.flash('error', 'আপনাকে এখনো কোনো কাজ নির্ধারণ করা হয়নি। অ্যাডমিনের সাথে যোগাযোগ করুন।');
+      return res.redirect('/validate/login');
+    }
     req.session.volunteerUser = {
       email,
       name: activeVolunteers[0].name,
       tasks: activeVolunteers.map(v => v.assigned_task || ''),
       event_ids: activeVolunteers.map(v => v.event_id),
     };
-    if (hasStall && !hasReg) return res.redirect('/validate/stalls');
-    if (hasReg && !hasStall) return res.redirect('/validate/register');
+    if (hasStall && !hasReg && !hasQR) return res.redirect('/validate/stalls');
+    if (hasReg && !hasStall && !hasQR) return res.redirect('/validate/register');
     res.redirect('/validate');
   } catch (err) {
     req.flash('error', 'Login error. Please try again.');
@@ -93,11 +98,10 @@ router.post('/logout', (req, res) => {
 router.use(requireValidator);
 
 router.get('/', (req, res) => {
+  const correctPage = getVolunteerRedirect(req.session);
+  if (correctPage !== '/validate') return res.redirect(correctPage);
   const user = req.session.volunteerUser || req.session.adminUser;
-  const tasks = (req.session.volunteerUser?.tasks || []).map(t => (t || '').toLowerCase());
-  const hasStallAccess = req.session.adminUser || tasks.some(t => t.includes('স্টল') || t.includes('stall'));
-  const hasRegAccess = req.session.adminUser || tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
-  res.render('validator/scan', { title: 'QR Validator', user, hasStallAccess, hasRegAccess });
+  res.render('validator/scan', { title: 'QR যাচাইকারী', user });
 });
 
 // ── On-site registration (registration-desk volunteers only) ──────────────────
