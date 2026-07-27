@@ -36,9 +36,8 @@
   </div>
 </section>
 
-<!-- ── Announcements + Ads (below banner) ──────────── -->
-<% if (_announcements.length > 0 || _ads.length > 0) { %>
-<div class="home-panels container">
+<!-- ── Body: left panel | main | right panel ───────── -->
+<div class="home-body container">
 
   <% if (_announcements.length > 0) { %>
   <aside class="home-panel" id="annPanel">
@@ -57,59 +56,6 @@
   </aside>
   <% } %>
 
-  <% if (_ads.length > 0) { %>
-  <aside class="home-panel" id="adPanel">
-    <div class="home-panel-header">
-      <h3 class="home-panel-title">স্পনসর ও বিজ্ঞাপন</h3>
-      <button class="panel-toggle" id="adToggle">−</button>
-    </div>
-    <div class="home-panel-body" id="adBody">
-      <% _ads.forEach(ad => { %>
-        <% if (ad.link_url) { %>
-          <a href="<%= ad.link_url %>" target="_blank" rel="noopener" class="ad-card">
-        <% } else { %>
-          <div class="ad-card">
-        <% } %>
-          <% if (ad.image_url) { %>
-            <img src="<%= ad.image_url %>" alt="<%= ad.title %>" class="ad-card-img">
-          <% } else { %>
-            <div class="ad-card-placeholder">বিজ্ঞাপন</div>
-          <% } %>
-          <div class="ad-card-body">
-            <strong><%= ad.title %></strong>
-            <% if (ad.description) { %><div><%- ad.description %></div><% } %>
-          </div>
-        <% if (ad.link_url) { %></a><% } else { %></div><% } %>
-      <% }) %>
-    </div>
-  </aside>
-  <% } %>
-
-<script>
-(function() {
-  function initToggle(panelId, toggleId, bodyId, key) {
-    var panel = document.getElementById(panelId);
-    var toggle = document.getElementById(toggleId);
-    var body = document.getElementById(bodyId);
-    if (!panel) return;
-    function setMin(min) {
-      body.style.display = min ? 'none' : '';
-      toggle.textContent = min ? '+' : '−';
-      localStorage.setItem(key, min ? '1' : '0');
-    }
-    toggle.addEventListener('click', function() { setMin(body.style.display !== 'none'); });
-    if (localStorage.getItem(key) === '1') setMin(true);
-  }
-  initToggle('annPanel', 'annToggle', 'annBody', 'annMin');
-  initToggle('adPanel', 'adToggle', 'adBody', 'adMin');
-})();
-</script>
-
-</div>
-<% } %>
-
-<!-- ── Main Content ─────────────────────────────────── -->
-<div class="home-body container">
   <main class="home-main">
 
     <!-- About -->
@@ -149,7 +95,56 @@
     <% } %>
 
   </main>
+
+  <% if (_ads.length > 0) { %>
+  <aside class="home-panel" id="adPanel">
+    <div class="home-panel-header">
+      <h3 class="home-panel-title">স্পনসর ও বিজ্ঞাপন</h3>
+      <button class="panel-toggle" id="adToggle">−</button>
+    </div>
+    <div class="home-panel-body" id="adBody">
+      <% _ads.forEach(ad => { %>
+        <% if (ad.link_url) { %>
+          <a href="<%= ad.link_url %>" target="_blank" rel="noopener" class="ad-card">
+        <% } else { %>
+          <div class="ad-card">
+        <% } %>
+          <% if (ad.image_url) { %>
+            <img src="<%= ad.image_url %>" alt="<%= ad.title %>" class="ad-card-img">
+          <% } else { %>
+            <div class="ad-card-placeholder">বিজ্ঞাপন</div>
+          <% } %>
+          <div class="ad-card-body">
+            <strong><%= ad.title %></strong>
+            <% if (ad.description) { %><div><%- ad.description %></div><% } %>
+          </div>
+        <% if (ad.link_url) { %></a><% } else { %></div><% } %>
+      <% }) %>
+    </div>
+  </aside>
+  <% } %>
+
 </div>
+
+<script>
+(function() {
+  function initToggle(panelId, toggleId, bodyId, key) {
+    var panel = document.getElementById(panelId);
+    var toggle = document.getElementById(toggleId);
+    var body = document.getElementById(bodyId);
+    if (!panel) return;
+    function setMin(min) {
+      body.style.display = min ? 'none' : '';
+      toggle.textContent = min ? '+' : '−';
+      localStorage.setItem(key, min ? '1' : '0');
+    }
+    toggle.addEventListener('click', function() { setMin(body.style.display !== 'none'); });
+    if (localStorage.getItem(key) === '1') setMin(true);
+  }
+  initToggle('annPanel', 'annToggle', 'annBody', 'annMin');
+  initToggle('adPanel', 'adToggle', 'adBody', 'adMin');
+})();
+</script>
 
 <% } %>
 
