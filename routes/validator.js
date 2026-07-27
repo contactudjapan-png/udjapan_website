@@ -7,6 +7,7 @@ const emailService = require('../services/emailService');
 const eventService = require('../services/eventService');
 const settingsService = require('../services/settingsService');
 const instrumentService = require('../services/instrumentService');
+const competitionService = require('../services/competitionService');
 
 function requireValidator(req, res, next) {
   if (req.session.adminUser || req.session.volunteerUser) return next();
@@ -20,6 +21,7 @@ function getVolunteerRedirect(session) {
   if (roles.reg) return '/validate/register';
   if (roles.stall) return '/validate/stalls';
   if (roles.music) return '/validate/instruments';
+  if (roles.competition) return '/validate/competitions';
   return '/validate/no-access';
 }
 
@@ -44,6 +46,12 @@ function requireStallAccess(req, res, next) {
 function requireMusicAccess(req, res, next) {
   if (req.session.adminUser) return next();
   if (req.session.volunteerUser?.roles?.music) return next();
+  res.redirect(getVolunteerRedirect(req.session));
+}
+
+function requireCompetitionAccess(req, res, next) {
+  if (req.session.adminUser) return next();
+  if (req.session.volunteerUser?.roles?.competition) return next();
   res.redirect(getVolunteerRedirect(req.session));
 }
 
@@ -89,7 +97,8 @@ router.post('/login', async (req, res) => {
     const hasReg = volunteerTasks.some(t => taskGroups.reg.includes(t));
     const hasQR = volunteerTasks.some(t => taskGroups.qr.includes(t));
     const hasMusic = volunteerTasks.some(t => taskGroups.music.includes(t));
-    if (!hasStall && !hasReg && !hasQR && !hasMusic) {
+    const hasCompetition = volunteerTasks.some(t => (taskGroups.competition || []).includes(t));
+    if (!hasStall && !hasReg && !hasQR && !hasMusic && !hasCompetition) {
       req.session.volunteerUser = null;
       return res.redirect('/validate/no-access');
     }
@@ -98,7 +107,7 @@ router.post('/login', async (req, res) => {
       name: activeVolunteers[0].name,
       tasks: volunteerTasks,
       event_ids: activeVolunteers.map(v => v.event_id),
-      roles: { stall: hasStall, reg: hasReg, qr: hasQR, music: hasMusic },
+      roles: { stall: hasStall, reg: hasReg, qr: hasQR, music: hasMusic, competition: hasCompetition },
     };
     res.redirect(getVolunteerRedirect(req.session));
   } catch (err) {
@@ -281,6 +290,36 @@ router.post('/instruments/:id/delete', requireMusicAccess, async (req, res, next
     await instrumentService.deleteInstrument(req.params.id);
     req.flash('success', 'যন্ত্র মুছে ফেলা হয়েছে।');
     res.redirect('/validate/instruments');
+  } catch (err) { next(err); }
+});
+
+// ── Competitions (competition volunteers only) ─────────────────────────────────
+
+router.get('/competitions', requireCompetitionAccess, async (req, res, next) => {
+  try {
+    const user = req.session.volunteerUser || req.session.adminUser;
+    const eventIds = req.session.adminUser
+      ? (await db.from('events').select('id').eq('is_active', true)).data?.map(e => e.id) || []
+      : req.session.volunteerUser.event_ids;
+    const allCompetitions = [];
+    for (const eid of eventIds) {
+      const comps = await competitionService.getCompetitionsByEvent(eid);
+      const { data: ev } = await db.from('events').select('title').eq('id', eid).single();
+      comps.forEach(c => allCompetitions.push({ ...c, event_title: ev?.title || '' }));
+    }
+    res.render('validator/competitions', { title: 'প্রতিযোগিতা', user, competitions: allCompetitions });
+  } catch (err) { next(err); }
+});
+
+router.post('/competitions/:id/winner', requireCompetitionAccess, async (req, res, next) => {
+  try {
+    await competitionService.updateCompetition(req.params.id, {
+      name: req.body.name,
+      winner_name: req.body.winner_name,
+      notes: req.body.notes,
+    });
+    req.flash('success', 'বিজয়ী সংরক্ষিত হয়েছে।');
+    res.redirect('/validate/competitions');
   } catch (err) { next(err); }
 });
 

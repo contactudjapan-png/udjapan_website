@@ -17,6 +17,7 @@
             <option value="reg">রেজিস্ট্রেশন</option>
             <option value="qr">QR যাচাইকারী</option>
             <option value="music">সংগীত ও মঞ্চ</option>
+            <option value="competition">প্রতিযোগিতা</option>
           </select>
           <button type="button" class="btn btn-sm btn-danger remove-row" style="flex-shrink:0">&times;</button>
         </div>
@@ -29,6 +30,7 @@
               <option value="reg" <%= task.role === 'reg' ? 'selected' : '' %>>রেজিস্ট্রেশন</option>
               <option value="qr" <%= task.role === 'qr' ? 'selected' : '' %>>QR যাচাইকারী</option>
               <option value="music" <%= task.role === 'music' ? 'selected' : '' %>>সংগীত ও মঞ্চ</option>
+              <option value="competition" <%= task.role === 'competition' ? 'selected' : '' %>>প্রতিযোগিতা</option>
             </select>
             <button type="button" class="btn btn-sm btn-danger remove-row" style="flex-shrink:0">&times;</button>
           </div>
@@ -47,31 +49,29 @@
 <script>
 (function () {
   const list = document.getElementById('task-list');
-
-  function removeRow(btn) {
-    const row = btn.closest('.task-row');
-    if (list.querySelectorAll('.task-row').length > 1) row.remove();
-    else { row.querySelector('input').value = ''; }
-  }
+  const roleOptions = `
+    <option value="stall">স্টল পর্যবেক্ষণ</option>
+    <option value="reg">রেজিস্ট্রেশন</option>
+    <option value="qr">QR যাচাইকারী</option>
+    <option value="music">সংগীত ও মঞ্চ</option>
+    <option value="competition">প্রতিযোগিতা</option>
+  `;
 
   list.addEventListener('click', function (e) {
-    if (e.target.classList.contains('remove-row')) removeRow(e.target);
+    if (!e.target.classList.contains('remove-row')) return;
+    const row = e.target.closest('.task-row');
+    if (list.querySelectorAll('.task-row').length > 1) row.remove();
+    else row.querySelector('input').value = '';
   });
 
   document.getElementById('add-task').addEventListener('click', function () {
     const row = document.createElement('div');
     row.className = 'task-row';
     row.style.cssText = 'display:flex;gap:0.5rem;align-items:center';
-    row.innerHTML = `
-      <input type="text" name="task_name" placeholder="কাজের নাম" class="inline-input" style="flex:1">
-      <select name="task_role" class="inline-input" style="width:200px">
-        <option value="stall">স্টল পর্যবেক্ষণ</option>
-        <option value="reg">রেজিস্ট্রেশন</option>
-        <option value="qr">QR যাচাইকারী</option>
-        <option value="music">সংগীত ও মঞ্চ</option>
-      </select>
-      <button type="button" class="btn btn-sm btn-danger remove-row" style="flex-shrink:0">&times;</button>
-    `;
+    row.innerHTML =
+      '<input type="text" name="task_name" placeholder="কাজের নাম" class="inline-input" style="flex:1">' +
+      '<select name="task_role" class="inline-input" style="width:200px">' + roleOptions + '</select>' +
+      '<button type="button" class="btn btn-sm btn-danger remove-row" style="flex-shrink:0">\u00d7</button>';
     list.appendChild(row);
     row.querySelector('input').focus();
   });

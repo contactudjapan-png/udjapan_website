@@ -1,0 +1,47 @@
+<%- include('../partials/head') %>
+<body class="<%= tierClass %>">
+<%- include('../partials/nav-public') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <div class="section-header">
+    <h1>প্রতিযোগিতা</h1>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <span style="color:var(--text-muted)"><%= user.name || user.email %></span>
+      <form action="/validate/logout" method="POST">
+        <button type="submit" class="btn btn-outline" style="font-size:0.85rem;padding:0.3rem 0.8rem">Log Out</button>
+      </form>
+    </div>
+  </div>
+
+  <% if (competitions.length === 0) { %>
+    <div class="empty-state"><p>কোনো প্রতিযোগিতা পাওয়া যায়নি।</p></div>
+  <% } else { %>
+    <div style="display:flex;flex-direction:column;gap:1.5rem;max-width:600px">
+      <% competitions.forEach(comp => { %>
+        <div class="card" style="padding:1.25rem">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem">
+            <div>
+              <h2 style="margin:0;font-size:1.05rem"><%= comp.name %></h2>
+              <small style="color:var(--text-muted)"><%= comp.event_title %></small>
+            </div>
+            <% if (comp.winner_name) { %>
+              <span style="color:var(--green);font-weight:600;font-size:0.9rem">🏆 <%= comp.winner_name %></span>
+            <% } %>
+          </div>
+          <% if (comp.notes) { %><p style="margin:0 0 0.75rem;color:var(--text-muted);font-size:0.875rem"><%= comp.notes %></p><% } %>
+          <form action="/validate/competitions/<%= comp.id %>/winner" method="POST" style="display:flex;gap:0.5rem;flex-wrap:wrap">
+            <input type="hidden" name="name" value="<%= comp.name %>">
+            <input type="hidden" name="notes" value="<%= comp.notes || '' %>">
+            <input type="text" name="winner_name" value="<%= comp.winner_name || '' %>" placeholder="বিজয়ীর নাম লিখুন" class="inline-input" style="flex:1;min-width:180px">
+            <button type="submit" class="btn btn-primary btn-sm">সংরক্ষণ</button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

@@ -48,8 +48,11 @@
           </td>
           <td><%= comp.notes || '—' %></td>
           <td class="action-cell">
-            <button type="button" class="btn btn-sm btn-outline"
-              onclick="openEdit('<%= comp.id %>','<%= comp.name.replace(/'/g,&quot;&#39;&quot;) %>','<%= (comp.winner_name||'').replace(/'/g,&quot;&#39;&quot;) %>','<%= (comp.notes||'').replace(/'/g,&quot;&#39;&quot;) %>')">
+            <button type="button" class="btn btn-sm btn-outline edit-comp-btn"
+              data-id="<%= comp.id %>"
+              data-name="<%= comp.name %>"
+              data-winner="<%= comp.winner_name || '' %>"
+              data-notes="<%= comp.notes || '' %>">
               সম্পাদনা
             </button>
             <form action="/admin/competitions/<%= comp.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('মুছে ফেলবেন?')">
@@ -82,24 +85,29 @@
       </div>
       <div style="display:flex;gap:0.5rem">
         <button type="submit" class="btn btn-primary">সংরক্ষণ</button>
-        <button type="button" class="btn btn-outline" onclick="closeEdit()">বাতিল</button>
+        <button type="button" id="close-modal" class="btn btn-outline">বাতিল</button>
       </div>
     </form>
   </div>
 </div>
 
 <script>
-function openEdit(id, name, winner, notes) {
-  document.getElementById('edit-form').action = '/admin/competitions/' + id + '/edit';
-  document.getElementById('edit-name').value = name;
-  document.getElementById('edit-winner').value = winner;
-  document.getElementById('edit-notes').value = notes;
-  var m = document.getElementById('edit-modal');
-  m.style.display = 'flex';
-}
-function closeEdit() {
-  document.getElementById('edit-modal').style.display = 'none';
-}
+(function () {
+  var modal = document.getElementById('edit-modal');
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.edit-comp-btn');
+    if (btn) {
+      document.getElementById('edit-form').action = '/admin/competitions/' + btn.dataset.id + '/edit';
+      document.getElementById('edit-name').value = btn.dataset.name;
+      document.getElementById('edit-winner').value = btn.dataset.winner;
+      document.getElementById('edit-notes').value = btn.dataset.notes;
+      modal.style.display = 'flex';
+    }
+  });
+  document.getElementById('close-modal').addEventListener('click', function () {
+    modal.style.display = 'none';
+  });
+})();
 </script>
 
 <%- include('../partials/footer') %>
