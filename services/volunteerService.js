@@ -17,7 +17,7 @@ async function createVolunteer(eventId, { name, email, phone, amount, preferred_
   const { data, error } = await db.from('volunteers').insert({
     event_id: eventId,
     name,
-    email,
+    email: (email || '').trim().toLowerCase(),
     phone: phone || '',
     assigned_task: null,
     status: 'pending',

@@ -88,7 +88,7 @@ router.post('/login', async (req, res) => {
     return res.redirect('/validate/login');
   }
   try {
-    const { data: volunteers } = await db.from('volunteers').select('*').eq('email', email).eq('status', 'approved');
+    const { data: volunteers } = await db.from('volunteers').select('*').ilike('email', email).eq('status', 'approved');
     if (!volunteers || volunteers.length === 0) {
       req.session.volunteerUser = null;
       req.flash('error', 'No approved volunteer found with that email.');
