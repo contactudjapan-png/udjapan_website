@@ -12,11 +12,12 @@ async function getSubmissionById(id) {
   return data;
 }
 
-async function createSubmission(eventId, { name, email, payment_reference, children_count, adults_count }) {
+async function createSubmission(eventId, { name, email, phone, payment_reference, children_count, adults_count }) {
   const { data, error } = await db.from('submissions').insert({
     event_id: eventId,
     name,
     email,
+    phone: phone || '',
     payment_reference: payment_reference || '',
     children_count: children_count || 0,
     adults_count: adults_count || 0,

@@ -27,6 +27,14 @@ async function getRegistrationByToken(token) {
   // Phone number lookup — validator types phone number at entrance
   const digits = token.replace(/[\s\-().]/g, '');
   if (/^\+?\d{6,}$/.test(digits)) {
+    // Check phone field first
+    const { data: data3p } = await db.from('registrations').select('*').eq('phone', token).single();
+    if (data3p) return data3p;
+    if (digits !== token) {
+      const { data: data3pn } = await db.from('registrations').select('*').eq('phone', digits).single();
+      if (data3pn) return data3pn;
+    }
+    // Fallback: email field (legacy)
     const { data: data3 } = await db.from('registrations').select('*').eq('email', token).single();
     if (data3) return data3;
     if (digits !== token) {
@@ -39,12 +47,13 @@ async function getRegistrationByToken(token) {
   return null;
 }
 
-async function createRegistration(eventId, { name, email, payment_reference, amount, transaction_id }) {
+async function createRegistration(eventId, { name, email, phone, payment_reference, amount, transaction_id }) {
   const qr_token = crypto.randomUUID();
   const { data, error } = await db.from('registrations').insert({
     event_id: eventId,
     name,
     email,
+    phone: phone || '',
     payment_reference: payment_reference || '',
     amount: amount ? parseFloat(amount) : null,
     transaction_id: transaction_id || null,
