@@ -12,12 +12,14 @@ async function getSubmissionById(id) {
   return data;
 }
 
-async function createSubmission(eventId, { name, email, payment_reference }) {
+async function createSubmission(eventId, { name, email, payment_reference, children_count, adults_count }) {
   const { data, error } = await db.from('submissions').insert({
     event_id: eventId,
     name,
     email,
     payment_reference: payment_reference || '',
+    children_count: children_count || 0,
+    adults_count: adults_count || 0,
     status: 'pending',
   }).select().single();
   if (error) throw new Error(error.message);

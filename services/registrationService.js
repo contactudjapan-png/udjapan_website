@@ -24,6 +24,17 @@ async function getRegistrationByToken(token) {
     if (!error2 && data2) return data2;
   }
 
+  // Phone number lookup — validator types phone number at entrance
+  const digits = token.replace(/[\s\-().]/g, '');
+  if (/^\+?\d{6,}$/.test(digits)) {
+    const { data: data3 } = await db.from('registrations').select('*').eq('email', token).single();
+    if (data3) return data3;
+    if (digits !== token) {
+      const { data: data4 } = await db.from('registrations').select('*').eq('email', digits).single();
+      if (data4) return data4;
+    }
+  }
+
   if (error && error.code !== 'PGRST116') console.error('[getRegistrationByToken] DB error:', error.message);
   return null;
 }

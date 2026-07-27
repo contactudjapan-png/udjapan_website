@@ -14,13 +14,15 @@
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>Name</th><th>Email</th><th>Payment Reference</th><th>Submitted</th><th>Actions</th>
+        <th>নাম</th><th>যোগাযোগ</th><th>শিশু (অনূর্ধ্ব-১৫)</th><th>প্রাপ্তবয়স্ক (১৫+)</th><th>পেমেন্ট রেফারেন্স</th><th>তারিখ</th><th>Actions</th>
       </tr></thead>
       <tbody>
       <% submissions.forEach(sub => { %>
         <tr>
           <td><strong><%= sub.name %></strong></td>
           <td><%= sub.email %></td>
+          <td><%= sub.children_count || 0 %></td>
+          <td><%= sub.adults_count || 0 %></td>
           <td><%= sub.payment_reference || '—' %></td>
           <td><%= new Date(sub.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
           <td class="action-cell">

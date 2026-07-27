@@ -41,7 +41,7 @@
     <% if (_event.description) { %>
     <section class="home-about">
       <h2>ইভেন্ট সম্পর্কে</h2>
-      <p><%= _event.description %></p>
+      <div><%- _event.description.replace(/\n/g, '<br>') %></div>
     </section>
     <% } %>
 

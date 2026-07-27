@@ -17,7 +17,9 @@
       <h3>সাবমিশন বিবরণ</h3>
       <table class="detail-table">
         <tr><td>নাম</td><td><%= submission.name %></td></tr>
-        <tr><td>ইমেইল</td><td><%= submission.email %></td></tr>
+        <tr><td>যোগাযোগ</td><td><%= submission.email %></td></tr>
+        <tr><td>শিশু (অনূর্ধ্ব-১৫)</td><td><%= submission.children_count || 0 %></td></tr>
+        <tr><td>প্রাপ্তবয়স্ক (১৫+)</td><td><%= submission.adults_count || 0 %></td></tr>
         <tr><td>ইভেন্ট</td><td><%= event.title %></td></tr>
         <tr><td>তারিখ</td><td><%= new Date(event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin' }) %></td></tr>
         <% if (event.location) { %><tr><td>স্থান</td><td><%= event.location %></td></tr><% } %>

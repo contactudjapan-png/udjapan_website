@@ -8,6 +8,10 @@ async function sendRegistrationConfirmation(registration, event, baseUrl) {
     console.log(`[Email] SMTP not configured — skipping confirmation email to ${registration.email}`);
     return;
   }
+  if (!registration.email || !registration.email.includes('@')) {
+    console.log(`[Email] Contact is a phone number — skipping QR email for ${registration.name}`);
+    return;
+  }
 
   const qrUrl = `${baseUrl}/api/validate/${registration.qr_token}`;
   const qrBuffer = await generateQRBuffer(qrUrl);

@@ -49,16 +49,18 @@ router.post(`/event/:id/register`, async (req, res, next) => {
       return res.redirect(`/event/${req.params.id}`);
     }
 
-    const { name, email, payment_reference } = req.body;
+    const { name, email, payment_reference, children_count, adults_count } = req.body;
     if (!name || !email) {
-      req.flash('error', 'Name and email are required.');
+      req.flash('error', 'Name and contact info are required.');
       return res.redirect(`/event/${req.params.id}`);
     }
 
     const submission = await submissionService.createSubmission(req.params.id, {
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: email.trim(),
       payment_reference: payment_reference ? payment_reference.trim() : '',
+      children_count: parseInt(children_count) || 0,
+      adults_count: parseInt(adults_count) || 0,
     });
 
     res.redirect(`/submit/success/${submission.id}`);

@@ -83,17 +83,27 @@
             <input type="hidden" name="ticket_price" value="<%= activePrice %>">
           <% } %>
           <div class="form-group">
-            <label for="name">পূর্ণ নাম *</label>
-            <input type="text" id="name" name="name" required placeholder="আপনার পূর্ণ নাম">
+            <label for="name">অংশগ্রহণকারীর/অংশগ্রহণকারীদের নাম *</label>
+            <input type="text" id="name" name="name" required placeholder="নাম">
+            <small>একাধিক নাম হলে "/" বা কমা দিয়ে আলাদা করুন</small>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="children_count">অনূর্ধ্ব-১৫ বছর বয়সী অংশগ্রহণকারীর সংখ্যা *</label>
+              <input type="number" id="children_count" name="children_count" required min="0" value="0">
+            </div>
+            <div class="form-group">
+              <label for="adults_count">১৫ বছর বা তদূর্ধ্ব অংশগ্রহণকারীর সংখ্যা *</label>
+              <input type="number" id="adults_count" name="adults_count" required min="0" value="0">
+            </div>
           </div>
           <div class="form-group">
-            <label for="email">ইমেইল ঠিকানা *</label>
-            <input type="email" id="email" name="email" required placeholder="your@email.com">
+            <label for="payment_reference">পেপাল ট্রানজেকশন নম্বর / ব্যাংক ট্রান্সফারকারীর নাম *</label>
+            <input type="text" id="payment_reference" name="payment_reference" required placeholder="লেনদেন আইডি বা নাম">
           </div>
           <div class="form-group">
-            <label for="payment_reference">পেমেন্ট রেফারেন্স</label>
-            <input type="text" id="payment_reference" name="payment_reference" placeholder="লেনদেন আইডি বা পেমেন্টকারীর নাম">
-            <small>আপনার PayPal লেনদেন আইডি বা পেমেন্টে ব্যবহৃত নাম লিখুন</small>
+            <label for="email">ইমেইল, ইমেইল যদি না থাকে তবে টেলিফোন নম্বর *</label>
+            <input type="text" id="email" name="email" required placeholder="your@email.com অথবা +49...">
           </div>
           <button type="submit" class="btn btn-primary">জমা দিন</button>
         </form>
