@@ -170,22 +170,26 @@ router.post('/register/:eventId', requireRegistrationAccess, async (req, res, ne
       req.flash('error', 'ইভেন্টটি সক্রিয় নেই।');
       return res.redirect('/validate/register');
     }
-    const { name, email, phone, payment_reference } = req.body;
-    if (!name || !email || !phone) {
-      req.flash('error', 'নাম, ইমেইল এবং ফোন নম্বর আবশ্যক।');
+    const { name, email, phone, payment_reference, amount } = req.body;
+    if (!name || !phone) {
+      req.flash('error', 'নাম এবং ফোন নম্বর আবশ্যক।');
       return res.redirect(`/validate/register/${event.id}`);
     }
     const registration = await registrationService.createRegistration(event.id, {
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: (email || '').trim().toLowerCase(),
       phone: phone.trim(),
       payment_reference: (payment_reference || '').trim(),
+      amount,
     });
     const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
-    emailService.sendRegistrationConfirmation(registration, event, baseUrl).catch(err => {
-      console.error('[Email] Failed:', err.message);
-    });
-    req.flash('success', `${name.trim()} সফলভাবে নিবন্ধিত হয়েছে। QR কোড ইমেইলে পাঠানো হয়েছে।`);
+    if (registration.email) {
+      emailService.sendRegistrationConfirmation(registration, event, baseUrl).catch(err => {
+        console.error('[Email] Failed:', err.message);
+      });
+    }
+    const emailNote = registration.email ? ' QR কোড ইমেইলে পাঠানো হয়েছে।' : '';
+    req.flash('success', `${name.trim()} সফলভাবে নিবন্ধিত হয়েছে।${emailNote}`);
     res.redirect(`/validate/register/${event.id}`);
   } catch (err) { next(err); }
 });

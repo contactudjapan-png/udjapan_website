@@ -54,17 +54,23 @@
         <input type="text" id="name" name="name" required placeholder="পূর্ণ নাম">
       </div>
       <div class="form-group">
-        <label for="email">ইমেইল *</label>
-        <input type="email" id="email" name="email" required placeholder="email@example.com">
-        <small>QR কোড এই ঠিকানায় পাঠানো হবে।</small>
+        <label for="email">ইমেইল</label>
+        <input type="email" id="email" name="email" placeholder="email@example.com">
+        <small>ইমেইল দিলে QR কোড পাঠানো হবে।</small>
       </div>
       <div class="form-group">
         <label for="phone">ফোন নম্বর *</label>
         <input type="tel" id="phone" name="phone" required placeholder="+49 1XX XXXXXXXX">
       </div>
-      <div class="form-group">
-        <label for="payment_reference">পেমেন্ট রেফারেন্স</label>
-        <input type="text" id="payment_reference" name="payment_reference" placeholder="লেনদেন ID বা নাম">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="amount">পরিমাণ (€)</label>
+          <input type="number" id="amount" name="amount" step="0.01" min="0" value="<%= currentPrice ? Number(currentPrice).toFixed(2) : '' %>" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label for="payment_reference">পেমেন্ট রেফারেন্স</label>
+          <input type="text" id="payment_reference" name="payment_reference" placeholder="লেনদেন ID বা নাম">
+        </div>
       </div>
       <button type="submit" class="btn btn-primary">নিবন্ধন করুন ও QR পাঠান</button>
     </form>
