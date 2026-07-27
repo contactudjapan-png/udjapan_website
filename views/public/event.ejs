@@ -106,21 +106,8 @@
 
     <div class="volunteer-section">
       <h2>স্বেচ্ছাসেবক হতে চান?</h2>
-      <form action="/event/<%= event.id %>/volunteer" method="POST" class="register-form">
-        <div class="form-group">
-          <label for="vol_name">নাম *</label>
-          <input type="text" id="vol_name" name="name" required placeholder="আপনার নাম">
-        </div>
-        <div class="form-group">
-          <label for="vol_email">ইমেইল *</label>
-          <input type="email" id="vol_email" name="email" required placeholder="your@email.com">
-        </div>
-        <div class="form-group">
-          <label for="vol_phone">ফোন (ঐচ্ছিক)</label>
-          <input type="tel" id="vol_phone" name="phone" placeholder="+880 1XXX XXXXXX">
-        </div>
-        <button type="submit" class="btn btn-outline">স্বেচ্ছাসেবক হিসেবে নাম দিন</button>
-      </form>
+      <p>আমাদের দলের সাথে যোগ দিন এবং এই ইভেন্টকে সফল করুন।</p>
+      <a href="/event/<%= event.id %>/volunteer" class="btn btn-outline">স্বেচ্ছাসেবক হিসেবে নাম দিন</a>
     </div>
   </div>
 </main>

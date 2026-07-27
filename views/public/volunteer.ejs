@@ -1,0 +1,35 @@
+<%- include('../partials/head') %>
+<body>
+<%- include('../partials/nav-public') %>
+<%- include('../partials/flash') %>
+
+<main class="container">
+  <div class="page-header">
+    <a href="/event/<%= event.id %>" class="back-link">← ইভেন্টে ফিরুন</a>
+    <h1>স্বেচ্ছাসেবক — <%= event.title %></h1>
+  </div>
+
+  <div class="event-detail-card" style="max-width:520px">
+    <p>আমাদের ইভেন্টে স্বেচ্ছাসেবক হিসেবে যোগ দিতে আগ্রহী? নিচের ফর্মটি পূরণ করুন এবং আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।</p>
+
+    <form action="/event/<%= event.id %>/volunteer" method="POST" class="register-form" style="margin-top:1.5rem">
+      <div class="form-group">
+        <label for="name">নাম *</label>
+        <input type="text" id="name" name="name" required placeholder="আপনার পূর্ণ নাম">
+      </div>
+      <div class="form-group">
+        <label for="email">ইমেইল *</label>
+        <input type="email" id="email" name="email" required placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label for="phone">ফোন (ঐচ্ছিক)</label>
+        <input type="tel" id="phone" name="phone" placeholder="+880 1XXX XXXXXX">
+      </div>
+      <button type="submit" class="btn btn-outline">স্বেচ্ছাসেবক হিসেবে নাম দিন</button>
+    </form>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

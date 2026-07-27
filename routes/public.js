@@ -122,21 +122,31 @@ router.post(`/event/:id/polls/:pollId/vote`, async (req, res, next) => {
   }
 });
 
+// Volunteer page
+router.get('/event/:id/volunteer', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    res.render('public/volunteer', { title: `স্বেচ্ছাসেবক — ${event.title}`, event });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // Volunteer signup
 router.post(`/event/:id/volunteer`, async (req, res, next) => {
   try {
     const { name, email, phone } = req.body;
     if (!name || !email) {
       req.flash('error', 'Name and email are required.');
-      return res.redirect(`/event/${req.params.id}`);
+      return res.redirect(`/event/${req.params.id}/volunteer`);
     }
     await volunteerService.createVolunteer(req.params.id, {
       name: name.trim(),
       email: email.trim().toLowerCase(),
       phone: phone ? phone.trim() : '',
     });
-    req.flash('success', 'Thank you for volunteering! We will contact you soon.');
-    res.redirect(`/event/${req.params.id}`);
+    req.flash('success', 'ধন্যবাদ! আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।');
+    res.redirect(`/event/${req.params.id}/volunteer`);
   } catch (err) {
     next(err);
   }
