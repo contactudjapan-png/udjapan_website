@@ -7,3 +7,4 @@ public/uploads/
 memory/
 supabase_seed.sql
 supabase_migration_scan_logs.sql
+config/memoryDb.js
