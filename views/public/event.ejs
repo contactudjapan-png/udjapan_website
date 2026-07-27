@@ -1,5 +1,5 @@
 <%- include('../partials/head') %>
-<body class="event-page"<% if (event.banner_url) { %> style="background-image:url('<%= event.banner_url %>');background-attachment:fixed;background-position:top center;background-size:100% auto;background-repeat:no-repeat"<% } %>>
+<body class="event-page <%= tierClass %>"<% if (event.banner_url) { %> style="background-image:url('<%= event.banner_url %>');background-attachment:fixed;background-position:top center;background-size:100% auto;background-repeat:no-repeat"<% } %>>
 <div class="event-overlay">
 <%- include('../partials/nav-public') %>
 <%- include('../partials/flash') %>

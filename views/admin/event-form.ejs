@@ -25,8 +25,16 @@ function toBerlinInput(dateStr) {
         <input type="text" id="title" name="title" required value="<%= event ? event.title : '' %>">
       </div>
       <div class="form-group">
-        <label for="description">বিবরণ</label>
+        <label for="description">বিবরণ (বাংলা)</label>
         <textarea id="description" name="description" rows="6" data-rich><%= event ? event.description : '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label for="description_en">Description (English)</label>
+        <textarea id="description_en" name="description_en" rows="6" data-rich><%= event ? (event.description_en || '') : '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label for="description_de">Beschreibung (Deutsch)</label>
+        <textarea id="description_de" name="description_de" rows="6" data-rich><%= event ? (event.description_de || '') : '' %></textarea>
       </div>
       <div class="form-row">
         <div class="form-group">

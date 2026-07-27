@@ -1,15 +1,5 @@
 <%- include('../partials/head') %>
-<%
-  var _nowTs = Date.now();
-  var _ebTs  = locals.currentEvent && locals.currentEvent.early_bird_deadline ? new Date(locals.currentEvent.early_bird_deadline).getTime() : null;
-  var _midTs = locals.currentEvent && locals.currentEvent.mid_deadline        ? new Date(locals.currentEvent.mid_deadline).getTime()        : null;
-  var _evdTs = locals.currentEvent && locals.currentEvent.event_date          ? new Date(locals.currentEvent.event_date).getTime()          : null;
-  var _tierCls = 'tier-bd';
-  if (_ebTs  && _nowTs < _ebTs)  _tierCls = 'tier-halide';
-  else if (_midTs && _nowTs < _midTs && (!_ebTs  || _nowTs >= _ebTs))  _tierCls = 'tier-nilkantha';
-  else if (_evdTs && _nowTs < _evdTs && (!_midTs || _nowTs >= _midTs)) _tierCls = 'tier-kokila';
-%>
-<body class="home-page <%= _tierCls %>">
+<body class="home-page <%= tierClass %>">
 <%- include('../partials/nav-public') %>
 <%- include('../partials/flash') %>
 
@@ -69,10 +59,15 @@
   <main class="home-main">
 
     <!-- About -->
-    <% if (_event.description) { %>
+    <%
+      var _desc = _event.description || '';
+      if (locale === 'en' && _event.description_en) _desc = _event.description_en;
+      else if (locale === 'de' && _event.description_de) _desc = _event.description_de;
+    %>
+    <% if (_desc) { %>
     <section class="home-about">
       <h2><%- t('home.about') %></h2>
-      <div id="eventDesc" class="rich-content"><%- _event.description %></div>
+      <div id="eventDesc" class="rich-content"><%- _desc %></div>
     </section>
     <% } %>
 

@@ -61,6 +61,31 @@ app.use((req, res, next) => {
 // i18n — locale detection and t() helper
 app.use(require('./middleware/i18n'));
 
+// Tier class — compute once per request for non-admin routes (1-min cache)
+const _eventSvc = require('./services/eventService');
+const _tierState = { cls: 'tier-bd', at: 0 };
+app.use(async (req, res, next) => {
+  const now = Date.now();
+  if (now - _tierState.at > 60 * 1000) {
+    try {
+      const evts = await _eventSvc.getActiveEvents();
+      const ev = evts[0];
+      let cls = 'tier-bd';
+      if (ev) {
+        const eb = ev.early_bird_deadline ? +new Date(ev.early_bird_deadline) : null;
+        const mid = ev.mid_deadline ? +new Date(ev.mid_deadline) : null;
+        const evd = ev.event_date ? +new Date(ev.event_date) : null;
+        if (eb && now < eb) cls = 'tier-halide';
+        else if (mid && now < mid && (!eb || now >= eb)) cls = 'tier-nilkantha';
+        else if (evd && now < evd && (!mid || now >= mid)) cls = 'tier-kokila';
+      }
+      _tierState.cls = cls; _tierState.at = now;
+    } catch {}
+  }
+  res.locals.tierClass = _tierState.cls;
+  next();
+});
+
 // Storage proxy — serves private bucket files via signed URLs
 app.use('/storage', async (req, res) => {
   try {

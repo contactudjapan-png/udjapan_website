@@ -1,5 +1,8 @@
 -- ── New columns on existing tables ──────────────────────────────────────────
 
+ALTER TABLE events ADD COLUMN IF NOT EXISTS description_en TEXT DEFAULT NULL;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS description_de TEXT DEFAULT NULL;
+
 ALTER TABLE registrations ADD COLUMN IF NOT EXISTS amount NUMERIC(10,2) DEFAULT NULL;
 ALTER TABLE registrations ADD COLUMN IF NOT EXISTS transaction_id TEXT DEFAULT NULL;
 

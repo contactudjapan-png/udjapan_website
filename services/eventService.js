@@ -32,6 +32,8 @@ async function createEvent(eventData) {
   const payload = {
     title: eventData.title,
     description: eventData.description || '',
+    description_en: eventData.description_en || null,
+    description_de: eventData.description_de || null,
     event_date: eventData.event_date,
     location: eventData.location || '',
     max_capacity: parseInt(eventData.max_capacity) || null,
@@ -50,6 +52,8 @@ async function updateEvent(id, eventData) {
   const payload = {
     title: eventData.title,
     description: eventData.description || '',
+    description_en: eventData.description_en || null,
+    description_de: eventData.description_de || null,
     event_date: eventData.event_date,
     location: eventData.location || '',
     max_capacity: parseInt(eventData.max_capacity) || null,
