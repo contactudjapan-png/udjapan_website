@@ -118,6 +118,14 @@ function toBerlinInput(dateStr) {
         <input type="file" name="paypal_qr" accept="image/*">
       </div>
       <div class="form-group">
+        <label>পপআপ বিজ্ঞাপন ছবি</label>
+        <% if (event.popup_image_url) { %>
+          <img src="<%= event.popup_image_url %>" alt="পপআপ" class="preview-img">
+        <% } %>
+        <input type="file" name="popup_image" accept="image/*">
+        <small>হোম পেজে পেজ লোডে পপআপ হিসেবে দেখাবে। খালি রাখলে পপআপ দেখাবে না।</small>
+      </div>
+      <div class="form-group">
         <label class="checkbox-label">
           <input type="checkbox" name="registration_open" <%= event.registration_open ? 'checked' : '' %>>
           সাবমিশন উন্মুক্ত

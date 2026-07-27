@@ -126,13 +126,20 @@ router.post('/events/:id/edit', upload.single('banner'), async (req, res, next) 
   }
 });
 
-router.post('/events/:id/edit/payment', upload.single('paypal_qr'), async (req, res, next) => {
+router.post('/events/:id/edit/payment', upload.fields([{ name: 'paypal_qr', maxCount: 1 }, { name: 'popup_image', maxCount: 1 }]), async (req, res, next) => {
   try {
     await eventService.updateEventPayment(req.params.id, convertEventDates(req.body));
-    if (req.file) {
-      const ext = path.extname(req.file.originalname).toLowerCase();
-      const url = await eventService.uploadFileToBucket('paypal-qr', `${req.params.id}/paypal-qr${ext}`, req.file.buffer, req.file.mimetype);
+    if (req.files && req.files.paypal_qr) {
+      const f = req.files.paypal_qr[0];
+      const ext = path.extname(f.originalname).toLowerCase();
+      const url = await eventService.uploadFileToBucket('paypal-qr', `${req.params.id}/paypal-qr${ext}`, f.buffer, f.mimetype);
       await eventService.updatePaypalQrUrl(req.params.id, url);
+    }
+    if (req.files && req.files.popup_image) {
+      const f = req.files.popup_image[0];
+      const ext = path.extname(f.originalname).toLowerCase();
+      const url = await eventService.uploadFileToBucket('popups', `${req.params.id}/popup${ext}`, f.buffer, f.mimetype);
+      await eventService.updatePopupUrl(req.params.id, url);
     }
     req.flash('success', 'পেমেন্ট তথ্য আপডেট হয়েছে।');
     res.redirect(`/admin/events/${req.params.id}/edit`);

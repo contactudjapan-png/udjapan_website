@@ -838,3 +838,53 @@ main { flex: 1; }
 .ql-toolbar { background: var(--bg-card, #f8f8f8); border-color: var(--border, #ddd) !important; }
 .ql-container.ql-snow { border-color: var(--border, #ddd) !important; border-radius: 0 0 var(--radius, 6px) var(--radius, 6px); }
 .ql-toolbar.ql-snow { border-color: var(--border, #ddd) !important; border-radius: var(--radius, 6px) var(--radius, 6px) 0 0; }
+
+
+/* ─── Popup Advertisement ────────────────────────────────────────────────────── */
+.popup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.popup-modal {
+  position: relative;
+  max-width: 480px;
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+.popup-img {
+  width: 100%;
+  display: block;
+}
+.popup-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.popup-close:hover { background: rgba(0,0,0,0.85); }
+.popup-cta {
+  display: block;
+  text-align: center;
+  border-radius: 0;
+  padding: 0.85rem;
+  font-size: 1rem;
+}

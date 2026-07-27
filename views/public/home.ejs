@@ -148,6 +148,29 @@
 
 <% } %>
 
+<% if (_event && _event.popup_image_url) { %>
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-modal">
+    <button class="popup-close" id="popupClose" aria-label="বন্ধ করুন">✕</button>
+    <img src="<%= _event.popup_image_url %>" alt="<%= _event.title %>" class="popup-img">
+    <% if (_event.registration_open) { %>
+      <a href="/event/<%= _event.id %>" class="btn btn-primary popup-cta">নিবন্ধন করুন</a>
+    <% } %>
+  </div>
+</div>
+<script>
+(function() {
+  var KEY = 'popup_dismissed_<%= _event.id %>';
+  var overlay = document.getElementById('popupOverlay');
+  if (localStorage.getItem(KEY)) { overlay.style.display = 'none'; return; }
+  overlay.style.display = 'flex';
+  function close() { overlay.style.display = 'none'; localStorage.setItem(KEY, '1'); }
+  document.getElementById('popupClose').addEventListener('click', close);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+})();
+</script>
+<% } %>
+
 <%- include('../partials/footer') %>
 </body>
 </html>

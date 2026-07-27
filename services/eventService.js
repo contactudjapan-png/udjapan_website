@@ -88,6 +88,12 @@ async function updatePaypalQrUrl(id, url) {
   return data;
 }
 
+async function updatePopupUrl(id, url) {
+  const { data, error } = await db.from('events').update({ popup_image_url: url }).eq('id', id).select().single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 async function uploadFileToBucket(bucket, filePath, buffer, mimetype) {
   const { data, error } = await db.storage.from(bucket).upload(filePath, buffer, {
     contentType: mimetype,
@@ -107,5 +113,6 @@ module.exports = {
   deleteEvent,
   updateBannerUrl,
   updatePaypalQrUrl,
+  updatePopupUrl,
   uploadFileToBucket,
 };
