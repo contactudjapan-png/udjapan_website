@@ -164,8 +164,6 @@ a:hover { text-decoration: underline; }
 }
 .home-hero-img {
   width: 100%;
-  max-height: 560px;
-  object-fit: cover;
   display: block;
 }
 .home-hero-overlay {
@@ -794,6 +792,9 @@ main { flex: 1; }
   font-size: 0.85rem;
   margin-top: 3rem;
   border-top: 1px solid var(--border);
+  background: var(--bg);
+  position: relative;
+  z-index: 1;
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────────── */
