@@ -917,29 +917,55 @@ main { flex: 1; }
   display: inline-block;
   font-size: 0.78rem;
   font-weight: 700;
-  padding: 2px 10px;
+  padding: 3px 12px;
   border-radius: 20px;
   margin-left: 6px;
   vertical-align: middle;
   white-space: nowrap;
   letter-spacing: 0.02em;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Hind Siliguri', 'Inter', sans-serif;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 }
-.tier-badge--normal  { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
-.tier-badge--soon    { background: #fff8e1; color: #e65100; border: 1px solid #ffe082; animation: tier-pulse-slow 2s ease-in-out infinite; }
-.tier-badge--warning { background: #fff3e0; color: #bf360c; border: 1px solid #ffcc80; animation: tier-pulse-med 1s ease-in-out infinite; }
-.tier-badge--urgent  { background: #ffebee; color: #b71c1c; border: 1px solid #ef9a9a; animation: tier-pulse-fast 0.6s ease-in-out infinite; }
-.tier-badge--expired { background: #f5f5f5; color: #9e9e9e; border: 1px solid #e0e0e0; text-decoration: line-through; opacity: 0.7; }
 
-@keyframes tier-pulse-slow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.7; transform: scale(1.04); }
+/* Per-tier colors */
+.tier-badge--halide    { background: #fffde7; color: #e65100; border: 1px solid #ffc107; animation-name: breathe-halide; }
+.tier-badge--nilkantha { background: #e3f2fd; color: #1565c0; border: 1px solid #64b5f6; animation-name: breathe-nilkantha; }
+.tier-badge--kokila    { background: #f3e5f5; color: #6a1b9a; border: 1px solid #ba68c8; animation-name: breathe-kokila; }
+
+/* Urgency controls animation speed */
+.tier-badge--normal  { animation-duration: 3.5s; }
+.tier-badge--soon    { animation-duration: 2s; }
+.tier-badge--warning { animation-duration: 1.1s; }
+.tier-badge--urgent  { animation-duration: 0.6s; }
+.tier-badge--expired { animation-name: none; background: #f5f5f5; color: #9e9e9e; border: 1px solid #e0e0e0; text-decoration: line-through; opacity: 0.7; }
+
+@keyframes breathe-halide {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 0   0 rgba(230,81,0,.3); }
+  50%       { transform: scale(1.06); box-shadow: 0 0 10px 4px rgba(255,193,7,.4); }
 }
-@keyframes tier-pulse-med {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.6; transform: scale(1.06); }
+@keyframes breathe-nilkantha {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 0   0 rgba(21,101,192,.3); }
+  50%       { transform: scale(1.06); box-shadow: 0 0 10px 4px rgba(100,181,246,.45); }
 }
-@keyframes tier-pulse-fast {
-  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(183,28,28,0.5); }
-  50%       { opacity: 0.55; transform: scale(1.09); box-shadow: 0 0 0 7px rgba(183,28,28,0); }
+@keyframes breathe-kokila {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 0   0 rgba(106,27,154,.3); }
+  50%       { transform: scale(1.06); box-shadow: 0 0 10px 4px rgba(186,104,200,.45); }
+}
+
+/* ─── Site-wide tier palettes ────────────────────────────────────────────────── */
+body.tier-halide {
+  --primary: #e65100; --primary-dark: #bf360c; --primary-light: #ff8a50;
+  --green: #b8860b;   --green-dark: #8b6914;
+  --bg: #fffde7;      --border: #ffe082;       --text-muted: #795548;
+}
+body.tier-nilkantha {
+  --primary: #1565c0; --primary-dark: #0d47a1; --primary-light: #42a5f5;
+  --green: #006064;   --green-dark: #00474b;
+  --bg: #e8f4fd;      --border: #90caf9;       --text-muted: #37474f;
+}
+body.tier-kokila {
+  --primary: #6a1b9a; --primary-dark: #4a148c; --primary-light: #ab47bc;
+  --green: #4527a0;   --green-dark: #311b92;
+  --bg: #f5f0fb;      --border: #ce93d8;       --text-muted: #5e35b1;
 }

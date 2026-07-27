@@ -1,5 +1,15 @@
 <%- include('../partials/head') %>
-<body class="home-page">
+<%
+  var _nowTs = Date.now();
+  var _ebTs  = locals.currentEvent && locals.currentEvent.early_bird_deadline ? new Date(locals.currentEvent.early_bird_deadline).getTime() : null;
+  var _midTs = locals.currentEvent && locals.currentEvent.mid_deadline        ? new Date(locals.currentEvent.mid_deadline).getTime()        : null;
+  var _evdTs = locals.currentEvent && locals.currentEvent.event_date          ? new Date(locals.currentEvent.event_date).getTime()          : null;
+  var _tierCls = '';
+  if (_ebTs  && _nowTs < _ebTs)  _tierCls = 'tier-halide';
+  else if (_midTs && _nowTs < _midTs && (!_ebTs  || _nowTs >= _ebTs))  _tierCls = 'tier-nilkantha';
+  else if (_evdTs && _nowTs < _evdTs && (!_midTs || _nowTs >= _midTs)) _tierCls = 'tier-kokila';
+%>
+<body class="home-page <%= _tierCls %>">
 <%- include('../partials/nav-public') %>
 <%- include('../partials/flash') %>
 
@@ -79,9 +89,9 @@
       var evd = <%- _event.event_date          ? JSON.stringify(new Date(_event.event_date).getTime())          : 'null' %>;
 
       var TIERS = [
-        { keywords: ['হলদে বউঃ','হলদে বউ:'], deadline: eb,  start: null },
-        { keywords: ['নীলকণ্ঠঃ','নীলকণ্ঠ:'],  deadline: mid, start: eb   },
-        { keywords: ['কোকিলাঃ','কোকিলা:'],   deadline: evd, start: mid  },
+        { name: 'halide',     keywords: ['হলদে বউঃ','হলদে বউ:'], deadline: eb,  start: null },
+        { name: 'nilkantha',  keywords: ['নীলকণ্ঠঃ','নীলকণ্ঠ:'],  deadline: mid, start: eb   },
+        { name: 'kokila',     keywords: ['কোকিলাঃ','কোকিলা:'],   deadline: evd, start: mid  },
       ];
 
       function isActive(tier, now) {
@@ -96,10 +106,12 @@
         var h = Math.floor((ms % 86400000) / 3600000);
         var m = Math.floor((ms % 3600000) / 60000);
         var s = Math.floor((ms % 60000) / 1000);
-        if (d >= 2) return toBN(d) + 'দ ' + toBN(h) + 'ঘ ' + toBN(m) + 'মি ' + toBN(s) + 'সে';
-        if (d === 1) return toBN(1) + 'দ ' + toBN(h) + 'ঘ ' + toBN(m) + 'মি ' + toBN(s) + 'সে';
-        if (h > 0)  return toBN(h) + 'ঘ ' + toBN(m) + 'মি ' + toBN(s) + 'সে';
-        return toBN(m) + 'মি ' + toBN(s) + 'সে';
+        var parts = [];
+        if (d > 0) parts.push(toBN(d) + ' দিন');
+        if (h > 0) parts.push(toBN(h) + ' ঘণ্টা');
+        if (m > 0 || d > 0) parts.push(toBN(m) + ' মিনিট');
+        parts.push(toBN(s) + ' সেকেন্ড');
+        return parts.join(' ');
       }
 
       var descEl = document.getElementById('eventDesc');
@@ -117,7 +129,7 @@
             badge.className = 'tier-badge';
             badge.style.display = 'none';
             strongs[i].parentNode.insertBefore(badge, strongs[i].nextSibling);
-            badges.push({ el: badge, deadline: tier.deadline, start: tier.start });
+            badges.push({ el: badge, deadline: tier.deadline, start: tier.start, name: tier.name });
             break;
           }
         }
@@ -131,12 +143,11 @@
 
           b.el.style.display = 'inline-block';
           var rem = b.deadline - now;
-          var label = fmt(rem);
-          b.el.textContent = '⏰ শেষ হচ্ছে: ' + label;
-          b.el.className = rem < 6 * 3600000  ? 'tier-badge tier-badge--urgent'  :
-                           rem < 24 * 3600000 ? 'tier-badge tier-badge--warning' :
-                           rem < 3 * 86400000 ? 'tier-badge tier-badge--soon'    :
-                                                'tier-badge tier-badge--normal';
+          var urgency = rem < 6 * 3600000  ? 'urgent'  :
+                        rem < 24 * 3600000 ? 'warning' :
+                        rem < 3 * 86400000 ? 'soon'    : 'normal';
+          b.el.className = 'tier-badge tier-badge--' + b.name + ' tier-badge--' + urgency;
+          b.el.textContent = '⏰ শেষ হচ্ছে: ' + fmt(rem);
         });
       }
 
