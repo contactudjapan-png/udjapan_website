@@ -76,9 +76,8 @@ router.post('/login', async (req, res) => {
     const hasStall = tasks.some(t => t.includes('স্টল') || t.includes('stall'));
     const hasReg = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
     const hasQR = tasks.some(t => t.includes('qr') || t.includes('যাচাই') || t.includes('validation') || t.includes('scanner'));
-    const hasAnyTask = tasks.some(t => t.trim() !== '');
-    if (!hasAnyTask) {
-      req.flash('error', 'আপনাকে এখনো কোনো কাজ নির্ধারণ করা হয়নি। অ্যাডমিনের সাথে যোগাযোগ করুন।');
+    if (!hasStall && !hasReg && !hasQR) {
+      req.flash('error', 'আপনার কাজের ধরন স্বেচ্ছাসেবী কর্নারে প্রবেশযোগ্য নয়। অ্যাডমিনের সাথে যোগাযোগ করুন।');
       return res.redirect('/validate/login');
     }
     req.session.volunteerUser = {
@@ -87,9 +86,7 @@ router.post('/login', async (req, res) => {
       tasks: activeVolunteers.map(v => v.assigned_task || ''),
       event_ids: activeVolunteers.map(v => v.event_id),
     };
-    if (hasStall && !hasReg && !hasQR) return res.redirect('/validate/stalls');
-    if (hasReg && !hasStall && !hasQR) return res.redirect('/validate/register');
-    res.redirect('/validate');
+    res.redirect(getVolunteerRedirect(req.session));
   } catch (err) {
     req.flash('error', 'Login error. Please try again.');
     res.redirect('/validate/login');
