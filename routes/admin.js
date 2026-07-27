@@ -20,6 +20,7 @@ const importService = require('../services/importService');
 const advertisementService = require('../services/advertisementService');
 const announcementService = require('../services/announcementService');
 const settingsService = require('../services/settingsService');
+const translationService = require('../services/translationService');
 
 // Convert a "YYYY-MM-DDTHH:MM" string entered as Berlin local time to a UTC ISO string
 function berlinToUTC(localStr) {
@@ -68,7 +69,7 @@ router.get('/', async (req, res, next) => {
   try {
     const stats = await reportService.getDashboardStats();
     const events = await eventService.getAllEvents();
-    res.render('admin/dashboard', { title: 'Dashboard', stats, events });
+    res.render('admin/dashboard', { title: 'Dashboard', stats, events, useMemoryDb: !!process.env.USE_MEMORY_DB });
   } catch (err) { next(err); }
 });
 
@@ -813,6 +814,54 @@ router.post('/seed', async (req, res, next) => {
     req.flash('error', `Seed failed: ${err.message}`);
     res.redirect('/admin');
   }
+});
+
+// ─── Translations ────────────────────────────────────────────────────────────
+
+router.get('/translations', async (req, res, next) => {
+  try {
+    translationService.invalidateCache();
+    const all = await translationService.loadAll();
+    const { SEEDS, SUPPORTED_LOCALES } = translationService;
+    // Build a unified key list: seeds + any extra keys in DB
+    const keySet = new Set(SEEDS.map(s => s.key));
+    for (const locale of SUPPORTED_LOCALES) {
+      if (all[locale]) Object.keys(all[locale]).forEach(k => keySet.add(k));
+    }
+    const keys = Array.from(keySet).sort();
+    res.render('admin/translations', { title: 'Translations', keys, all, SUPPORTED_LOCALES });
+  } catch (err) { next(err); }
+});
+
+router.post('/translations', async (req, res, next) => {
+  try {
+    // Form fields named: t[key][locale]
+    const t = req.body.t || {};
+    const rows = [];
+    for (const [key, locales] of Object.entries(t)) {
+      for (const [locale, value] of Object.entries(locales)) {
+        if (value !== undefined && value !== null) {
+          rows.push({ key, locale, value: value.toString() });
+        }
+      }
+    }
+    await translationService.bulkUpsert(rows);
+    translationService.invalidateCache();
+    req.flash('success', 'অনুবাদ সংরক্ষিত হয়েছে।');
+    res.redirect('/admin/translations');
+  } catch (err) { next(err); }
+});
+
+router.post('/translations/add-key', async (req, res, next) => {
+  try {
+    const { key, value } = req.body;
+    if (key && value) {
+      await translationService.upsertTranslation(key.trim(), 'bn', value.trim());
+      translationService.invalidateCache();
+    }
+    req.flash('success', 'নতুন কী যোগ হয়েছে।');
+    res.redirect('/admin/translations');
+  } catch (err) { next(err); }
 });
 
 module.exports = router;

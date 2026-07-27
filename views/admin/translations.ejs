@@ -1,0 +1,97 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <div class="section-header">
+    <h1>অনুবাদ পরিচালনা</h1>
+  </div>
+
+  <p style="color:var(--text-muted);margin-bottom:1rem">
+    সব পাবলিক স্ট্রিং এখানে তিনটি ভাষায় সম্পাদনা করুন: <strong>বাংলা (bn)</strong>, <strong>English (en)</strong>, <strong>Deutsch (de)</strong>।
+    ব্যবহারকারীরা সাইটের নিচে ভাষা নির্বাচন করতে পারবেন।
+  </p>
+
+  <!-- Add new key -->
+  <details style="margin-bottom:1.5rem">
+    <summary class="btn btn-outline" style="cursor:pointer;display:inline-block">+ নতুন কী যোগ করুন</summary>
+    <div style="padding:1rem;background:var(--bg);border-radius:var(--radius);margin-top:0.5rem;max-width:500px">
+      <form action="/admin/translations/add-key" method="POST">
+        <div class="form-group">
+          <label>কী (Key)</label>
+          <input type="text" name="key" required placeholder="যেমন: nav.new_link" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>বাংলা মান</label>
+          <input type="text" name="value" required placeholder="বাংলায় লিখুন" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">যোগ করুন</button>
+      </form>
+    </div>
+  </details>
+
+  <!-- Search -->
+  <div style="margin-bottom:1rem">
+    <input type="text" id="tr-search" placeholder="কী বা মান খুঁজুন..." style="padding:0.4rem 0.7rem;border:1px solid var(--border);border-radius:var(--radius);width:280px;font-size:0.9rem">
+  </div>
+
+  <form action="/admin/translations" method="POST" id="tr-form">
+    <div style="margin-bottom:1rem">
+      <button type="submit" class="btn btn-primary">সব পরিবর্তন সংরক্ষণ করুন</button>
+    </div>
+    <table class="admin-table" id="tr-table">
+      <thead>
+        <tr>
+          <th style="min-width:180px">কী</th>
+          <% SUPPORTED_LOCALES.forEach(loc => { %>
+            <th>
+              <% if (loc === 'bn') { %>বাংলা<% } else if (loc === 'en') { %>English<% } else if (loc === 'de') { %>Deutsch<% } else { %><%= loc %><% } %>
+            </th>
+          <% }) %>
+        </tr>
+      </thead>
+      <tbody>
+        <% keys.forEach(key => { %>
+          <tr class="tr-row" data-key="<%= key %>">
+            <td style="font-family:monospace;font-size:0.8rem;color:var(--text-muted)"><%= key %></td>
+            <% SUPPORTED_LOCALES.forEach(loc => { %>
+              <td>
+                <input
+                  type="text"
+                  name="t[<%= key %>][<%= loc %>]"
+                  value="<%= (all[loc] && all[loc][key]) ? all[loc][key] : '' %>"
+                  placeholder="<%= loc === 'bn' ? '(সেট করুন)' : '(ঐচ্ছিক)' %>"
+                  style="width:100%;box-sizing:border-box;padding:0.3rem 0.5rem;border:1px solid var(--border);border-radius:4px;font-size:0.85rem;font-family:inherit"
+                >
+              </td>
+            <% }) %>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <div style="margin-top:1rem">
+      <button type="submit" class="btn btn-primary">সব পরিবর্তন সংরক্ষণ করুন</button>
+    </div>
+  </form>
+</main>
+
+<script>
+(function() {
+  var search = document.getElementById('tr-search');
+  var rows = document.querySelectorAll('.tr-row');
+  search.addEventListener('input', function() {
+    var q = this.value.toLowerCase().trim();
+    rows.forEach(function(row) {
+      if (!q) { row.style.display = ''; return; }
+      var key = row.dataset.key.toLowerCase();
+      var vals = Array.from(row.querySelectorAll('input')).map(function(i) { return i.value.toLowerCase(); }).join(' ');
+      row.style.display = (key.includes(q) || vals.includes(q)) ? '' : 'none';
+    });
+  });
+})();
+</script>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

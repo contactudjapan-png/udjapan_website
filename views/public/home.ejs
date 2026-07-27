@@ -10,8 +10,8 @@
 
 <% if (!_event) { %>
   <main class="container" style="padding:80px 20px;text-align:center">
-    <h1 style="color:#888">শীঘ্রই আসছে</h1>
-    <p style="color:#aaa">নতুন ইভেন্টের জন্য অপেক্ষা করুন।</p>
+    <h1 style="color:#888"><%- t('home.coming_soon') %></h1>
+    <p style="color:#aaa"><%- t('home.coming_soon_sub') %></p>
   </main>
 <% } else { %>
 
@@ -22,16 +22,16 @@
   <% } %>
   <div class="home-hero-overlay"></div>
   <div class="home-hero-content">
-    <p class="home-hero-label">আসন্ন ইভেন্ট</p>
+    <p class="home-hero-label"><%- t('home.upcoming_label') %></p>
     <h1 class="home-hero-title"><%= _event.title %></h1>
     <div class="home-hero-meta">
       <span>📅 <%= new Date(_event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin' }) %></span>
       <% if (_event.location) { %><span>📍 <%= _event.location %></span><% } %>
     </div>
     <% if (_event.registration_open) { %>
-      <a href="/event/<%= _event.id %>" class="btn btn-primary btn-hero">নিবন্ধন করুন</a>
+      <a href="/event/<%= _event.id %>" class="btn btn-primary btn-hero"><%- t('home.register') %></a>
     <% } else { %>
-      <span class="badge badge-closed btn-hero-badge">নিবন্ধন বন্ধ</span>
+      <span class="badge badge-closed btn-hero-badge"><%- t('home.reg_closed') %></span>
     <% } %>
   </div>
 </section>
@@ -42,7 +42,7 @@
   <% if (_announcements.length > 0) { %>
   <aside class="home-panel" id="annPanel">
     <div class="home-panel-header">
-      <h3 class="home-panel-title">📢 ঘোষণা</h3>
+      <h3 class="home-panel-title"><%- t('home.announcements') %></h3>
       <button class="panel-toggle" id="annToggle">−</button>
     </div>
     <div class="home-panel-body" id="annBody">
@@ -61,7 +61,7 @@
     <!-- About -->
     <% if (_event.description) { %>
     <section class="home-about">
-      <h2>ইভেন্ট সম্পর্কে</h2>
+      <h2><%- t('home.about') %></h2>
       <div><%- _event.description.replace(/\n/g, '<br>') %></div>
     </section>
     <% } %>
@@ -69,7 +69,7 @@
     <!-- Other Events -->
     <% if (_others.length > 0) { %>
     <section class="home-other-events">
-      <h2>অন্যান্য ইভেন্ট</h2>
+      <h2><%- t('home.other_events') %></h2>
       <div class="events-grid">
         <% _others.forEach(ev => { %>
           <a href="/event/<%= ev.id %>" class="event-card">
@@ -83,9 +83,9 @@
               <p class="event-meta">📅 <%= new Date(ev.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin' }) %></p>
               <% if (ev.location) { %><p class="event-meta">📍 <%= ev.location %></p><% } %>
               <% if (!ev.registration_open) { %>
-                <span class="badge badge-closed">নিবন্ধন বন্ধ</span>
+                <span class="badge badge-closed"><%- t('home.reg_closed') %></span>
               <% } else { %>
-                <span class="badge badge-open">নিবন্ধন খোলা</span>
+                <span class="badge badge-open"><%- t('home.reg_open') %></span>
               <% } %>
             </div>
           </a>
@@ -99,7 +99,7 @@
   <% if (_ads.length > 0) { %>
   <aside class="home-panel" id="adPanel">
     <div class="home-panel-header">
-      <h3 class="home-panel-title">স্পনসর ও বিজ্ঞাপন</h3>
+      <h3 class="home-panel-title"><%- t('home.sponsors') %></h3>
       <button class="panel-toggle" id="adToggle">−</button>
     </div>
     <div class="home-panel-body" id="adBody">
@@ -112,11 +112,12 @@
           <% if (ad.image_url) { %>
             <img src="<%= ad.image_url %>" alt="<%= ad.title %>" class="ad-card-img">
           <% } else { %>
-            <div class="ad-card-placeholder">বিজ্ঞাপন</div>
+            <div class="ad-card-placeholder"><%- t('home.ad_placeholder') %></div>
           <% } %>
           <div class="ad-card-body">
             <strong><%= ad.title %></strong>
-            <% if (ad.description) { %><div><%- ad.description %></div><% } %>
+            <% const _adDescPub = ad.description ? ad.description.replace(/<p><br\s*\/?><\/p>/gi,'').trim() : ''; %>
+            <% if (_adDescPub) { %><div><%- _adDescPub %></div><% } %>
           </div>
         <% if (ad.link_url) { %></a><% } else { %></div><% } %>
       <% }) %>
@@ -154,7 +155,7 @@
     <button class="popup-close" id="popupClose" aria-label="বন্ধ করুন">✕</button>
     <img src="<%= _event.popup_image_url %>" alt="<%= _event.title %>" class="popup-img">
     <% if (_event.registration_open) { %>
-      <a href="/event/<%= _event.id %>" class="btn btn-primary popup-cta">নিবন্ধন করুন</a>
+      <a href="/event/<%= _event.id %>" class="btn btn-primary popup-cta"><%- t('home.register') %></a>
     <% } %>
   </div>
 </div>

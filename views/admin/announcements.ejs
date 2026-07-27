@@ -20,7 +20,7 @@
       <% announcements.forEach(ann => { %>
         <tr>
           <td><strong><%= ann.title %></strong></td>
-          <td style="max-width:300px;white-space:pre-wrap;font-size:0.9rem"><%= ann.content %></td>
+          <td style="max-width:300px;font-size:0.9rem"><% const _annPreview = ann.content ? ann.content.replace(/<[^>]+>/g,'').trim().slice(0,150) : ''; %><%- _annPreview %></td>
           <td><%= ann.sort_order %></td>
           <td><span class="badge <%= ann.is_active ? 'badge-open' : 'badge-closed' %>"><%= ann.is_active ? 'সক্রিয়' : 'নিষ্ক্রিয়' %></span></td>
           <td class="action-cell">

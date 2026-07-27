@@ -24,7 +24,8 @@
               <img src="<%= ad.image_url %>" alt="<%= ad.title %>" style="width:80px;height:50px;object-fit:cover;border-radius:4px;margin-bottom:4px;display:block;">
             <% } %>
             <strong><%= ad.title %></strong>
-            <% if (ad.description) { %><br><small><%= ad.description %></small><% } %>
+            <% const _adDesc = ad.description ? ad.description.replace(/<p><br\s*\/?><\/p>/gi,'').trim() : ''; %>
+            <% if (_adDesc) { %><br><small><%- _adDesc %></small><% } %>
           </td>
           <td><% if (ad.link_url) { %><a href="<%= ad.link_url %>" target="_blank" style="word-break:break-all"><%= ad.link_url %></a><% } else { %>—<% } %></td>
           <td><%= ad.sort_order %></td>

@@ -1,9 +1,14 @@
 <nav class="nav-public">
-  <a href="/" class="nav-logo">উদযাপন</a>
+  <a href="/" class="nav-logo"><%- t('nav.logo') %></a>
   <div class="nav-links">
-    <a href="/">ইভেন্টসমূহ</a>
-    <a href="/privacy">গোপনীয়তা</a>
-    <a href="/validate/login">স্বেচ্ছাসেবী কর্নার</a>
-    <a href="/admin">অ্যাডমিন</a>
+    <a href="/"><%- t('nav.events') %></a>
+    <a href="/privacy"><%- t('nav.privacy') %></a>
+    <a href="/validate/login"><%- t('nav.volunteer') %></a>
+    <a href="/admin"><%- t('nav.admin') %></a>
+    <div class="lang-picker">
+      <a href="?lang=bn" class="<%= locale === 'bn' ? 'lang-active' : '' %>">বাং</a>
+      <a href="?lang=en" class="<%= locale === 'en' ? 'lang-active' : '' %>">EN</a>
+      <a href="?lang=de" class="<%= locale === 'de' ? 'lang-active' : '' %>">DE</a>
+    </div>
   </div>
 </nav>

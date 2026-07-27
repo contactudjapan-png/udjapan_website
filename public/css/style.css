@@ -22,7 +22,7 @@
 
 html { font-size: 16px; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Hind Siliguri', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -80,6 +80,27 @@ a:hover { text-decoration: underline; }
 }
 
 .nav-links a:hover, .nav-links .btn-link:hover { color: #fff; }
+
+.lang-picker {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 0.15rem 0.4rem;
+}
+.lang-picker a {
+  font-size: 0.75rem !important;
+  padding: 0.1rem 0.35rem;
+  border-radius: 12px;
+  color: rgba(255,255,255,0.7) !important;
+  text-decoration: none;
+}
+.lang-picker a.lang-active {
+  background: rgba(255,255,255,0.25);
+  color: #fff !important;
+  font-weight: 600;
+}
 
 /* ─── Layout ────────────────────────────────────────────────────────────────── */
 .container {

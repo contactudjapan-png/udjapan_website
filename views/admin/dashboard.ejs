@@ -29,9 +29,11 @@
     <h2>ইভেন্টসমূহ</h2>
     <div style="display:flex;gap:8px;align-items:center">
       <a href="/admin/events/new" class="btn btn-primary">+ নতুন ইভেন্ট</a>
+      <% if (useMemoryDb) { %>
       <form action="/admin/seed" method="POST" onsubmit="return confirm('পরীক্ষামূলক ডেটা যোগ করবেন? (৩টি ইভেন্ট, ২০০ নিবন্ধন, ৫০ খরচ, ২০ স্টল, ১৫ স্বেচ্ছাসেবী প্রতিটিতে)')">
         <button type="submit" class="btn btn-outline">টেস্ট ডেটা লোড করুন</button>
       </form>
+      <% } %>
     </div>
   </div>
 

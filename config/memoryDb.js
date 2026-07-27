@@ -241,6 +241,7 @@ class MemoryDB {
       email_log: [],
       advertisements: [],
       announcements: [],
+      translations: [],
     };
     this.storage = new MemoryStorage(uploadsDir);
     this.auth = new MemoryAuth();

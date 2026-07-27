@@ -14,7 +14,8 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", 'unpkg.com', 'cdnjs.cloudflare.com'],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
+      fontSrc: ["'self'", 'fonts.gstatic.com'],
       imgSrc: ["'self'", 'data:', 'blob:', '*'],
       mediaSrc: ["'self'", 'blob:'],
       connectSrc: ["'self'"],
@@ -33,7 +34,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Body parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 // Session — cookie-based, persists across serverless invocations
 app.use(cookieSession({
   name: 'udjsess',
@@ -57,6 +57,9 @@ app.use((req, res, next) => {
   res.locals.adminUser = req.session.adminUser || null;
   next();
 });
+
+// i18n — locale detection and t() helper
+app.use(require('./middleware/i18n'));
 
 // Storage proxy — serves private bucket files via signed URLs
 app.use('/storage', async (req, res) => {
@@ -86,13 +89,18 @@ app.use('/validate', validatorRouter);
 
 // 404 handler
 app.use((req, res) => {
+  if (!res.locals.t) res.locals.t = (k) => k;
+  if (!res.locals.locale) res.locals.locale = 'bn';
   res.status(404).render('public/404', { title: 'Page Not Found' });
 });
 
 // Error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).render('public/error', { title: 'Server Error', message: err.message });
+  console.error('APP ERROR:', err.message);
+  if (!res.locals.t) res.locals.t = (k) => k;
+  if (!res.locals.locale) res.locals.locale = 'bn';
+  // Send plain text error to avoid cascading template errors
+  res.status(500).type('text').send('Error: ' + err.message + '\n\n' + err.stack);
 });
 
 // ── Auto-seed in-memory DB on startup ────────────────────────────────────────
