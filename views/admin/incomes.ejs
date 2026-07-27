@@ -17,7 +17,7 @@
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>ক্যাটাগরি</th><th>বিবরণ</th><th>পরিমাণ</th><th>লেনদেন আইডি</th><th>প্রদানকারী</th><th>তারিখ</th><th>কার্যক্রম</th>
+        <th>ক্যাটাগরি</th><th>বিবরণ</th><th>পরিমাণ</th><th>লেনদেন আইডি</th><th>প্রদানকারী</th><th>পেমেন্টের তারিখ/সময়</th><th>কার্যক্রম</th>
       </tr></thead>
       <tbody>
       <% incomes.forEach(inc => { %>
@@ -31,7 +31,14 @@
             <% if (inc.payer_email) { %><br><small><%= inc.payer_email %></small><% } %>
             <% if (!inc.payer_name && !inc.payer_email) { %>—<% } %>
           </td>
-          <td><%= new Date(inc.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td style="white-space:nowrap;font-size:0.85rem">
+            <% if (inc.payment_date) { %>
+              <%= new Date(inc.payment_date).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %><br>
+              <span style="color:var(--text-muted)"><%= new Date(inc.payment_date).toLocaleTimeString('bn-BD', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit' }) %></span>
+            <% } else { %>
+              <%= new Date(inc.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %>
+            <% } %>
+          </td>
           <td>
             <form action="/admin/incomes/<%= inc.id %>/delete" method="POST" onsubmit="return confirm('এই আয় মুছে ফেলবেন?')">
               <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>

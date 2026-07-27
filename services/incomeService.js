@@ -11,7 +11,7 @@ async function getTotalByEvent(eventId) {
   return incomes.reduce((sum, i) => sum + parseFloat(i.amount || 0), 0);
 }
 
-async function createIncome(eventId, { category, description, amount, transaction_id, payer_name, payer_email }) {
+async function createIncome(eventId, { category, description, amount, transaction_id, payer_name, payer_email, payment_date }) {
   const { data, error } = await db.from('incomes').insert({
     event_id: eventId,
     category: category || null,
@@ -20,6 +20,7 @@ async function createIncome(eventId, { category, description, amount, transactio
     transaction_id: transaction_id || null,
     payer_name: payer_name || null,
     payer_email: payer_email || null,
+    payment_date: payment_date || null,
   }).select().single();
   if (error) throw new Error(error.message);
   return data;

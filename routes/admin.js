@@ -758,7 +758,9 @@ router.get('/events/:id/incomes/new', async (req, res, next) => {
 
 router.post('/events/:id/incomes/new', async (req, res, next) => {
   try {
-    await incomeService.createIncome(req.params.id, req.body);
+    const body = { ...req.body };
+    if (body.payment_date) body.payment_date = berlinToUTC(body.payment_date);
+    await incomeService.createIncome(req.params.id, body);
     req.flash('success', 'আয় যোগ হয়েছে।');
     res.redirect(`/admin/events/${req.params.id}/incomes`);
   } catch (err) {

@@ -27,9 +27,13 @@
         <input type="number" id="amount" name="amount" step="0.01" min="0" required>
       </div>
       <div class="form-group">
-        <label for="transaction_id">লেনদেন আইডি</label>
-        <input type="text" id="transaction_id" name="transaction_id" placeholder="ব্যাংক/পেমেন্ট রেফারেন্স">
+        <label for="payment_date">পেমেন্টের তারিখ ও সময়</label>
+        <input type="datetime-local" id="payment_date" name="payment_date">
       </div>
+    </div>
+    <div class="form-group">
+      <label for="transaction_id">লেনদেন আইডি</label>
+      <input type="text" id="transaction_id" name="transaction_id" placeholder="ব্যাংক/পেমেন্ট রেফারেন্স">
     </div>
     <div class="form-row">
       <div class="form-group">

@@ -43,13 +43,18 @@ async function exportExpenses(expenses) {
 }
 
 async function exportIncomes(incomes) {
-  const headers = ['ক্যাটাগরি', 'বিবরণ', 'পরিমাণ', 'লেনদেন আইডি', 'প্রদানকারী', 'ইমেইল', 'তারিখ'];
-  const rows = incomes.map(i => [
-    i.category || '', i.description || '',
-    parseFloat(i.amount || 0).toFixed(2),
-    i.transaction_id || '', i.payer_name || '', i.payer_email || '',
-    new Date(i.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }),
-  ]);
+  const headers = ['ক্যাটাগরি', 'বিবরণ', 'পরিমাণ', 'লেনদেন আইডি', 'প্রদানকারী', 'ইমেইল', 'পেমেন্টের তারিখ', 'পেমেন্টের সময়', 'এন্ট্রি তারিখ'];
+  const rows = incomes.map(i => {
+    const payDate = i.payment_date ? new Date(i.payment_date) : null;
+    return [
+      i.category || '', i.description || '',
+      parseFloat(i.amount || 0).toFixed(2),
+      i.transaction_id || '', i.payer_name || '', i.payer_email || '',
+      payDate ? payDate.toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) : '',
+      payDate ? payDate.toLocaleTimeString('bn-BD', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit' }) : '',
+      new Date(i.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }),
+    ];
+  });
   return exportToExcel('আয়', headers, rows);
 }
 

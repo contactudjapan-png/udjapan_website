@@ -25,8 +25,11 @@ CREATE TABLE IF NOT EXISTS incomes (
   transaction_id TEXT,
   payer_name TEXT,
   payer_email TEXT,
+  payment_date TIMESTAMPTZ DEFAULT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+-- If incomes table already exists:
+ALTER TABLE incomes ADD COLUMN IF NOT EXISTS payment_date TIMESTAMPTZ DEFAULT NULL;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_income_txn ON incomes(transaction_id) WHERE transaction_id IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS waitlist (
