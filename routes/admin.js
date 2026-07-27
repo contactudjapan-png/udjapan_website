@@ -138,7 +138,7 @@ router.post('/events/:id/edit/payment', upload.fields([{ name: 'paypal_qr', maxC
     if (req.files && req.files.popup_image) {
       const f = req.files.popup_image[0];
       const ext = path.extname(f.originalname).toLowerCase();
-      const url = await eventService.uploadFileToBucket('popups', `${req.params.id}/popup${ext}`, f.buffer, f.mimetype);
+      const url = await eventService.uploadFileToBucket('banners', `${req.params.id}/popup${ext}`, f.buffer, f.mimetype);
       await eventService.updatePopupUrl(req.params.id, url);
     }
     req.flash('success', 'পেমেন্ট তথ্য আপডেট হয়েছে।');
