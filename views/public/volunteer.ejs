@@ -25,6 +25,29 @@
         <label for="phone">ফোন (ঐচ্ছিক)</label>
         <input type="tel" id="phone" name="phone" placeholder="+880 1XXX XXXXXX">
       </div>
+
+      <% if (allTasks && allTasks.length > 0) { %>
+      <div class="form-group">
+        <label for="preferred_task">পছন্দের কাজ (ঐচ্ছিক)</label>
+        <select id="preferred_task" name="preferred_task">
+          <option value="">— নির্বাচন করুন —</option>
+          <% allTasks.forEach(task => { %>
+            <option value="<%= task %>"><%= task %></option>
+          <% }) %>
+        </select>
+      </div>
+      <% } %>
+
+      <div class="form-group">
+        <label for="preferred_time">পছন্দের সময় (ঐচ্ছিক)</label>
+        <select id="preferred_time" name="preferred_time">
+          <option value="">— নির্বাচন করুন —</option>
+          <% timeSlots.forEach(slot => { %>
+            <option value="<%= slot %>"><%= slot %></option>
+          <% }) %>
+        </select>
+      </div>
+
       <button type="submit" class="btn btn-outline">স্বেচ্ছাসেবক হিসেবে নাম দিন</button>
     </form>
   </div>

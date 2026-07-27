@@ -15,7 +15,7 @@
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>পারিশ্রমিক</th><th>অবস্থা</th><th>সেশন</th><th>কাজ</th><th>কার্যক্রম</th>
+        <th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>পছন্দ</th><th>পারিশ্রমিক</th><th>অবস্থা</th><th>সেশন</th><th>কাজ</th><th>কার্যক্রম</th>
       </tr></thead>
       <tbody>
       <% volunteers.forEach(vol => { %>
@@ -23,6 +23,11 @@
           <td><%= vol.name %></td>
           <td><%= vol.email %></td>
           <td><%= vol.phone || '—' %></td>
+          <td style="font-size:0.8rem">
+            <% if (vol.preferred_task) { %><div><strong>কাজ:</strong> <%= vol.preferred_task %></div><% } %>
+            <% if (vol.preferred_time) { %><div><strong>সময়:</strong> <%= vol.preferred_time %></div><% } %>
+            <% if (!vol.preferred_task && !vol.preferred_time) { %>—<% } %>
+          </td>
           <td><% if (vol.amount) { %>€<%= parseFloat(vol.amount).toFixed(2) %><% } else { %>—<% } %></td>
           <td>
             <span class="badge badge-<%= vol.status %>">
