@@ -1,0 +1,49 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <div class="section-header">
+    <h1>আয়সমূহ — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/incomes/new" class="btn btn-primary">+ আয় যোগ করুন</a>
+  </div>
+
+  <div class="total-banner">মোট আয়: <strong>€<%= total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) %></strong></div>
+
+  <% if (incomes.length === 0) { %>
+    <div class="empty-state"><p>কোনো আয় নথিভুক্ত হয়নি।</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>ক্যাটাগরি</th><th>বিবরণ</th><th>পরিমাণ</th><th>লেনদেন আইডি</th><th>প্রদানকারী</th><th>তারিখ</th><th>কার্যক্রম</th>
+      </tr></thead>
+      <tbody>
+      <% incomes.forEach(inc => { %>
+        <tr>
+          <td><%= inc.category || '—' %></td>
+          <td><%= inc.description || '—' %></td>
+          <td>€<%= parseFloat(inc.amount).toLocaleString('en-US', {minimumFractionDigits:2}) %></td>
+          <td><% if (inc.transaction_id) { %><code><%= inc.transaction_id %></code><% } else { %>—<% } %></td>
+          <td>
+            <% if (inc.payer_name) { %><%= inc.payer_name %><% } %>
+            <% if (inc.payer_email) { %><br><small><%= inc.payer_email %></small><% } %>
+            <% if (!inc.payer_name && !inc.payer_email) { %>—<% } %>
+          </td>
+          <td><%= new Date(inc.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td>
+            <form action="/admin/incomes/<%= inc.id %>/delete" method="POST" onsubmit="return confirm('এই আয় মুছে ফেলবেন?')">
+              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

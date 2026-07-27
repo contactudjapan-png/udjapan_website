@@ -1,0 +1,87 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <h1>বাল্ক পেমেন্ট আমদানি — <%= event.title %></h1>
+
+  <div class="info-box">
+    <strong>CSV/Excel ফরম্যাট:</strong> কলামগুলো হবে: <code>name</code>, <code>email</code>, <code>transaction_id</code>, <code>amount</code><br>
+    প্রথম সারি হেডার হিসেবে ব্যবহার হবে। <code>amount</code> ঐচ্ছিক।
+  </div>
+
+  <div class="admin-form-card" style="margin-bottom:2rem">
+    <form action="/admin/events/<%= event.id %>/bulk-payment" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="payment_file">পেমেন্ট ফাইল (CSV বা Excel .xlsx)</label>
+        <input type="file" id="payment_file" name="payment_file" accept=".csv,.xlsx,.xls" required>
+      </div>
+      <button type="submit" class="btn btn-primary">প্রক্রিয়া করুন</button>
+    </form>
+  </div>
+
+  <% if (locals.results) { %>
+    <div class="report-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number" style="color:var(--success)"><%= results.matched.length %></div>
+          <div class="stat-label">পরিশোধিত হয়েছে</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" style="color:var(--warning)"><%= results.alreadyPaid.length %></div>
+          <div class="stat-label">ইতিমধ্যে পরিশোধিত / এড়ানো হয়েছে</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" style="color:var(--danger)"><%= results.notFound.length %></div>
+          <div class="stat-label">পাওয়া যায়নি</div>
+        </div>
+      </div>
+
+      <% if (results.matched.length > 0) { %>
+        <h2 style="margin-top:1.5rem">পরিশোধিত (<%= results.matched.length %>)</h2>
+        <table class="admin-table">
+          <thead><tr><th>নাম</th><th>ইমেইল</th><th>লেনদেন আইডি</th><th>পরিমাণ</th></tr></thead>
+          <tbody>
+          <% results.matched.forEach(r => { %>
+            <tr>
+              <td><%= r.name %></td><td><%= r.email %></td>
+              <td><%= r.transaction_id || '—' %></td>
+              <td><% if (r.amount) { %>€<%= parseFloat(r.amount).toFixed(2) %><% } else { %>—<% } %></td>
+            </tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+
+      <% if (results.notFound.length > 0) { %>
+        <h2 style="margin-top:1.5rem;color:var(--danger)">পাওয়া যায়নি (<%= results.notFound.length %>)</h2>
+        <table class="admin-table">
+          <thead><tr><th>নাম</th><th>ইমেইল</th><th>লেনদেন আইডি</th></tr></thead>
+          <tbody>
+          <% results.notFound.forEach(r => { %>
+            <tr><td><%= r.name || '—' %></td><td><%= r.email || '—' %></td><td><%= r.transaction_id || '—' %></td></tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+
+      <% if (results.alreadyPaid.length > 0) { %>
+        <h2 style="margin-top:1.5rem;color:var(--warning)">এড়ানো হয়েছে (<%= results.alreadyPaid.length %>)</h2>
+        <table class="admin-table">
+          <thead><tr><th>নাম</th><th>ইমেইল</th><th>কারণ</th></tr></thead>
+          <tbody>
+          <% results.alreadyPaid.forEach(r => { %>
+            <tr><td><%= r.name || '—' %></td><td><%= r.email || '—' %></td><td><%= r.reason %></td></tr>
+          <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

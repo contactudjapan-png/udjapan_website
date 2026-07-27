@@ -1,0 +1,33 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <h1>অডিট লগ</h1>
+
+  <% if (logs.length === 0) { %>
+    <div class="empty-state"><p>কোনো লগ নেই।</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>সময়</th><th>ব্যবহারকারী</th><th>কার্যক্রম</th><th>সত্তা ধরন</th><th>সত্তা আইডি</th>
+      </tr></thead>
+      <tbody>
+      <% logs.forEach(log => { %>
+        <tr>
+          <td style="white-space:nowrap;font-size:0.8rem"><%= new Date(log.created_at).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td><%= log.user_email || '—' %></td>
+          <td><span class="badge badge-<%= log.action === 'delete' ? 'rejected' : log.action === 'create' ? 'approved' : 'pending' %>"><%= log.action %></span></td>
+          <td><%= log.entity_type %></td>
+          <td><% if (log.entity_id) { %><code style="font-size:0.75rem"><%= log.entity_id.slice(0,8) %>...</code><% } else { %>—<% } %></td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

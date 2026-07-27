@@ -15,7 +15,7 @@
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>অবস্থা</th><th>কাজ</th><th>কার্যক্রম</th>
+        <th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>পারিশ্রমিক</th><th>অবস্থা</th><th>সেশন</th><th>কাজ</th><th>কার্যক্রম</th>
       </tr></thead>
       <tbody>
       <% volunteers.forEach(vol => { %>
@@ -23,10 +23,45 @@
           <td><%= vol.name %></td>
           <td><%= vol.email %></td>
           <td><%= vol.phone || '—' %></td>
+          <td><% if (vol.amount) { %>€<%= parseFloat(vol.amount).toFixed(2) %><% } else { %>—<% } %></td>
           <td>
             <span class="badge badge-<%= vol.status %>">
               <% if (vol.status === 'pending') { %>অপেক্ষমাণ<% } else if (vol.status === 'approved') { %>অনুমোদিত<% } else { %>প্রত্যাখ্যাত<% } %>
             </span>
+          </td>
+          <td>
+            <% if (vol.session_token && vol.session_expires_at) { %>
+              <%
+                const expiry = new Date(vol.session_expires_at);
+                const now = new Date();
+                const mins = Math.max(0, Math.round((expiry - now) / 60000));
+                const expired = now > expiry;
+              %>
+              <% if (expired) { %>
+                <span class="badge badge-rejected">মেয়াদ শেষ</span>
+              <% } else { %>
+                <span class="badge badge-approved"><%= mins %> মিনিট</span>
+              <% } %>
+            <% } else { %>
+              <span style="color:var(--text-muted);font-size:0.8rem">নেই</span>
+            <% } %>
+            <div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">
+              <form action="/admin/volunteers/<%= vol.id %>/start-session" method="POST" style="display:inline">
+                <select name="time_limit_minutes" class="inline-input" style="width:70px">
+                  <option value="30">৩০ মি</option>
+                  <option value="60">১ ঘ</option>
+                  <option value="120" selected>২ ঘ</option>
+                  <option value="240">৪ ঘ</option>
+                  <option value="480">৮ ঘ</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-success">শুরু</button>
+              </form>
+              <% if (vol.session_token) { %>
+                <form action="/admin/volunteers/<%= vol.id %>/stop-session" method="POST">
+                  <button type="submit" class="btn btn-sm btn-danger">বন্ধ</button>
+                </form>
+              <% } %>
+            </div>
           </td>
           <td><%= vol.assigned_task || '—' %></td>
           <td class="action-cell action-cell--wrap">

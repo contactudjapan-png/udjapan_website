@@ -137,6 +137,23 @@
     </div>
   </div>
 
+  <%# উপস্থিতি বিশ্লেষণ %>
+  <div class="report-section">
+    <h2>উপস্থিতি বিশ্লেষণ</h2>
+    <div class="stats-grid stats-grid-sm">
+      <div class="stat-card"><div class="stat-number"><%= attendance.checkedIn %></div><div class="stat-label">চেক-ইন</div></div>
+      <div class="stat-card"><div class="stat-number"><%= attendance.noShow %></div><div class="stat-label">অনুপস্থিত</div></div>
+      <div class="stat-card"><div class="stat-number"><%= attendance.rate %>%</div><div class="stat-label">উপস্থিতির হার</div></div>
+      <div class="stat-card"><div class="stat-number"><%= attendance.totalScans %></div><div class="stat-label">মোট স্ক্যান</div></div>
+    </div>
+    <% if (attendance.totalScans > 0) { %>
+      <div class="chart-container" style="margin-top:1rem">
+        <canvas id="attendanceChart"></canvas>
+      </div>
+      <p class="chart-hint">ঘণ্টা অনুযায়ী চেক-ইন বিতরণ</p>
+    <% } %>
+  </div>
+
   <%# ভোটের ফলাফল %>
   <% if (report.pollResults.length > 0) { %>
   <div class="report-section">
@@ -187,6 +204,17 @@
       ],
     },
     options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
+  });
+  <% } %>
+
+  <% if (attendance.totalScans > 0) { %>
+  new Chart(document.getElementById('attendanceChart'), {
+    type: 'bar',
+    data: {
+      labels: <%- JSON.stringify(attendance.byHour.map(h => h.hour + ':00')) %>,
+      datasets: [{ label: 'চেক-ইন', data: <%- JSON.stringify(attendance.byHour.map(h => h.count)) %>, backgroundColor: 'rgba(79,134,247,0.6)', borderColor: '#4f86f7', borderWidth: 1 }],
+    },
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
   });
   <% } %>
 

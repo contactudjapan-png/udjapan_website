@@ -1,0 +1,41 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <h1>রিফান্ড যোগ করুন — <%= event.title %></h1>
+
+  <form action="/admin/events/<%= event.id %>/refunds/new" method="POST" class="admin-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="amount">রিফান্ড পরিমাণ (€) *</label>
+        <input type="number" id="amount" name="amount" step="0.01" min="0" required>
+      </div>
+      <div class="form-group">
+        <label for="transaction_id">লেনদেন আইডি</label>
+        <input type="text" id="transaction_id" name="transaction_id" placeholder="রিফান্ড রেফারেন্স">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="registration_id">নিবন্ধন (ঐচ্ছিক)</label>
+      <select id="registration_id" name="registration_id">
+        <option value="">— বেছে নিন —</option>
+        <% registrations.forEach(reg => { %>
+          <option value="<%= reg.id %>"><%= reg.name %> (<%= reg.email %>)</option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="reason">কারণ</label>
+      <textarea id="reason" name="reason" rows="3" placeholder="রিফান্ডের কারণ লিখুন..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">রিফান্ড সংরক্ষণ করুন</button>
+    <a href="/admin/events/<%= event.id %>/refunds" class="btn btn-outline">বাতিল</a>
+  </form>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

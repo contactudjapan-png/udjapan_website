@@ -23,6 +23,7 @@ async function createStall(eventId, stallData) {
     assigned_to_phone: stallData.assigned_to_phone || null,
     is_occupied: !!(stallData.assigned_to_name),
     notes: stallData.notes || null,
+    fee: stallData.fee ? parseFloat(stallData.fee) : null,
   }).select().single();
   if (error) throw new Error(error.message);
   return data;
@@ -38,6 +39,7 @@ async function updateStall(id, stallData) {
     assigned_to_phone: stallData.assigned_to_phone || null,
     is_occupied: !!(stallData.assigned_to_name),
     notes: stallData.notes || null,
+    fee: stallData.fee ? parseFloat(stallData.fee) : null,
   }).eq('id', id).select().single();
   if (error) throw new Error(error.message);
   return data;

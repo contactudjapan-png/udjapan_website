@@ -21,6 +21,14 @@ const advertisementService = require('../services/advertisementService');
 const announcementService = require('../services/announcementService');
 const settingsService = require('../services/settingsService');
 const translationService = require('../services/translationService');
+const incomeService = require('../services/incomeService');
+const bulkPaymentService = require('../services/bulkPaymentService');
+const waitlistService = require('../services/waitlistService');
+const refundService = require('../services/refundService');
+const feedbackService = require('../services/feedbackService');
+const exportService = require('../services/exportService');
+const auditService = require('../services/auditService');
+const ExcelJS = require('exceljs');
 
 // Convert a "YYYY-MM-DDTHH:MM" string entered as Berlin local time to a UTC ISO string
 function berlinToUTC(localStr) {
@@ -608,8 +616,11 @@ router.post('/events/:id/import', upload.single('excel_file'), async (req, res, 
 router.get('/events/:id/reports', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
-    const report = await reportService.getEventReport(req.params.id);
-    res.render('admin/reports', { title: `Reports — ${event.title}`, event, report });
+    const [report, attendance] = await Promise.all([
+      reportService.getEventReport(req.params.id),
+      reportService.getAttendanceStats(req.params.id),
+    ]);
+    res.render('admin/reports', { title: `Reports — ${event.title}`, event, report, attendance });
   } catch (err) { next(err); }
 });
 
@@ -722,6 +733,288 @@ router.post('/announcements/:id/delete', async (req, res, next) => {
     await announcementService.deleteAnnouncement(req.params.id);
     req.flash('success', 'ঘোষণা মুছে ফেলা হয়েছে।');
     res.redirect('/admin/announcements');
+  } catch (err) { next(err); }
+});
+
+// ─── Incomes ─────────────────────────────────────────────────────────────────
+
+router.get('/events/:id/incomes', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const incomes = await incomeService.getIncomesByEvent(req.params.id);
+    const total = incomes.reduce((s, i) => s + parseFloat(i.amount || 0), 0);
+    res.render('admin/incomes', { title: `আয় — ${event.title}`, event, incomes, total });
+  } catch (err) { next(err); }
+});
+
+router.get('/events/:id/incomes/new', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const raw = await settingsService.getIncomeCategories();
+    const categories = (raw || '').split('\n').map(c => c.trim()).filter(Boolean);
+    res.render('admin/income-form', { title: 'নতুন আয়', event, categories });
+  } catch (err) { next(err); }
+});
+
+router.post('/events/:id/incomes/new', async (req, res, next) => {
+  try {
+    await incomeService.createIncome(req.params.id, req.body);
+    req.flash('success', 'আয় যোগ হয়েছে।');
+    res.redirect(`/admin/events/${req.params.id}/incomes`);
+  } catch (err) {
+    req.flash('error', err.message);
+    res.redirect(`/admin/events/${req.params.id}/incomes/new`);
+  }
+});
+
+router.post('/incomes/:id/delete', async (req, res, next) => {
+  try {
+    const { data: income } = await db.from('incomes').select('event_id').eq('id', req.params.id).single();
+    await incomeService.deleteIncome(req.params.id);
+    req.flash('success', 'আয় মুছে ফেলা হয়েছে।');
+    res.redirect(income ? `/admin/events/${income.event_id}/incomes` : '/admin');
+  } catch (err) { next(err); }
+});
+
+router.get('/settings/income-categories', async (req, res, next) => {
+  try {
+    const incomeCategories = await settingsService.getIncomeCategories();
+    res.render('admin/income-categories', { title: 'আয়ের ক্যাটাগরি', incomeCategories });
+  } catch (err) { next(err); }
+});
+
+router.post('/settings/income-categories', async (req, res, next) => {
+  try {
+    await settingsService.setIncomeCategories((req.body.income_categories || '').trim());
+    req.flash('success', 'আয়ের ক্যাটাগরি সংরক্ষিত হয়েছে।');
+    res.redirect('/admin/settings/income-categories');
+  } catch (err) { next(err); }
+});
+
+// ─── Bulk Payment ─────────────────────────────────────────────────────────────
+
+router.get('/events/:id/bulk-payment', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    res.render('admin/bulk-payment', { title: `বাল্ক পেমেন্ট — ${event.title}`, event });
+  } catch (err) { next(err); }
+});
+
+router.post('/events/:id/bulk-payment', upload.single('payment_file'), async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    if (!req.file) {
+      req.flash('error', 'কোনো ফাইল আপলোড হয়নি।');
+      return res.redirect(`/admin/events/${req.params.id}/bulk-payment`);
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(req.file.buffer);
+
+    const rows = [];
+    const sheet = workbook.worksheets[0];
+    if (sheet) {
+      const header = sheet.getRow(1).values;
+      const colIdx = {};
+      header.forEach((h, i) => { if (h) colIdx[String(h).trim().toLowerCase()] = i; });
+      for (let r = 2; r <= sheet.rowCount; r++) {
+        const row = sheet.getRow(r).values;
+        rows.push({
+          name: colIdx.name !== undefined ? String(row[colIdx.name] || '').trim() : '',
+          email: colIdx.email !== undefined ? String(row[colIdx.email] || '').trim() : '',
+          transaction_id: colIdx.transaction_id !== undefined ? String(row[colIdx.transaction_id] || '').trim() : '',
+          amount: colIdx.amount !== undefined ? row[colIdx.amount] : null,
+        });
+      }
+    }
+
+    const results = await bulkPaymentService.processBulkPayment(req.params.id, rows);
+    res.render('admin/bulk-payment', { title: `বাল্ক পেমেন্ট — ${event.title}`, event, results });
+  } catch (err) {
+    req.flash('error', err.message);
+    res.redirect(`/admin/events/${req.params.id}/bulk-payment`);
+  }
+});
+
+// ─── Volunteer Sessions ───────────────────────────────────────────────────────
+
+router.post('/volunteers/:id/start-session', async (req, res, next) => {
+  try {
+    const vol = await volunteerService.startSession(req.params.id, parseInt(req.body.time_limit_minutes) || 120);
+    req.flash('success', 'সেশন শুরু হয়েছে।');
+    res.redirect(`/admin/events/${vol.event_id}/volunteers`);
+  } catch (err) { next(err); }
+});
+
+router.post('/volunteers/:id/stop-session', async (req, res, next) => {
+  try {
+    const vol = await volunteerService.stopSession(req.params.id);
+    req.flash('success', 'সেশন শেষ হয়েছে।');
+    res.redirect(`/admin/events/${vol.event_id}/volunteers`);
+  } catch (err) { next(err); }
+});
+
+// ─── Waitlist ─────────────────────────────────────────────────────────────────
+
+router.get('/events/:id/waitlist', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const waitlist = await waitlistService.getWaitlistByEvent(req.params.id);
+    res.render('admin/waitlist', { title: `ওয়েটলিস্ট — ${event.title}`, event, waitlist });
+  } catch (err) { next(err); }
+});
+
+router.post('/waitlist/:id/promote', async (req, res, next) => {
+  try {
+    const entry = await waitlistService.promoteToRegistration(req.params.id);
+    req.flash('success', `${entry.name} নিবন্ধনে যোগ করা হয়েছে।`);
+    res.redirect(`/admin/events/${entry.event_id}/waitlist`);
+  } catch (err) {
+    req.flash('error', err.message);
+    res.redirect('back');
+  }
+});
+
+router.post('/waitlist/:id/delete', async (req, res, next) => {
+  try {
+    const { data: entry } = await db.from('waitlist').select('event_id').eq('id', req.params.id).single();
+    await waitlistService.deleteWaitlist(req.params.id);
+    req.flash('success', 'ওয়েটলিস্ট এন্ট্রি মুছে ফেলা হয়েছে।');
+    res.redirect(entry ? `/admin/events/${entry.event_id}/waitlist` : '/admin');
+  } catch (err) { next(err); }
+});
+
+// ─── Refunds ─────────────────────────────────────────────────────────────────
+
+router.get('/events/:id/refunds', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const refunds = await refundService.getRefundsByEvent(req.params.id);
+    const total = await refundService.getTotalByEvent(req.params.id);
+    res.render('admin/refunds', { title: `রিফান্ড — ${event.title}`, event, refunds, total });
+  } catch (err) { next(err); }
+});
+
+router.get('/events/:id/refunds/new', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const registrations = await registrationService.getRegistrationsByEvent(req.params.id);
+    res.render('admin/refund-form', { title: 'নতুন রিফান্ড', event, registrations });
+  } catch (err) { next(err); }
+});
+
+router.post('/events/:id/refunds/new', async (req, res, next) => {
+  try {
+    await refundService.createRefund(req.params.id, req.body);
+    req.flash('success', 'রিফান্ড যোগ হয়েছে।');
+    res.redirect(`/admin/events/${req.params.id}/refunds`);
+  } catch (err) {
+    req.flash('error', err.message);
+    res.redirect(`/admin/events/${req.params.id}/refunds/new`);
+  }
+});
+
+router.post('/refunds/:id/delete', async (req, res, next) => {
+  try {
+    const { data: refund } = await db.from('refunds').select('event_id').eq('id', req.params.id).single();
+    await refundService.deleteRefund(req.params.id);
+    req.flash('success', 'রিফান্ড মুছে ফেলা হয়েছে।');
+    res.redirect(refund ? `/admin/events/${refund.event_id}/refunds` : '/admin');
+  } catch (err) { next(err); }
+});
+
+// ─── Financial Dashboard ──────────────────────────────────────────────────────
+
+router.get('/events/:id/financial-dashboard', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const summary = await reportService.getFinancialSummary(req.params.id);
+    res.render('admin/financial-dashboard', { title: `আর্থিক সারসংক্ষেপ — ${event.title}`, event, summary });
+  } catch (err) { next(err); }
+});
+
+// ─── Export ───────────────────────────────────────────────────────────────────
+
+router.get('/events/:id/export/registrations', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const registrations = await registrationService.getRegistrationsByEvent(req.params.id);
+    const buffer = await exportService.exportRegistrations(registrations);
+    res.setHeader('Content-Disposition', `attachment; filename="registrations-${event.title}.xlsx"`);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(Buffer.from(buffer));
+  } catch (err) { next(err); }
+});
+
+router.get('/events/:id/export/expenses', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const expenses = await expenseService.getExpensesByEvent(req.params.id);
+    const buffer = await exportService.exportExpenses(expenses);
+    res.setHeader('Content-Disposition', `attachment; filename="expenses-${event.title}.xlsx"`);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(Buffer.from(buffer));
+  } catch (err) { next(err); }
+});
+
+router.get('/events/:id/export/incomes', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const incomes = await incomeService.getIncomesByEvent(req.params.id);
+    const buffer = await exportService.exportIncomes(incomes);
+    res.setHeader('Content-Disposition', `attachment; filename="incomes-${event.title}.xlsx"`);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(Buffer.from(buffer));
+  } catch (err) { next(err); }
+});
+
+router.get('/events/:id/export/financial', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const summary = await reportService.getFinancialSummary(req.params.id);
+    const buffer = await exportService.exportFinancialSummary(summary, event.title);
+    res.setHeader('Content-Disposition', `attachment; filename="financial-${event.title}.xlsx"`);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(Buffer.from(buffer));
+  } catch (err) { next(err); }
+});
+
+// ─── Feedback ─────────────────────────────────────────────────────────────────
+
+router.get('/events/:id/feedback', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const results = await feedbackService.getAggregatedResults(req.params.id);
+    res.render('admin/feedback', { title: `ফিডব্যাক — ${event.title}`, event, results });
+  } catch (err) { next(err); }
+});
+
+router.post('/events/:id/feedback/questions', async (req, res, next) => {
+  try {
+    await feedbackService.createQuestion(req.params.id, req.body);
+    req.flash('success', 'প্রশ্ন যোগ হয়েছে।');
+    res.redirect(`/admin/events/${req.params.id}/feedback`);
+  } catch (err) {
+    req.flash('error', err.message);
+    res.redirect(`/admin/events/${req.params.id}/feedback`);
+  }
+});
+
+router.post('/feedback-questions/:id/delete', async (req, res, next) => {
+  try {
+    const { data: q } = await db.from('feedback_questions').select('event_id').eq('id', req.params.id).single();
+    await feedbackService.deleteQuestion(req.params.id);
+    req.flash('success', 'প্রশ্ন মুছে ফেলা হয়েছে।');
+    res.redirect(q ? `/admin/events/${q.event_id}/feedback` : '/admin');
+  } catch (err) { next(err); }
+});
+
+// ─── Audit Log ────────────────────────────────────────────────────────────────
+
+router.get('/audit-log', async (req, res, next) => {
+  try {
+    const logs = await auditService.getLog({ limit: 200 });
+    res.render('admin/audit-log', { title: 'অডিট লগ', logs });
   } catch (err) { next(err); }
 });
 

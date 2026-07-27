@@ -68,6 +68,11 @@ class QueryBuilder {
     return this;
   }
 
+  ilike(field, pattern) {
+    this._filters.push({ type: 'ilike', field, pattern });
+    return this;
+  }
+
   order(field, opts = {}) {
     this._orderBy = { field, ascending: opts.ascending !== false };
     return this;
@@ -93,6 +98,11 @@ class QueryBuilder {
       if (f.type === 'neq' && row[f.field] === f.value) return false;
       if (f.type === 'in' && !f.values.includes(row[f.field])) return false;
       if (f.type === 'is' && row[f.field] !== f.value) return false;
+      if (f.type === 'ilike') {
+        const val = (row[f.field] || '').toLowerCase();
+        const pat = f.pattern.toLowerCase().replace(/%/g, '');
+        if (!val.includes(pat)) return false;
+      }
     }
     return true;
   }
@@ -230,12 +240,18 @@ class MemoryDB {
       registrations: [],
       submissions: [],
       expenses: [],
+      incomes: [],
       polls: [],
       poll_options: [],
       poll_votes: [],
       stalls: [],
       stall_observations: [],
       volunteers: [],
+      waitlist: [],
+      refunds: [],
+      feedback_questions: [],
+      feedback_responses: [],
+      audit_log: [],
       app_settings: [],
       scan_logs: [],
       email_log: [],

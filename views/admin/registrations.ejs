@@ -21,14 +21,15 @@
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>নাম</th><th>ইমেইল</th><th>পেমেন্ট রেফারেন্স</th><th>অবস্থা</th><th>নিবন্ধিত</th><th>কার্যক্রম</th>
+        <th>নাম</th><th>ইমেইল</th><th>পরিমাণ</th><th>লেনদেন আইডি</th><th>অবস্থা</th><th>নিবন্ধিত</th><th>কার্যক্রম</th>
       </tr></thead>
       <tbody>
       <% registrations.forEach(reg => { %>
         <tr>
           <td><%= reg.name %></td>
           <td><%= reg.email %></td>
-          <td><%= reg.payment_reference || '—' %></td>
+          <td><% if (reg.amount) { %>€<%= parseFloat(reg.amount).toFixed(2) %><% } else { %>—<% } %></td>
+          <td><% if (reg.transaction_id) { %><code style="font-size:0.78rem"><%= reg.transaction_id %></code><% } else { %><%= reg.payment_reference || '—' %><% } %></td>
           <td>
             <span class="badge <%= reg.is_paid ? 'badge-paid' : 'badge-pending' %>">
               <%= reg.is_paid ? 'পরিশোধিত' : 'অপেক্ষমাণ' %>
@@ -38,7 +39,7 @@
           <td class="action-cell">
             <form action="/admin/registrations/<%= reg.id %>/toggle-paid" method="POST" style="display:inline">
               <button type="submit" class="btn btn-sm <%= reg.is_paid ? 'btn-outline' : 'btn-success' %>">
-                <%= reg.is_paid ? 'অপরিশোধিত করুন' : 'পরিশোধিত করুন' %>
+                <%= reg.is_paid ? 'অপরিশোধিত' : 'পরিশোধিত' %>
               </button>
             </form>
             <form action="/admin/registrations/<%= reg.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই নিবন্ধন মুছে ফেলবেন?')">

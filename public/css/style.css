@@ -38,7 +38,7 @@ a { color: var(--primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 /* ─── Navigation ────────────────────────────────────────────────────────────── */
-.nav-public, .nav-admin {
+.nav-public {
   height: var(--nav-h);
   background: var(--green);
   display: flex;
@@ -49,6 +49,124 @@ a:hover { text-decoration: underline; }
   top: 0;
   z-index: 100;
 }
+
+/* ─── Admin Sidebar ─────────────────────────────────────────────────────────── */
+.nav-admin {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 240px;
+  height: 100vh;
+  background: var(--green);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 200;
+  transition: transform 0.25s ease;
+}
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+.sidebar-close {
+  display: none;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.sidebar-section {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-group-label {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.45);
+  padding: 0.5rem 1rem 0.25rem;
+}
+.nav-admin .nav-link {
+  display: block;
+  padding: 0.45rem 1rem;
+  color: rgba(255,255,255,0.82);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-admin .nav-link:hover { background: rgba(255,255,255,0.12); color: #fff; text-decoration: none; }
+.nav-admin .nav-link.active { background: rgba(255,255,255,0.2); color: #fff; font-weight: 600; }
+.sidebar-footer {
+  margin-top: auto;
+  padding: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.sidebar-footer .btn-link {
+  color: rgba(255,255,255,0.75);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.875rem;
+  padding: 0;
+  text-align: left;
+}
+.sidebar-footer .btn-link:hover { color: #fff; }
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 300;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  width: 38px;
+  height: 38px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 150;
+}
+.admin-topbar {
+  position: fixed;
+  top: 0.75rem;
+  right: 1rem;
+  z-index: 250;
+}
+.admin-logout-btn {
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.8rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.admin-logout-btn:hover { background: var(--danger); color: #fff; border-color: var(--danger); text-decoration: none; }
 
 .nav-logo {
   color: #fff;
@@ -495,7 +613,7 @@ small { color: var(--text-muted); font-size: 0.8rem; }
 .detail-table td:first-child { font-weight: 500; color: var(--text-muted); width: 40%; }
 
 /* ─── Admin ──────────────────────────────────────────────────────────────────── */
-.admin-page { background: var(--bg); }
+.admin-page { background: var(--bg); padding-left: 240px; }
 
 .subnav {
   display: flex;
@@ -829,6 +947,15 @@ main { flex: 1; }
 @media (max-width: 860px) {
   .home-body { flex-direction: column; }
   .home-panel { width: 100%; }
+}
+
+@media (max-width: 768px) {
+  .admin-page { padding-left: 0; padding-top: 3rem; }
+  .nav-admin { transform: translateX(-240px); }
+  .nav-admin.sidebar-open { transform: translateX(0); }
+  .hamburger { display: flex; }
+  .sidebar-close { display: block; }
+  .sidebar-overlay.sidebar-open { display: block; }
 }
 
 @media (max-width: 640px) {

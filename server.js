@@ -81,9 +81,10 @@ const publicRouter = require('./routes/public');
 const adminRouter = require('./routes/admin');
 const apiRouter = require('./routes/api');
 const validatorRouter = require('./routes/validator');
+const auditLog = require('./middleware/auditLog');
 
 app.use('/', publicRouter);
-app.use('/admin', adminRouter);
+app.use('/admin', auditLog, adminRouter);
 app.use('/api', apiRouter);
 app.use('/validate', validatorRouter);
 

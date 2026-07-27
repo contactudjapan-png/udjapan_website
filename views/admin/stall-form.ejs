@@ -36,6 +36,10 @@
         <input type="tel" id="assigned_to_phone" name="assigned_to_phone" value="<%= stall ? (stall.assigned_to_phone || '') : '' %>">
       </div>
     </div>
+    <div class="form-group">
+      <label for="fee">স্টল ফি (€)</label>
+      <input type="number" id="fee" name="fee" step="0.01" min="0" value="<%= stall ? (stall.fee || '') : '' %>" placeholder="0.00">
+    </div>
     <hr>
     <div class="form-group">
       <label for="notes">পর্যবেক্ষণ নোট</label>

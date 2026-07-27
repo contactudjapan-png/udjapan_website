@@ -5,6 +5,73 @@ const volunteerService = require('./volunteerService');
 const submissionService = require('./submissionService');
 const db = require('../config/db');
 
+async function getFinancialSummary(eventId) {
+  const [registrations, expenses] = await Promise.all([
+    registrationService.getRegistrationsByEvent(eventId),
+    expenseService.getExpensesByEvent(eventId),
+  ]);
+
+  const { data: incomes } = await db.from('incomes').select('*').eq('event_id', eventId);
+  const { data: refunds } = await db.from('refunds').select('*').eq('event_id', eventId);
+
+  const totalIncome = (incomes || []).reduce((s, i) => s + parseFloat(i.amount || 0), 0);
+  const totalExpenses = expenses.reduce((s, e) => s + parseFloat(e.amount || 0), 0);
+  const totalRefunds = (refunds || []).reduce((s, r) => s + parseFloat(r.amount || 0), 0);
+  const netProfit = totalIncome - totalExpenses - totalRefunds;
+
+  const paidCount = registrations.filter(r => r.is_paid).length;
+  const unpaidCount = registrations.length - paidCount;
+
+  // Income by category
+  const incomeCatMap = {};
+  (incomes || []).forEach(i => {
+    const cat = i.category || 'অন্যান্য';
+    incomeCatMap[cat] = (incomeCatMap[cat] || 0) + parseFloat(i.amount || 0);
+  });
+  const incomeByCategory = Object.entries(incomeCatMap).map(([category, total]) => ({
+    category, total, pct: totalIncome > 0 ? (total / totalIncome) * 100 : 0,
+  })).sort((a, b) => b.total - a.total);
+
+  // Expense by category
+  const expCatMap = {};
+  expenses.forEach(e => {
+    const cat = e.category || 'অন্যান্য';
+    expCatMap[cat] = (expCatMap[cat] || 0) + parseFloat(e.amount || 0);
+  });
+  const expenseByCategory = Object.entries(expCatMap).map(([category, total]) => ({
+    category, total, pct: totalExpenses > 0 ? (total / totalExpenses) * 100 : 0,
+  })).sort((a, b) => b.total - a.total);
+
+  return {
+    totalIncome, totalExpenses, totalRefunds, netProfit,
+    paidCount, unpaidCount,
+    incomeByCategory, expenseByCategory,
+    incomes: incomes || [],
+    expenses,
+    refunds: refunds || [],
+  };
+}
+
+async function getAttendanceStats(eventId) {
+  const { data: logs } = await db.from('scan_logs').select('*').eq('event_id', eventId);
+  const registrations = await registrationService.getRegistrationsByEvent(eventId);
+  const scannedTokens = new Set((logs || []).map(l => l.qr_token));
+
+  const checkedIn = registrations.filter(r => scannedTokens.has(r.qr_token)).length;
+  const noShow = registrations.length - checkedIn;
+  const rate = registrations.length > 0 ? ((checkedIn / registrations.length) * 100).toFixed(1) : 0;
+
+  // Check-in by hour
+  const hourMap = {};
+  (logs || []).forEach(log => {
+    const h = new Date(log.scanned_at).getHours();
+    hourMap[h] = (hourMap[h] || 0) + 1;
+  });
+  const byHour = Array.from({ length: 24 }, (_, h) => ({ hour: h, count: hourMap[h] || 0 }));
+
+  return { checkedIn, noShow, rate, totalRegistrations: registrations.length, byHour, totalScans: (logs || []).length };
+}
+
 // Compute 3-period simple moving average for a sorted series [{date, value}]
 function movingAverage(series, window = 3) {
   return series.map((point, i) => {
@@ -171,4 +238,4 @@ async function getDashboardStats() {
   return { totalEvents, activeEvents, totalRegistrations, paidRegistrations, eventStats };
 }
 
-module.exports = { getEventReport, getDashboardStats };
+module.exports = { getEventReport, getDashboardStats, getFinancialSummary, getAttendanceStats };

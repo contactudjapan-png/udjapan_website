@@ -1,0 +1,43 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <div class="section-header">
+    <h1>রিফান্ডসমূহ — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/refunds/new" class="btn btn-primary">+ রিফান্ড যোগ করুন</a>
+  </div>
+
+  <div class="total-banner">মোট রিফান্ড: <strong>€<%= total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) %></strong></div>
+
+  <% if (refunds.length === 0) { %>
+    <div class="empty-state"><p>কোনো রিফান্ড নথিভুক্ত হয়নি।</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>পরিমাণ</th><th>কারণ</th><th>লেনদেন আইডি</th><th>তারিখ</th><th>কার্যক্রম</th>
+      </tr></thead>
+      <tbody>
+      <% refunds.forEach(r => { %>
+        <tr>
+          <td style="color:var(--danger);font-weight:600">-€<%= parseFloat(r.amount).toLocaleString('en-US', {minimumFractionDigits:2}) %></td>
+          <td><%= r.reason || '—' %></td>
+          <td><% if (r.transaction_id) { %><code><%= r.transaction_id %></code><% } else { %>—<% } %></td>
+          <td><%= new Date(r.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td>
+            <form action="/admin/refunds/<%= r.id %>/delete" method="POST" onsubmit="return confirm('এই রিফান্ড মুছে ফেলবেন?')">
+              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

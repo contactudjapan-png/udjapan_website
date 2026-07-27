@@ -9,6 +9,7 @@ const volunteerService = require('../services/volunteerService');
 const submissionService = require('../services/submissionService');
 const advertisementService = require('../services/advertisementService');
 const announcementService = require('../services/announcementService');
+const feedbackService = require('../services/feedbackService');
 
 
 
@@ -155,6 +156,33 @@ router.post(`/event/:id/volunteer`, async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+// Feedback (public)
+router.get('/event/:id/feedback', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const questions = await feedbackService.getQuestionsByEvent(req.params.id);
+    res.render('public/feedback', { title: `ফিডব্যাক — ${event.title}`, event, questions });
+  } catch (err) { next(err); }
+});
+
+router.post('/event/:id/feedback', async (req, res, next) => {
+  try {
+    const { respondent_email, ...answers } = req.body;
+    const questions = await feedbackService.getQuestionsByEvent(req.params.id);
+    for (const q of questions) {
+      const val = answers[`q_${q.id}`];
+      if (!val) continue;
+      await feedbackService.submitResponse(req.params.id, q.id, {
+        rating: q.type === 'rating' ? val : null,
+        text_response: q.type === 'text' ? val : null,
+        respondent_email: respondent_email || null,
+      });
+    }
+    req.flash('success', 'আপনার ফিডব্যাকের জন্য ধন্যবাদ!');
+    res.redirect(`/event/${req.params.id}/feedback`);
+  } catch (err) { next(err); }
 });
 
 module.exports = router;

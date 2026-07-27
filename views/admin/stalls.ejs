@@ -20,7 +20,7 @@
     </div>
     <table class="admin-table">
       <thead><tr>
-        <th>স্টলের নাম</th><th>অবস্থান</th><th>বরাদ্দ</th><th>অবস্থা</th><th>কার্যক্রম</th>
+        <th>স্টলের নাম</th><th>অবস্থান</th><th>বরাদ্দ</th><th>ফি</th><th>অবস্থা</th><th>কার্যক্রম</th>
       </tr></thead>
       <tbody>
       <% stalls.forEach(stall => { %>
@@ -34,6 +34,7 @@
               <% if (stall.assigned_to_phone) { %><br><small><%= stall.assigned_to_phone %></small><% } %>
             <% } else { %>—<% } %>
           </td>
+          <td><% if (stall.fee) { %>€<%= parseFloat(stall.fee).toFixed(2) %><% } else { %>—<% } %></td>
           <td><span class="badge <%= stall.is_occupied ? 'badge-closed' : 'badge-open' %>"><%= stall.is_occupied ? 'দখলকৃত' : 'খালি' %></span></td>
           <td class="action-cell">
             <button class="btn btn-sm obs-btn"

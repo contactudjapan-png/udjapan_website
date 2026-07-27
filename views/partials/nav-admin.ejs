@@ -1,17 +1,60 @@
-<nav class="nav-admin">
-  <a href="/admin" class="nav-logo">উদযাপন অ্যাডমিন</a>
-  <div class="nav-links">
-    <a href="/admin">ড্যাশবোর্ড</a>
-    <a href="/admin/events">ইভেন্টসমূহ</a>
-    <a href="/admin/ads">বিজ্ঞাপন</a>
-    <a href="/admin/announcements">ঘোষণা</a>
-    <a href="/admin/settings/volunteer-tasks">স্বেচ্ছাসেবী কাজ</a>
-    <a href="/admin/settings/stall-obs-types">স্টল পর্যবেক্ষণ</a>
-    <a href="/admin/settings/expense-categories">খরচ ক্যাটাগরি</a>
-    <a href="/admin/translations">অনুবাদ</a>
-    <a href="/" target="_blank">সাইট দেখুন</a>
-    <form action="/admin/logout" method="POST" style="display:inline">
-      <button type="submit" class="btn-link">লগআউট</button>
-    </form>
+<nav class="nav-admin" id="sidebar">
+  <div class="sidebar-header">
+    <a href="/admin" class="nav-logo">উদযাপন</a>
+    <button class="sidebar-close" id="sidebarClose" aria-label="Close">&times;</button>
+  </div>
+
+  <div class="sidebar-section">
+    <span class="sidebar-group-label">প্রধান</span>
+    <a href="/admin" class="nav-link">ড্যাশবোর্ড</a>
+    <a href="/admin/events" class="nav-link">ইভেন্টসমূহ</a>
+  </div>
+
+  <div class="sidebar-section">
+    <span class="sidebar-group-label">বিষয়বস্তু</span>
+    <a href="/admin/ads" class="nav-link">বিজ্ঞাপন</a>
+    <a href="/admin/announcements" class="nav-link">ঘোষণা</a>
+  </div>
+
+  <div class="sidebar-section">
+    <span class="sidebar-group-label">সেটিংস</span>
+    <a href="/admin/settings/volunteer-tasks" class="nav-link">স্বেচ্ছাসেবী কাজ</a>
+    <a href="/admin/settings/stall-obs-types" class="nav-link">স্টল পর্যবেক্ষণ</a>
+    <a href="/admin/settings/expense-categories" class="nav-link">খরচ ক্যাটাগরি</a>
+    <a href="/admin/settings/income-categories" class="nav-link">আয় ক্যাটাগরি</a>
+    <a href="/admin/translations" class="nav-link">অনুবাদ</a>
+  </div>
+
+  <div class="sidebar-section">
+    <span class="sidebar-group-label">লগ</span>
+    <a href="/admin/audit-log" class="nav-link">অডিট লগ</a>
+  </div>
+
+  <div class="sidebar-footer">
+    <a href="/" target="_blank" class="nav-link" style="padding:0;color:rgba(255,255,255,0.75);font-size:0.85rem">সাইট দেখুন ↗</a>
   </div>
 </nav>
+
+<!-- Logout (top-right) -->
+<div class="admin-topbar">
+  <form action="/admin/logout" method="POST">
+    <button type="submit" class="btn btn-sm btn-outline admin-logout-btn">লগআউট</button>
+  </form>
+</div>
+
+<button class="hamburger" id="hamburger" aria-label="মেনু">&#9776;</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<script>
+(function(){
+  var sidebar = document.getElementById('sidebar');
+  var hamburger = document.getElementById('hamburger');
+  var overlay = document.getElementById('sidebarOverlay');
+  var closeBtn = document.getElementById('sidebarClose');
+  function open() { sidebar.classList.add('sidebar-open'); overlay.classList.add('sidebar-open'); }
+  function close() { sidebar.classList.remove('sidebar-open'); overlay.classList.remove('sidebar-open'); }
+  if (hamburger) hamburger.addEventListener('click', open);
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  if (overlay) overlay.addEventListener('click', close);
+})();
+</script>

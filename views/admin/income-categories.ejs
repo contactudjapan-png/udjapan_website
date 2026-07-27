@@ -1,0 +1,21 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <h1>আয়ের ক্যাটাগরি</h1>
+  <p style="color:var(--text-muted)">এই তালিকা আয় যোগ করার ফর্মে ড্রপডাউনে দেখাবে।</p>
+
+  <form action="/admin/settings/income-categories" method="POST" class="admin-form" style="max-width:480px">
+    <div class="form-group">
+      <label for="income_categories">ক্যাটাগরিসমূহ (প্রতি লাইনে একটি)</label>
+      <textarea id="income_categories" name="income_categories" rows="10" placeholder="যেমন:&#10;নিবন্ধন ফি&#10;স্টল ফি&#10;অনুদান&#10;স্পনসরশিপ&#10;অন্যান্য"><%= incomeCategories %></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">সংরক্ষণ করুন</button>
+  </form>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

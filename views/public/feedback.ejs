@@ -1,0 +1,71 @@
+<%- include('../partials/head') %>
+<body>
+<%- include('../partials/nav-public') %>
+<%- include('../partials/flash') %>
+
+<main class="container" style="max-width:700px;margin:2rem auto;padding:0 1rem">
+  <h1 style="margin-bottom:0.25rem">ফিডব্যাক</h1>
+  <p style="color:var(--text-muted);margin-bottom:2rem"><%= event.title %></p>
+
+  <% if (questions.length === 0) { %>
+    <div class="empty-state"><p>এই ইভেন্টের জন্য এখনো কোনো প্রশ্ন নেই।</p></div>
+  <% } else { %>
+    <form action="/event/<%= event.id %>/feedback" method="POST">
+      <div class="admin-form-card" style="margin-bottom:1.5rem">
+        <div class="form-group">
+          <label for="respondent_email">আপনার ইমেইল (ঐচ্ছিক)</label>
+          <input type="email" id="respondent_email" name="respondent_email" placeholder="your@email.com">
+        </div>
+      </div>
+
+      <% questions.forEach((q, idx) => { %>
+        <div class="admin-form-card" style="margin-bottom:1rem">
+          <p style="font-weight:600;margin-bottom:0.75rem"><%= idx + 1 %>. <%= q.question %></p>
+
+          <% if (q.type === 'rating') { %>
+            <div class="rating-input" style="display:flex;gap:0.5rem">
+              <% for (let i = 1; i <= 5; i++) { %>
+                <label style="display:flex;flex-direction:column;align-items:center;cursor:pointer;gap:0.25rem">
+                  <input type="radio" name="q_<%= q.id %>" value="<%= i %>" style="display:none">
+                  <span class="star-btn" data-val="<%= i %>" style="font-size:2rem;color:#ccc;cursor:pointer">★</span>
+                  <span style="font-size:0.75rem;color:var(--text-muted)"><%= i %></span>
+                </label>
+              <% } %>
+            </div>
+          <% } else { %>
+            <textarea name="q_<%= q.id %>" rows="3" placeholder="আপনার মন্তব্য লিখুন..." style="width:100%;resize:vertical"></textarea>
+          <% } %>
+        </div>
+      <% }) %>
+
+      <button type="submit" class="btn btn-primary" style="width:100%">ফিডব্যাক জমা দিন</button>
+    </form>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+
+<script>
+document.querySelectorAll('.rating-input').forEach(group => {
+  const stars = group.querySelectorAll('.star-btn');
+  stars.forEach((star, i) => {
+    star.addEventListener('click', () => {
+      const radio = group.querySelectorAll('input[type=radio]')[i];
+      radio.checked = true;
+      stars.forEach((s, j) => {
+        s.style.color = j <= i ? 'var(--warning, #f59e0b)' : '#ccc';
+      });
+    });
+    star.addEventListener('mouseover', () => {
+      stars.forEach((s, j) => { s.style.color = j <= i ? 'var(--warning, #f59e0b)' : '#ccc'; });
+    });
+    star.addEventListener('mouseout', () => {
+      const checked = group.querySelector('input[type=radio]:checked');
+      const checkedIdx = checked ? parseInt(checked.value) - 1 : -1;
+      stars.forEach((s, j) => { s.style.color = j <= checkedIdx ? 'var(--warning, #f59e0b)' : '#ccc'; });
+    });
+  });
+});
+</script>
+</body>
+</html>

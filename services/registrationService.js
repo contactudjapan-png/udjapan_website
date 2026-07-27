@@ -39,16 +39,28 @@ async function getRegistrationByToken(token) {
   return null;
 }
 
-async function createRegistration(eventId, { name, email, payment_reference }) {
+async function createRegistration(eventId, { name, email, payment_reference, amount, transaction_id }) {
   const qr_token = crypto.randomUUID();
   const { data, error } = await db.from('registrations').insert({
     event_id: eventId,
     name,
     email,
     payment_reference: payment_reference || '',
+    amount: amount ? parseFloat(amount) : null,
+    transaction_id: transaction_id || null,
     is_paid: false,
     qr_token,
   }).select().single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+async function updateRegistrationPayment(id, { is_paid, transaction_id, amount }) {
+  const update = {};
+  if (is_paid !== undefined) update.is_paid = is_paid;
+  if (transaction_id !== undefined) update.transaction_id = transaction_id;
+  if (amount !== undefined) update.amount = amount ? parseFloat(amount) : null;
+  const { data, error } = await db.from('registrations').update(update).eq('id', id).select().single();
   if (error) throw new Error(error.message);
   return data;
 }
@@ -82,6 +94,7 @@ module.exports = {
   getRegistrationById,
   getRegistrationByToken,
   createRegistration,
+  updateRegistrationPayment,
   togglePaid,
   deleteRegistration,
   countByEvent,
