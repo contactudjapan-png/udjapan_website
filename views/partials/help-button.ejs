@@ -1,6 +1,6 @@
-<% if (true) { %>
+<% if (locals.currentEvent && locals.currentEvent.is_active) { %>
 <% var _volName = (locals.volunteerUser && locals.volunteerUser.name) ? locals.volunteerUser.name : ''; %>
-<% var _helpEventId = (locals.currentEvent && locals.currentEvent.id) || ''; %>
+<% var _helpEventId = locals.currentEvent.id; %>
 
 <button class="help-sos-btn" id="helpSosBtn" title="জরুরি সাহায্য">🆘</button>
 
