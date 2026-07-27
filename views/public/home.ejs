@@ -62,8 +62,79 @@
     <% if (_event.description) { %>
     <section class="home-about">
       <h2><%- t('home.about') %></h2>
-      <div><%- _event.description.replace(/\n/g, '<br>') %></div>
+      <div id="eventDesc"><%- _event.description %></div>
     </section>
+    <% } %>
+
+    <% if (_event.early_bird_deadline || _event.mid_deadline || _event.event_date) { %>
+    <script>
+    (function() {
+      var TIERS = [
+        { keywords: ['হলদে বউঃ','হলদে বউ:'], deadline: <%- _event.early_bird_deadline ? JSON.stringify(new Date(_event.early_bird_deadline).getTime()) : 'null' %> },
+        { keywords: ['নীলকণ্ঠঃ','নীলকণ্ঠ:'],  deadline: <%- _event.mid_deadline ? JSON.stringify(new Date(_event.mid_deadline).getTime()) : 'null' %> },
+        { keywords: ['কোকিলাঃ','কোকিলা:'],   deadline: <%- _event.event_date ? JSON.stringify(new Date(_event.event_date).getTime()) : 'null' %> },
+      ];
+      var badges = [];
+
+      function fmt(ms) {
+        if (ms <= 0) return null;
+        var d = Math.floor(ms / 86400000);
+        var h = Math.floor((ms % 86400000) / 3600000);
+        var m = Math.floor((ms % 3600000) / 60000);
+        var s = Math.floor((ms % 60000) / 1000);
+        if (d >= 2) return d + 'দ ' + h + 'ঘ ' + m + 'মি';
+        if (d === 1) return '১দ ' + h + 'ঘ ' + m + 'মি';
+        if (h > 0)  return h + 'ঘ ' + m + 'মি ' + s + 'সে';
+        return m + 'মি ' + s + 'সে';
+      }
+
+      var descEl = document.getElementById('eventDesc');
+      if (!descEl) return;
+
+      TIERS.forEach(function(tier) {
+        if (!tier.deadline) return;
+        var strongs = descEl.querySelectorAll('strong, b');
+        for (var i = 0; i < strongs.length; i++) {
+          var txt = strongs[i].textContent;
+          var matched = tier.keywords.some(function(kw) { return txt.indexOf(kw) !== -1; });
+          if (matched) {
+            var badge = document.createElement('span');
+            badge.className = 'tier-badge';
+            strongs[i].parentNode.insertBefore(badge, strongs[i].nextSibling);
+            badges.push({ el: badge, deadline: tier.deadline });
+            break;
+          }
+        }
+      });
+
+      function tick() {
+        var now = Date.now();
+        badges.forEach(function(b) {
+          var rem = b.deadline - now;
+          var label = fmt(rem);
+          if (!label) {
+            b.el.textContent = '⏰ শেষ';
+            b.el.className = 'tier-badge tier-badge--expired';
+          } else if (rem < 6 * 3600000) {
+            b.el.textContent = '⏰ শেষ হচ্ছে: ' + label;
+            b.el.className = 'tier-badge tier-badge--urgent';
+          } else if (rem < 24 * 3600000) {
+            b.el.textContent = '⏰ শেষ হচ্ছে: ' + label;
+            b.el.className = 'tier-badge tier-badge--warning';
+          } else if (rem < 3 * 86400000) {
+            b.el.textContent = '⏰ শেষ হচ্ছে: ' + label;
+            b.el.className = 'tier-badge tier-badge--soon';
+          } else {
+            b.el.textContent = '⏰ শেষ হচ্ছে: ' + label;
+            b.el.className = 'tier-badge tier-badge--normal';
+          }
+        });
+      }
+
+      tick();
+      setInterval(tick, 1000);
+    })();
+    </script>
     <% } %>
 
     <!-- Other Events -->
