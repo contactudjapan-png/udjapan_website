@@ -1,6 +1,9 @@
 <nav class="nav-public">
   <a href="/" class="nav-logo"><%- t('nav.logo') %></a>
-  <div class="nav-links">
+  <button class="nav-pub-toggle" aria-label="Menu" onclick="this.closest('nav').querySelector('.nav-links').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="pubNavLinks">
     <a href="/"><%- t('nav.events') %></a>
     <a href="/privacy"><%- t('nav.privacy') %></a>
     <a href="/validate/login"><%- t('nav.volunteer') %></a>

@@ -137,8 +137,8 @@ function toBerlinInput(dateStr) {
     </form>
   </div>
 
-  <hr>
-  <div class="danger-zone">
+  <hr style="margin-top:3rem">
+  <div class="danger-zone" style="margin-top:2rem">
     <h2>বিপদ অঞ্চল</h2>
     <form action="/admin/events/<%= event.id %>/delete" method="POST" onsubmit="return confirm('এই ইভেন্ট এবং এর সমস্ত ডেটা স্থায়ীভাবে মুছে ফেলবেন?')">
       <button type="submit" class="btn btn-danger">ইভেন্ট মুছুন</button>
