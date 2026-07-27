@@ -55,18 +55,21 @@ router.get('/login', (req, res) => {
 router.post('/login', async (req, res) => {
   const email = (req.body.email || '').trim().toLowerCase();
   if (!email) {
+    req.session.volunteerUser = null;
     req.flash('error', 'Email is required.');
     return res.redirect('/validate/login');
   }
   try {
     const { data: volunteers } = await db.from('volunteers').select('*').eq('email', email).eq('status', 'approved');
     if (!volunteers || volunteers.length === 0) {
+      req.session.volunteerUser = null;
       req.flash('error', 'No approved volunteer found with that email.');
       return res.redirect('/validate/login');
     }
     const eventIds = volunteers.map(v => v.event_id);
     const { data: activeEvents } = await db.from('events').select('id').eq('is_active', true).in('id', eventIds);
     if (!activeEvents || activeEvents.length === 0) {
+      req.session.volunteerUser = null;
       req.flash('error', 'You are not assigned to any active event.');
       return res.redirect('/validate/login');
     }
@@ -77,6 +80,7 @@ router.post('/login', async (req, res) => {
     const hasReg = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
     const hasQR = tasks.some(t => t.includes('qr') || t.includes('যাচাই') || t.includes('validation') || t.includes('scanner'));
     if (!hasStall && !hasReg && !hasQR) {
+      req.session.volunteerUser = null;
       req.flash('error', 'আপনার কাজের ধরন স্বেচ্ছাসেবী কর্নারে প্রবেশযোগ্য নয়। অ্যাডমিনের সাথে যোগাযোগ করুন।');
       return res.redirect('/validate/login');
     }
@@ -88,6 +92,7 @@ router.post('/login', async (req, res) => {
     };
     res.redirect(getVolunteerRedirect(req.session));
   } catch (err) {
+    req.session.volunteerUser = null;
     req.flash('error', 'Login error. Please try again.');
     res.redirect('/validate/login');
   }
