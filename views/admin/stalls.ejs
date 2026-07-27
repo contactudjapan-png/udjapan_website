@@ -20,7 +20,7 @@
     </div>
     <table class="admin-table">
       <thead><tr>
-        <th>স্টলের নাম</th><th>অবস্থান</th><th>বরাদ্দ</th><th>অবস্থা</th><th>পর্যবেক্ষণ</th><th>কার্যক্রম</th>
+        <th>স্টলের নাম</th><th>অবস্থান</th><th>বরাদ্দ</th><th>অবস্থা</th><th>কার্যক্রম</th>
       </tr></thead>
       <tbody>
       <% stalls.forEach(stall => { %>
@@ -35,30 +35,12 @@
             <% } else { %>—<% } %>
           </td>
           <td><span class="badge <%= stall.is_occupied ? 'badge-closed' : 'badge-open' %>"><%= stall.is_occupied ? 'দখলকৃত' : 'খালি' %></span></td>
-          <td>
-            <% if (stall.observations && stall.observations.length > 0) { %>
-              <details>
-                <summary style="cursor:pointer;font-size:0.85rem"><%= stall.observations.length %> পর্যবেক্ষণ</summary>
-                <table class="admin-table" style="margin-top:0.5rem;font-size:0.8rem">
-                  <thead><tr><th>সময়</th><th>ধরন</th><th>রেটিং</th><th>নোট</th><th>দ্বারা</th></tr></thead>
-                  <tbody>
-                  <% stall.observations.forEach(obs => { %>
-                    <tr>
-                      <td style="white-space:nowrap"><%= new Date(obs.created_at).toLocaleString('bn-BD') %></td>
-                      <td><%= obs.observation_type || '—' %></td>
-                      <td><% if (obs.rating) { %><%= obs.rating %>/১০<% } else { %>—<% } %></td>
-                      <td><%= obs.notes || '—' %></td>
-                      <td><small><%= obs.submitted_by %></small></td>
-                    </tr>
-                  <% }) %>
-                  </tbody>
-                </table>
-              </details>
-            <% } else { %>
-              <span style="color:var(--text-muted);font-size:0.85rem">—</span>
-            <% } %>
-          </td>
           <td class="action-cell">
+            <button class="btn btn-sm" onclick="showObs(this)"
+              data-name="<%= stall.stall_name %>"
+              data-obs="<%- JSON.stringify(stall.observations || []) %>">
+              পর্যবেক্ষণ (<%= stall.observations ? stall.observations.length : 0 %>)
+            </button>
             <a href="/admin/stalls/<%= stall.id %>/edit" class="btn btn-sm">সম্পাদনা/বরাদ্দ</a>
             <form action="/admin/stalls/<%= stall.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই স্টল মুছে ফেলবেন?')">
               <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
@@ -70,6 +52,46 @@
     </table>
   <% } %>
 </main>
+
+<!-- Observations modal -->
+<div id="obs-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;padding:2rem;overflow-y:auto" onclick="closeObs(event)">
+  <div style="background:#fff;border-radius:8px;max-width:780px;margin:0 auto;padding:1.5rem;position:relative">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <h2 id="obs-title" style="margin:0"></h2>
+      <button onclick="document.getElementById('obs-backdrop').style.display='none'" class="btn btn-outline" style="padding:0.2rem 0.6rem;font-size:1.1rem">&times;</button>
+    </div>
+    <div id="obs-body"></div>
+  </div>
+</div>
+
+<script>
+function showObs(btn) {
+  const name = btn.dataset.name;
+  const obs = JSON.parse(btn.dataset.obs);
+  document.getElementById('obs-title').textContent = 'পর্যবেক্ষণ — ' + name;
+  const body = document.getElementById('obs-body');
+  if (!obs.length) {
+    body.innerHTML = '<p style="color:#888">এখনো কোনো পর্যবেক্ষণ নেই।</p>';
+  } else {
+    const stars = (r) => r ? '★'.repeat(r) + '☆'.repeat(10 - r) + ' ' + r + '/১০' : '—';
+    body.innerHTML = '<table class="admin-table"><thead><tr><th>সময়</th><th>ধরন</th><th>রেটিং</th><th>নোট</th><th>দ্বারা</th></tr></thead><tbody>' +
+      obs.map(o => `<tr>
+        <td style="white-space:nowrap">${new Date(o.created_at).toLocaleString('bn-BD')}</td>
+        <td>${o.observation_type || '—'}</td>
+        <td style="color:#f5b301;letter-spacing:1px">${stars(o.rating)}</td>
+        <td>${o.notes || '—'}</td>
+        <td><small>${o.submitted_by}</small></td>
+      </tr>`).join('') +
+    '</tbody></table>';
+  }
+  document.getElementById('obs-backdrop').style.display = 'block';
+}
+function closeObs(e) {
+  if (e.target === document.getElementById('obs-backdrop')) {
+    document.getElementById('obs-backdrop').style.display = 'none';
+  }
+}
+</script>
 
 <%- include('../partials/footer') %>
 </body>

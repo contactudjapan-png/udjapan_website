@@ -283,13 +283,13 @@ router.get('/events/:id/stalls', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
     const stalls = await stallService.getStallsByEvent(req.params.id);
-    const stallsWithObs = await Promise.all(
+    const stallsWithCount = await Promise.all(
       stalls.map(async s => ({
         ...s,
         observations: await stallObservationService.getObservationsByStall(s.id),
       }))
     );
-    res.render('admin/stalls', { title: `Stalls — ${event.title}`, event, stalls: stallsWithObs });
+    res.render('admin/stalls', { title: `Stalls — ${event.title}`, event, stalls: stallsWithCount });
   } catch (err) { next(err); }
 });
 
