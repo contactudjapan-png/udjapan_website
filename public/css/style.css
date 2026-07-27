@@ -413,59 +413,6 @@ a:hover { text-decoration: underline; }
 .home-about h2 { margin-bottom: 0.75rem; }
 .home-about p { color: var(--text-muted); line-height: 1.8; }
 
-/* ─── Home – About Full-Width ────────────────────────────────────────────────── */
-.home-about-full {
-  width: 100%;
-  padding: 2.5rem 2rem;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-  font-size: 1.1rem;
-  line-height: 1.85;
-  color: var(--text);
-}
-.home-about-full h2 { margin-bottom: 1rem; font-size: 1.4rem; color: var(--primary); }
-
-/* ─── Home – Live Hero ───────────────────────────────────────────────────────── */
-.home-hero-live {
-  position: relative;
-  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 60%, #1a4a35 100%);
-  color: #fff;
-  padding: 3rem 2rem;
-  text-align: center;
-  overflow: hidden;
-}
-.home-hero-live::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.25);
-}
-.home-hero-live-inner {
-  position: relative;
-  max-width: 700px;
-  margin: 0 auto;
-}
-.home-hero-live h1 { font-size: 2rem; margin: 1rem 0 0.5rem; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
-.home-hero-live .live-meta { opacity: 0.88; margin-bottom: 1.5rem; font-size: 1rem; }
-.home-hero-live .live-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-.home-hero-live .live-actions a { padding: 0.65rem 1.4rem; border-radius: var(--radius); font-weight: 600; text-decoration: none; }
-.live-badge {
-  display: inline-block;
-  background: #c62828;
-  color: #fff;
-  border-radius: 4px;
-  padding: 3px 10px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  animation: live-pulse 1.5s ease-in-out infinite;
-}
-@keyframes live-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.55; }
-}
-
 /* ─── Home – Side Panels ─────────────────────────────────────────────────────── */
 .home-panel {
   width: 220px;
