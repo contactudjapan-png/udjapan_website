@@ -7,13 +7,23 @@ const eventService = require('../services/eventService');
 router.get('/validate/:token', async (req, res) => {
   try {
     const token = req.params.token;
-    console.log('[validate] token:', token);
+    const db = require('../config/db');
     const registration = await registrationService.getRegistrationByToken(token);
-    console.log('[validate] found:', !!registration, registration ? registration.id : null);
-    if (!registration) {
-      return res.json({ valid: false, message: 'Invalid QR code' });
-    }
-    const event = await eventService.getEventById(registration.event_id);
+    const valid = !!registration;
+    const event = valid ? await eventService.getEventById(registration.event_id) : null;
+
+    // Log the scan
+    await db.from('scan_logs').insert({
+      qr_token: token,
+      registration_id: registration ? registration.id : null,
+      event_id: registration ? registration.event_id : null,
+      name: registration ? registration.name : null,
+      result: valid ? 'valid' : 'invalid',
+      scanned_at: new Date().toISOString(),
+    });
+
+    if (!valid) return res.json({ valid: false, message: 'Invalid QR code' });
+
     res.json({
       valid: true,
       name: registration.name,

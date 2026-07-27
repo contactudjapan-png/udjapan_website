@@ -1,0 +1,36 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <div class="section-header">
+    <h1>স্ক্যান লগ — <%= event.title %></h1>
+    <span style="color:var(--text-muted)">মোট: <%= logs.length %></span>
+  </div>
+
+  <% if (logs.length === 0) { %>
+    <div class="empty-state"><p>এখনো কোনো স্ক্যান হয়নি।</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>সময়</th><th>নাম</th><th>ফলাফল</th><th>কোড</th>
+      </tr></thead>
+      <tbody>
+      <% logs.forEach(log => { %>
+        <tr>
+          <td style="white-space:nowrap"><%= new Date(log.scanned_at).toLocaleString('bn-BD') %></td>
+          <td><%= log.name || '—' %></td>
+          <td><span class="badge <%= log.result === 'valid' ? 'badge-open' : 'badge-closed' %>"><%= log.result === 'valid' ? 'বৈধ' : 'অবৈধ' %></span></td>
+          <td style="font-family:monospace;font-size:0.85rem"><%= log.qr_token ? log.qr_token.slice(0, 8).toUpperCase() : '—' %></td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

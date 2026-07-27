@@ -562,6 +562,15 @@ router.get('/events/:id/reports', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+router.get('/events/:id/scan-logs', async (req, res, next) => {
+  try {
+    const db = require('../config/db');
+    const event = await eventService.getEventById(req.params.id);
+    const { data: logs } = await db.from('scan_logs').select('*').eq('event_id', req.params.id).order('scanned_at', { ascending: false });
+    res.render('admin/scan-logs', { title: `স্ক্যান লগ — ${event.title}`, event, logs: logs || [] });
+  } catch (err) { next(err); }
+});
+
 // ─── Advertisements ───────────────────────────────────────────────────────────
 
 router.get('/ads', async (req, res, next) => {

@@ -237,6 +237,7 @@ class MemoryDB {
       stall_observations: [],
       volunteers: [],
       app_settings: [],
+      scan_logs: [],
       email_log: [],
       advertisements: [],
     };
