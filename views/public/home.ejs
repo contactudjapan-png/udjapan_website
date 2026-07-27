@@ -96,8 +96,8 @@
         var h = Math.floor((ms % 86400000) / 3600000);
         var m = Math.floor((ms % 3600000) / 60000);
         var s = Math.floor((ms % 60000) / 1000);
-        if (d >= 2) return toBN(d) + 'দ ' + toBN(h) + 'ঘ ' + toBN(m) + 'মি';
-        if (d === 1) return toBN(1) + 'দ ' + toBN(h) + 'ঘ ' + toBN(m) + 'মি';
+        if (d >= 2) return toBN(d) + 'দ ' + toBN(h) + 'ঘ ' + toBN(m) + 'মি ' + toBN(s) + 'সে';
+        if (d === 1) return toBN(1) + 'দ ' + toBN(h) + 'ঘ ' + toBN(m) + 'মি ' + toBN(s) + 'সে';
         if (h > 0)  return toBN(h) + 'ঘ ' + toBN(m) + 'মি ' + toBN(s) + 'সে';
         return toBN(m) + 'মি ' + toBN(s) + 'সে';
       }
