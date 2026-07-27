@@ -14,7 +14,7 @@
     ta.parentNode.insertBefore(wrapper, ta);
     ta.style.display = 'none';
     var quill = new Quill(wrapper, { theme: 'snow', modules: { toolbar: toolbarOptions } });
-    if (ta.value) quill.root.innerHTML = ta.value;
+    if (ta.value) quill.clipboard.dangerouslyPasteHTML(ta.value);
     ta.closest('form').addEventListener('submit', function(e) {
       var html = quill.root.innerHTML;
       var text = quill.getText().trim();
