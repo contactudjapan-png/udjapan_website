@@ -1,5 +1,5 @@
 <%- include('../partials/head') %>
-<body class="event-page">
+<body class="event-page"<% if (event.banner_url) { %> style="background-image:url('<%= event.banner_url %>');background-attachment:fixed;background-position:center;background-size:cover"<% } %>>
 <div class="event-overlay">
 <%- include('../partials/nav-public') %>
 <%- include('../partials/flash') %>
