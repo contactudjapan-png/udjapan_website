@@ -52,9 +52,9 @@
             <span class="ticket-price">€<%= parseFloat(activePrice).toFixed(2) %></span>
           </div>
           <% if (activeTier === 'early_bird' && event.early_bird_deadline) { %>
-            <p class="ticket-deadline">হলদে বউ শেষ: <strong><%= new Date(event.early_bird_deadline).toLocaleDateString('bn-BD', {month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'}) %></strong></p>
+            <p class="ticket-deadline">হলদে বউ শেষ: <strong><%= new Date(event.early_bird_deadline).toLocaleDateString('bn-BD', {month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'}) %></strong></p>
           <% } else if (activeTier === 'mid' && event.mid_deadline) { %>
-            <p class="ticket-deadline">নীলকণ্ঠ মূল্য শেষ: <strong><%= new Date(event.mid_deadline).toLocaleDateString('bn-BD', {month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'}) %></strong></p>
+            <p class="ticket-deadline">নীলকণ্ঠ মূল্য শেষ: <strong><%= new Date(event.mid_deadline).toLocaleDateString('bn-BD', {month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'}) %></strong></p>
           <% } %>
         <% } else if (event.price_early_bird || event.price_mid || event.price_onspot) { %>
           <div class="ticket-tiers">
