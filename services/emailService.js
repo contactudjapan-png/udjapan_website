@@ -31,6 +31,8 @@ async function sendRegistrationConfirmation(registration, event, baseUrl) {
       </table>
       <p>Please bring or show the QR code below at the entrance:</p>
       <img src="cid:qrcode" alt="Entry QR Code" style="width:200px;height:200px;" />
+      <p style="margin-top:16px">If the QR code does not scan, show this code manually at the entrance:</p>
+      <p style="font-family:monospace;font-size:18px;font-weight:bold;letter-spacing:2px;background:#f4f4f4;padding:10px 16px;border-radius:6px;display:inline-block">${registration.qr_token}</p>
       <p>Your payment status will be confirmed by our team.</p>
       <p>See you at the event!</p>
     `,
