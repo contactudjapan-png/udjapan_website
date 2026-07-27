@@ -17,8 +17,8 @@ router.get('/', async (req, res, next) => {
   try {
     const [events, ads, announcements] = await Promise.all([
       eventService.getActiveEvents(),
-      advertisementService.getActiveAds(),
-      announcementService.getActiveAnnouncements(),
+      advertisementService.getActiveAds().catch(() => []),
+      announcementService.getActiveAnnouncements().catch(() => []),
     ]);
     const currentEvent = events[0] || null;
     const otherEvents = events.slice(1);
