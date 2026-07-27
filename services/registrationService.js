@@ -14,12 +14,18 @@ async function getRegistrationById(id) {
 }
 
 async function getRegistrationByToken(token) {
+  // Full UUID lookup
   const { data, error } = await db.from('registrations').select('*').eq('qr_token', token).single();
-  if (error) {
-    if (error.code !== 'PGRST116') console.error('[getRegistrationByToken] DB error:', error.message);
-    return null;
+  if (!error && data) return data;
+
+  // Short code lookup (first 8 chars, case-insensitive)
+  if (token.length === 8) {
+    const { data: data2, error: error2 } = await db.from('registrations').select('*').ilike('qr_token', `${token}-%`).single();
+    if (!error2 && data2) return data2;
   }
-  return data;
+
+  if (error && error.code !== 'PGRST116') console.error('[getRegistrationByToken] DB error:', error.message);
+  return null;
 }
 
 async function createRegistration(eventId, { name, email, payment_reference }) {
