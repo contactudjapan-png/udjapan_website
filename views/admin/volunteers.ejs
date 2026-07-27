@@ -88,7 +88,7 @@
               </form>
             </div>
             <form action="/admin/volunteers/<%= vol.id %>/assign-task" method="POST" class="task-assign-form">
-              <% const hasAnyTasks = taskGroups && (taskGroups.stall.length || taskGroups.reg.length || taskGroups.qr.length); %>
+              <% const hasAnyTasks = taskGroups && (taskGroups.stall.length || taskGroups.reg.length || taskGroups.qr.length || (taskGroups.music && taskGroups.music.length)); %>
               <% if (hasAnyTasks) { %>
                 <select name="task" class="inline-input">
                   <option value="">— কাজ বেছে নিন —</option>
@@ -105,6 +105,11 @@
                   <% if (taskGroups.qr.length) { %>
                   <optgroup label="QR যাচাইকারী">
                     <% taskGroups.qr.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
+                  </optgroup>
+                  <% } %>
+                  <% if (taskGroups.music && taskGroups.music.length) { %>
+                  <optgroup label="সংগীত ও মঞ্চ">
+                    <% taskGroups.music.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
                   </optgroup>
                   <% } %>
                 </select>
