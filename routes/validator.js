@@ -21,7 +21,7 @@ function getVolunteerRedirect(session) {
   if (hasQR) return '/validate';
   if (hasStall) return '/validate/stalls';
   if (hasReg) return '/validate/register';
-  return '/validate/login';
+  return '/validate/no-access';
 }
 
 function requireQRAccess(req, res, next) {
@@ -99,6 +99,10 @@ router.post('/login', async (req, res) => {
 router.post('/logout', (req, res) => {
   req.session.volunteerUser = null;
   res.redirect('/validate/login');
+});
+
+router.get('/no-access', (req, res) => {
+  res.render('validator/no-access', { title: 'প্রবেশাধিকার নেই' });
 });
 
 // ── Protected ────────────────────────────────────────────────────────────────
