@@ -21,6 +21,22 @@ const advertisementService = require('../services/advertisementService');
 const announcementService = require('../services/announcementService');
 const settingsService = require('../services/settingsService');
 
+// Convert a "YYYY-MM-DDTHH:MM" string entered as Berlin local time to a UTC ISO string
+function berlinToUTC(localStr) {
+  if (!localStr) return null;
+  const asUTC = new Date(localStr + ':00Z');
+  const berlinStr = asUTC.toLocaleString('sv', { timeZone: 'Europe/Berlin' }).slice(0, 16);
+  const offsetMs = new Date(berlinStr + ':00Z').getTime() - asUTC.getTime();
+  return new Date(asUTC.getTime() - offsetMs).toISOString();
+}
+
+function convertEventDates(body) {
+  if (body.event_date)          body.event_date          = berlinToUTC(body.event_date);
+  if (body.early_bird_deadline) body.early_bird_deadline = berlinToUTC(body.early_bird_deadline);
+  if (body.mid_deadline)        body.mid_deadline        = berlinToUTC(body.mid_deadline);
+  return body;
+}
+
 // ─── Auth ───────────────────────────────────────────────────────────────────
 
 router.get('/login', (req, res) => {
@@ -71,7 +87,7 @@ router.get('/events/new', (req, res) => {
 
 router.post('/events/new', async (req, res, next) => {
   try {
-    const event = await eventService.createEvent(req.body);
+    const event = await eventService.createEvent(convertEventDates(req.body));
     req.flash('success', 'Event created successfully.');
     res.redirect(`/admin/events/${event.id}/edit`);
   } catch (err) {
@@ -96,7 +112,7 @@ router.get('/events/:id/edit', async (req, res, next) => {
 
 router.post('/events/:id/edit', upload.single('banner'), async (req, res, next) => {
   try {
-    await eventService.updateEvent(req.params.id, req.body);
+    await eventService.updateEvent(req.params.id, convertEventDates(req.body));
     if (req.file) {
       const ext = path.extname(req.file.originalname).toLowerCase();
       const url = await eventService.uploadFileToBucket('banners', `${req.params.id}/banner${ext}`, req.file.buffer, req.file.mimetype);
@@ -112,7 +128,7 @@ router.post('/events/:id/edit', upload.single('banner'), async (req, res, next) 
 
 router.post('/events/:id/edit/payment', upload.single('paypal_qr'), async (req, res, next) => {
   try {
-    await eventService.updateEventPayment(req.params.id, req.body);
+    await eventService.updateEventPayment(req.params.id, convertEventDates(req.body));
     if (req.file) {
       const ext = path.extname(req.file.originalname).toLowerCase();
       const url = await eventService.uploadFileToBucket('paypal-qr', `${req.params.id}/paypal-qr${ext}`, req.file.buffer, req.file.mimetype);

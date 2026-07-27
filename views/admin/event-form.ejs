@@ -2,6 +2,12 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<%
+function toBerlinInput(dateStr) {
+  if (!dateStr) return '';
+  return new Date(dateStr).toLocaleString('sv', { timeZone: 'Europe/Berlin' }).slice(0, 16).replace(' ', 'T');
+}
+%>
 
 <main class="admin-container">
   <% if (event) { %>
@@ -26,7 +32,7 @@
         <div class="form-group">
           <label for="event_date">তারিখ ও সময় *</label>
           <input type="datetime-local" id="event_date" name="event_date" required
-            value="<%= event && event.event_date ? event.event_date.substring(0,16) : '' %>">
+            value="<%= event ? toBerlinInput(event.event_date) : '' %>">
         </div>
         <div class="form-group">
           <label for="max_capacity">সর্বোচ্চ ধারণক্ষমতা</label>
@@ -73,7 +79,7 @@
         <div class="form-group">
           <label for="early_bird_deadline">হলদে বউ সময়সীমা</label>
           <input type="datetime-local" id="early_bird_deadline" name="early_bird_deadline"
-            value="<%= event.early_bird_deadline ? event.early_bird_deadline.substring(0,16) : '' %>">
+            value="<%= toBerlinInput(event.early_bird_deadline) %>">
         </div>
       </div>
       <div class="form-row">
@@ -85,7 +91,7 @@
         <div class="form-group">
           <label for="mid_deadline">নীলকণ্ঠ সময়সীমা</label>
           <input type="datetime-local" id="mid_deadline" name="mid_deadline"
-            value="<%= event.mid_deadline ? event.mid_deadline.substring(0,16) : '' %>">
+            value="<%= toBerlinInput(event.mid_deadline) %>">
           <small>হলদে বউ সময়সীমার পর থেকে এই তারিখ পর্যন্ত নীলকণ্ঠ মূল্য প্রযোজ্য।</small>
         </div>
       </div>
