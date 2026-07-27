@@ -11,6 +11,7 @@ const registrationService = require('../services/registrationService');
 const expenseService = require('../services/expenseService');
 const pollService = require('../services/pollService');
 const stallService = require('../services/stallService');
+const stallObservationService = require('../services/stallObservationService');
 const volunteerService = require('../services/volunteerService');
 const emailService = require('../services/emailService');
 const reportService = require('../services/reportService');
@@ -282,7 +283,13 @@ router.get('/events/:id/stalls', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
     const stalls = await stallService.getStallsByEvent(req.params.id);
-    res.render('admin/stalls', { title: `Stalls — ${event.title}`, event, stalls });
+    const stallsWithObs = await Promise.all(
+      stalls.map(async s => ({
+        ...s,
+        observations: await stallObservationService.getObservationsByStall(s.id),
+      }))
+    );
+    res.render('admin/stalls', { title: `Stalls — ${event.title}`, event, stalls: stallsWithObs });
   } catch (err) { next(err); }
 });
 
