@@ -19,7 +19,7 @@ router.get('/', async (req, res, next) => {
     // First active event is the "current" featured event
     const currentEvent = events[0] || null;
     const otherEvents = events.slice(1);
-    res.render('public/home', { title: 'UDJapon', currentEvent, otherEvents, ads });
+    res.render('public/home', { title: 'Udjapon', currentEvent, otherEvents, ads });
   } catch (err) {
     next(err);
   }

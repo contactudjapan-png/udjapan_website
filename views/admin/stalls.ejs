@@ -38,9 +38,10 @@
           <td class="action-cell">
             <button class="btn btn-sm obs-btn"
               data-name="<%= stall.stall_name %>"
-              data-obs="<%- JSON.stringify(stall.observations || []) %>">
+              data-id="<%= stall.id %>">
               পর্যবেক্ষণ (<%= stall.observations ? stall.observations.length : 0 %>)
             </button>
+            <script type="application/json" id="obs-<%= stall.id %>"><%- JSON.stringify(stall.observations || []) %></script>
             <a href="/admin/stalls/<%= stall.id %>/edit" class="btn btn-sm">সম্পাদনা/বরাদ্দ</a>
             <form action="/admin/stalls/<%= stall.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই স্টল মুছে ফেলবেন?')">
               <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>

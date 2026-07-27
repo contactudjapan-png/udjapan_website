@@ -24,14 +24,11 @@
           <td><%= event.is_active ? '✓' : '✗' %></td>
           <td><%= event.registration_open ? 'খোলা' : 'বন্ধ' %></td>
           <td class="action-cell">
-            <a href="/admin/events/<%= event.id %>/edit" class="btn btn-sm">সম্পাদনা</a>
+            <a href="/admin/events/<%= event.id %>" class="btn btn-sm btn-primary">বিস্তারিত</a>
             <a href="/admin/events/<%= event.id %>/submissions" class="btn btn-sm">সাবমিশন</a>
             <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-sm">নিবন্ধন</a>
             <a href="/admin/events/<%= event.id %>/expenses" class="btn btn-sm">খরচ</a>
             <a href="/admin/events/<%= event.id %>/reports" class="btn btn-sm">রিপোর্ট</a>
-            <form action="/admin/events/<%= event.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই ইভেন্ট মুছে ফেলবেন?')">
-              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
-            </form>
           </td>
         </tr>
       <% }) %>

@@ -1,6 +1,6 @@
 function showObs(btn) {
   const name = btn.dataset.name;
-  const obs = JSON.parse(btn.dataset.obs);
+  const obs = JSON.parse(document.getElementById('obs-' + btn.dataset.id).textContent);
   document.getElementById('obs-title').textContent = 'পর্যবেক্ষণ — ' + name;
   const body = document.getElementById('obs-body');
   if (!obs.length) {

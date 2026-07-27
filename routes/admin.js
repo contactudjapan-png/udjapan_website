@@ -79,6 +79,13 @@ router.post('/events/new', async (req, res, next) => {
   }
 });
 
+router.get('/events/:id', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    res.render('admin/event-detail', { title: event.title, event });
+  } catch (err) { next(err); }
+});
+
 router.get('/events/:id/edit', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
