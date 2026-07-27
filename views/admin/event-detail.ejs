@@ -14,7 +14,7 @@
   <div class="admin-form" style="max-width:640px">
     <div class="form-group">
       <label>বিবরণ</label>
-      <p><%= event.description || '—' %></p>
+      <% if (event.description) { %><div class="rich-preview"><%- event.description %></div><% } else { %><p>—</p><% } %>
     </div>
 
     <div class="form-row">
