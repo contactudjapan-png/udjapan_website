@@ -77,26 +77,58 @@
 </div>
 
 <% if (_ads.length > 0) { %>
-<aside class="home-sidebar">
-  <h3 class="sidebar-ads-title">স্পনসর ও বিজ্ঞাপন</h3>
-  <% _ads.forEach(ad => { %>
-    <% if (ad.link_url) { %>
-      <a href="<%= ad.link_url %>" target="_blank" rel="noopener" class="ad-card">
-    <% } else { %>
-      <div class="ad-card">
-    <% } %>
-      <% if (ad.image_url) { %>
-        <img src="<%= ad.image_url %>" alt="<%= ad.title %>" class="ad-card-img">
+<aside class="home-sidebar" id="adSidebar">
+  <div class="sidebar-header">
+    <h3 class="sidebar-ads-title">স্পনসর ও বিজ্ঞাপন</h3>
+    <button class="sidebar-toggle" id="sidebarToggle" title="মিনিমাইজ করুন">−</button>
+  </div>
+  <div class="sidebar-content" id="sidebarContent">
+    <% _ads.forEach(ad => { %>
+      <% if (ad.link_url) { %>
+        <a href="<%= ad.link_url %>" target="_blank" rel="noopener" class="ad-card">
       <% } else { %>
-        <div class="ad-card-placeholder">বিজ্ঞাপন</div>
+        <div class="ad-card">
       <% } %>
-      <div class="ad-card-body">
-        <strong><%= ad.title %></strong>
-        <% if (ad.description) { %><p><%= ad.description %></p><% } %>
-      </div>
-    <% if (ad.link_url) { %></a><% } else { %></div><% } %>
-  <% }) %>
+        <% if (ad.image_url) { %>
+          <img src="<%= ad.image_url %>" alt="<%= ad.title %>" class="ad-card-img">
+        <% } else { %>
+          <div class="ad-card-placeholder">বিজ্ঞাপন</div>
+        <% } %>
+        <div class="ad-card-body">
+          <strong><%= ad.title %></strong>
+          <% if (ad.description) { %><p><%= ad.description %></p><% } %>
+        </div>
+      <% if (ad.link_url) { %></a><% } else { %></div><% } %>
+    <% }) %>
+  </div>
 </aside>
+<script>
+(function() {
+  const sidebar = document.getElementById('adSidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  const content = document.getElementById('sidebarContent');
+  const KEY = 'adSidebarMinimized';
+
+  function setMinimized(min) {
+    if (min) {
+      sidebar.classList.add('minimized');
+      toggle.textContent = '+';
+      toggle.title = 'প্রসারিত করুন';
+    } else {
+      sidebar.classList.remove('minimized');
+      toggle.textContent = '−';
+      toggle.title = 'মিনিমাইজ করুন';
+    }
+    localStorage.setItem(KEY, min ? '1' : '0');
+  }
+
+  if (localStorage.getItem(KEY) === '1') setMinimized(true);
+
+  toggle.addEventListener('click', () => {
+    setMinimized(!sidebar.classList.contains('minimized'));
+  });
+})();
+</script>
 <% } %>
 
 <% } %>

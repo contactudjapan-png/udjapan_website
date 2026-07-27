@@ -242,14 +242,44 @@ a:hover { text-decoration: underline; }
   padding: 1rem;
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   border: 1px solid var(--border);
+  transition: max-height 0.25s ease, padding 0.25s ease;
 }
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.sidebar-header .sidebar-ads-title { margin: 0; }
+.sidebar-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sidebar-toggle:hover { background: var(--bg); color: var(--text); }
+.home-sidebar.minimized {
+  max-height: 52px;
+  overflow: hidden;
+  padding-bottom: 0.75rem;
+}
+.home-sidebar.minimized .sidebar-content { display: none; }
 
 .sidebar-ads-title {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--text-muted);
-  margin-bottom: 0.75rem;
+  margin: 0;
 }
 
 .ads-grid {
