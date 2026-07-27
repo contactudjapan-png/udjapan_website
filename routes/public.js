@@ -135,13 +135,8 @@ router.get('/event/:id/volunteer', async (req, res, next) => {
     const settingsService = require('../services/settingsService');
     const taskGroups = await settingsService.getAllTaskGroups();
     const allTasks = [...taskGroups.stall, ...taskGroups.reg, ...taskGroups.qr].filter((t, i, a) => a.indexOf(t) === i);
-    // Half-hour time slots 08:00–22:00
-    const timeSlots = [];
-    for (let h = 8; h <= 22; h++) {
-      timeSlots.push(`${String(h).padStart(2,'0')}:00`);
-      if (h < 22) timeSlots.push(`${String(h).padStart(2,'0')}:30`);
-    }
-    res.render('public/volunteer', { title: `স্বেচ্ছাসেবক — ${event.title}`, event, allTasks, timeSlots });
+    const durations = ['30 min', '1 hr', '1.5 hr', '2 hr', '3 hr', '4 hr', '5 hr', '6 hr', '7 hr', '8 hr', 'Full day'];
+    res.render('public/volunteer', { title: `স্বেচ্ছাসেবক — ${event.title}`, event, allTasks, durations });
   } catch (err) {
     next(err);
   }
@@ -150,7 +145,7 @@ router.get('/event/:id/volunteer', async (req, res, next) => {
 // Volunteer signup
 router.post(`/event/:id/volunteer`, async (req, res, next) => {
   try {
-    const { name, email, phone, preferred_task, preferred_time } = req.body;
+    const { name, email, phone, preferred_task, preferred_duration } = req.body;
     if (!name || !email) {
       req.flash('error', 'Name and email are required.');
       return res.redirect(`/event/${req.params.id}/volunteer`);
@@ -160,7 +155,7 @@ router.post(`/event/:id/volunteer`, async (req, res, next) => {
       email: email.trim().toLowerCase(),
       phone: phone ? phone.trim() : '',
       preferred_task: preferred_task || null,
-      preferred_time: preferred_time || null,
+      preferred_duration: preferred_duration || null,
     });
     req.flash('success', 'ধন্যবাদ! আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।');
     res.redirect(`/event/${req.params.id}/volunteer`);

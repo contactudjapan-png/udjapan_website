@@ -10,7 +10,9 @@ ALTER TABLE stalls ADD COLUMN IF NOT EXISTS fee NUMERIC(10,2) DEFAULT NULL;
 
 ALTER TABLE volunteers ADD COLUMN IF NOT EXISTS amount NUMERIC(10,2) DEFAULT NULL;
 ALTER TABLE volunteers ADD COLUMN IF NOT EXISTS preferred_task TEXT DEFAULT NULL;
-ALTER TABLE volunteers ADD COLUMN IF NOT EXISTS preferred_time TEXT DEFAULT NULL;
+ALTER TABLE volunteers ADD COLUMN IF NOT EXISTS preferred_duration TEXT DEFAULT NULL;
+-- If preferred_time column exists from older migration, rename it:
+-- ALTER TABLE volunteers RENAME COLUMN preferred_time TO preferred_duration;
 ALTER TABLE volunteers ADD COLUMN IF NOT EXISTS session_token TEXT DEFAULT NULL;
 ALTER TABLE volunteers ADD COLUMN IF NOT EXISTS session_expires_at TIMESTAMPTZ DEFAULT NULL;
 ALTER TABLE volunteers ADD COLUMN IF NOT EXISTS session_started_at TIMESTAMPTZ DEFAULT NULL;

@@ -25,8 +25,8 @@
           <td><%= vol.phone || '—' %></td>
           <td style="font-size:0.8rem">
             <% if (vol.preferred_task) { %><div><strong>কাজ:</strong> <%= vol.preferred_task %></div><% } %>
-            <% if (vol.preferred_time) { %><div><strong>সময়:</strong> <%= vol.preferred_time %></div><% } %>
-            <% if (!vol.preferred_task && !vol.preferred_time) { %>—<% } %>
+            <% if (vol.preferred_duration) { %><div><strong>সময়কাল:</strong> <%= vol.preferred_duration %></div><% } %>
+            <% if (!vol.preferred_task && !vol.preferred_duration) { %>—<% } %>
           </td>
           <td><% if (vol.amount) { %>€<%= parseFloat(vol.amount).toFixed(2) %><% } else { %>—<% } %></td>
           <td>

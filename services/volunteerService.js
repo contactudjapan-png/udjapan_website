@@ -13,7 +13,7 @@ async function getVolunteerById(id) {
   return data;
 }
 
-async function createVolunteer(eventId, { name, email, phone, amount, preferred_task, preferred_time }) {
+async function createVolunteer(eventId, { name, email, phone, amount, preferred_task, preferred_duration }) {
   const { data, error } = await db.from('volunteers').insert({
     event_id: eventId,
     name,
@@ -23,7 +23,7 @@ async function createVolunteer(eventId, { name, email, phone, amount, preferred_
     status: 'pending',
     amount: amount ? parseFloat(amount) : null,
     preferred_task: preferred_task || null,
-    preferred_time: preferred_time || null,
+    preferred_duration: preferred_duration || null,
   }).select().single();
   if (error) throw new Error(error.message);
   return data;

@@ -39,11 +39,11 @@
       <% } %>
 
       <div class="form-group">
-        <label for="preferred_time">পছন্দের সময় (ঐচ্ছিক)</label>
-        <select id="preferred_time" name="preferred_time">
+        <label for="preferred_duration">পছন্দের সময়কাল (ঐচ্ছিক)</label>
+        <select id="preferred_duration" name="preferred_duration">
           <option value="">— নির্বাচন করুন —</option>
-          <% timeSlots.forEach(slot => { %>
-            <option value="<%= slot %>"><%= slot %></option>
+          <% durations.forEach(d => { %>
+            <option value="<%= d %>"><%= d %></option>
           <% }) %>
         </select>
       </div>
