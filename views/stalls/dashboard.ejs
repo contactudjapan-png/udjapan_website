@@ -77,7 +77,7 @@
                   <span style="font-size:0.8rem;color:var(--text-muted)"> <%= obs.rating %>/১০</span>
                 <% } else { %>—<% } %>
               </td>
-              <td><%= obs.notes || '—' %></td>
+              <td><%- obs.notes || '—' %></td>
             </tr>
           <% }) %>
           </tbody>

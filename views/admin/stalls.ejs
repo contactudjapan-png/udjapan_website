@@ -25,7 +25,7 @@
       <tbody>
       <% stalls.forEach(stall => { %>
         <tr>
-          <td><strong><%= stall.stall_name %></strong><% if(stall.description) { %><br><small><%= stall.description %></small><% } %></td>
+          <td><strong><%= stall.stall_name %></strong><% if(stall.description) { %><br><small><%- stall.description %></small><% } %></td>
           <td><%= stall.location_info || '—' %></td>
           <td>
             <% if (stall.assigned_to_name) { %>
