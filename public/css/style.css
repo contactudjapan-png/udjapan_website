@@ -1050,10 +1050,14 @@ main { flex: 1; }
 
 
 /* ─── Jodit Rich Text Editor ─────────────────────────────────────────────────── */
-.jodit-container, .jodit-container * { font-family: 'Anek Bangla', 'Inter', sans-serif !important; }
+.jodit-container, .jodit-container * { font-family: 'Anek Bangla', 'Nirmala UI', 'Vrinda', 'Inter', sans-serif !important; }
 .jodit-container { border-color: var(--border, #ddd) !important; border-radius: var(--radius, 6px) !important; }
 .jodit-wysiwyg { font-size: 0.95rem !important; color: var(--text, #111) !important; background: #fff !important; }
 .jodit-toolbar__box { background: var(--bg-card, #f8f8f8) !important; border-color: var(--border, #ddd) !important; border-radius: var(--radius, 6px) var(--radius, 6px) 0 0 !important; }
+
+/* ─── Rich text output (force Bangla font, override inline styles from editor) ── */
+#eventDesc, #eventDesc * { font-family: 'Anek Bangla', 'Nirmala UI', 'Vrinda', sans-serif !important; }
+.rich-content, .rich-content * { font-family: 'Anek Bangla', 'Nirmala UI', 'Vrinda', sans-serif !important; }
 
 
 /* ─── Popup Advertisement ────────────────────────────────────────────────────── */

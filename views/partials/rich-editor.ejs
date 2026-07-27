@@ -16,6 +16,20 @@
       disablePlugins: 'speech-recognize',
       allowResizeX: false,
       allowResizeY: true,
+      controls: {
+        font: {
+          list: {
+            "'Anek Bangla','Nirmala UI','Vrinda',sans-serif": 'Anek Bangla (বাংলা)',
+            "'Nirmala UI',sans-serif": 'Nirmala UI',
+            "'Inter',sans-serif": 'Inter',
+            "'Arial',Helvetica,sans-serif": 'Arial',
+            "'Times New Roman',Times,serif": 'Times New Roman',
+            "'Courier New',Courier,monospace": 'Courier New',
+            "'Georgia',serif": 'Georgia',
+            "'Verdana',Geneva,sans-serif": 'Verdana',
+          }
+        }
+      },
     });
     if (required) {
       ta.closest('form').addEventListener('submit', function(e) {
