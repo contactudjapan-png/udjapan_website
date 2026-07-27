@@ -258,6 +258,8 @@ class MemoryDB {
       advertisements: [],
       announcements: [],
       translations: [],
+      competitions: [],
+      instruments: [],
     };
     this.storage = new MemoryStorage(uploadsDir);
     this.auth = new MemoryAuth();

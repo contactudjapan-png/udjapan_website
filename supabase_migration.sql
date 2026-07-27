@@ -112,6 +112,15 @@ CREATE TABLE IF NOT EXISTS instruments (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS competitions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  event_id UUID REFERENCES events(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  winner_name TEXT DEFAULT NULL,
+  notes TEXT DEFAULT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ── Default settings ──────────────────────────────────────────────────────────
 
 INSERT INTO app_settings (key, value)

@@ -28,6 +28,7 @@ const refundService = require('../services/refundService');
 const feedbackService = require('../services/feedbackService');
 const exportService = require('../services/exportService');
 const auditService = require('../services/auditService');
+const competitionService = require('../services/competitionService');
 const ExcelJS = require('exceljs');
 
 // Convert a "YYYY-MM-DDTHH:MM" string entered as Berlin local time to a UTC ISO string
@@ -1039,6 +1040,43 @@ router.post('/feedback-questions/:id/delete', async (req, res, next) => {
     await feedbackService.deleteQuestion(req.params.id);
     req.flash('success', 'প্রশ্ন মুছে ফেলা হয়েছে।');
     res.redirect(q ? `/admin/events/${q.event_id}/feedback` : '/admin');
+  } catch (err) { next(err); }
+});
+
+// ─── Competitions ─────────────────────────────────────────────────────────────
+
+router.get('/events/:id/competitions', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const competitions = await competitionService.getCompetitionsByEvent(req.params.id);
+    res.render('admin/competitions', { title: `Competitions — ${event.title}`, event, competitions });
+  } catch (err) { next(err); }
+});
+
+router.post('/events/:id/competitions/new', async (req, res, next) => {
+  try {
+    const { name, winner_name, notes } = req.body;
+    if (!name) { req.flash('error', 'প্রতিযোগিতার নাম আবশ্যক।'); return res.redirect(`/admin/events/${req.params.id}/competitions`); }
+    await competitionService.createCompetition(req.params.id, { name, winner_name, notes });
+    req.flash('success', 'প্রতিযোগিতা যোগ করা হয়েছে।');
+    res.redirect(`/admin/events/${req.params.id}/competitions`);
+  } catch (err) { next(err); }
+});
+
+router.post('/competitions/:id/edit', async (req, res, next) => {
+  try {
+    const comp = await competitionService.updateCompetition(req.params.id, req.body);
+    req.flash('success', 'আপডেট হয়েছে।');
+    res.redirect(`/admin/events/${comp.event_id}/competitions`);
+  } catch (err) { next(err); }
+});
+
+router.post('/competitions/:id/delete', async (req, res, next) => {
+  try {
+    const { data } = await require('../config/db').from('competitions').select('event_id').eq('id', req.params.id).single();
+    await competitionService.deleteCompetition(req.params.id);
+    req.flash('success', 'মুছে ফেলা হয়েছে।');
+    res.redirect(data ? `/admin/events/${data.event_id}/competitions` : '/admin');
   } catch (err) { next(err); }
 });
 
