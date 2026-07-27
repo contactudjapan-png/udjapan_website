@@ -413,6 +413,59 @@ a:hover { text-decoration: underline; }
 .home-about h2 { margin-bottom: 0.75rem; }
 .home-about p { color: var(--text-muted); line-height: 1.8; }
 
+/* ─── Home – About Full-Width ────────────────────────────────────────────────── */
+.home-about-full {
+  width: 100%;
+  padding: 2.5rem 2rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  font-size: 1.1rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+.home-about-full h2 { margin-bottom: 1rem; font-size: 1.4rem; color: var(--primary); }
+
+/* ─── Home – Live Hero ───────────────────────────────────────────────────────── */
+.home-hero-live {
+  position: relative;
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 60%, #1a4a35 100%);
+  color: #fff;
+  padding: 3rem 2rem;
+  text-align: center;
+  overflow: hidden;
+}
+.home-hero-live::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+}
+.home-hero-live-inner {
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.home-hero-live h1 { font-size: 2rem; margin: 1rem 0 0.5rem; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.home-hero-live .live-meta { opacity: 0.88; margin-bottom: 1.5rem; font-size: 1rem; }
+.home-hero-live .live-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.home-hero-live .live-actions a { padding: 0.65rem 1.4rem; border-radius: var(--radius); font-weight: 600; text-decoration: none; }
+.live-badge {
+  display: inline-block;
+  background: #c62828;
+  color: #fff;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  animation: live-pulse 1.5s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
 /* ─── Home – Side Panels ─────────────────────────────────────────────────────── */
 .home-panel {
   width: 220px;
@@ -1166,17 +1219,62 @@ body.tier-bd {
   --bg: #f0f7f4;      --border: #c2dbd2;       --text-muted: #4a6b5a;
 }
 body.tier-halide {
-  --primary: #e65100; --primary-dark: #bf360c; --primary-light: #ff8a50;
+  --primary: #f9a825; --primary-dark: #f57f17; --primary-light: #ffd54f;
   --green: #b8860b;   --green-dark: #8b6914;
   --bg: #fffde7;      --border: #ffe082;       --text-muted: #795548;
+  --accent: #ff8f00;
 }
 body.tier-nilkantha {
-  --primary: #1565c0; --primary-dark: #0d47a1; --primary-light: #42a5f5;
+  --primary: #0097a7; --primary-dark: #00838f; --primary-light: #4dd0e1;
   --green: #006064;   --green-dark: #00474b;
-  --bg: #e8f4fd;      --border: #90caf9;       --text-muted: #37474f;
+  --bg: #e0f7fa;      --border: #80deea;       --text-muted: #37474f;
+  --accent: #00bcd4;
 }
 body.tier-kokila {
-  --primary: #6a1b9a; --primary-dark: #4a148c; --primary-light: #ab47bc;
+  --primary: #c62828; --primary-dark: #b71c1c; --primary-light: #ef5350;
   --green: #4527a0;   --green-dark: #311b92;
-  --bg: #f5f0fb;      --border: #ce93d8;       --text-muted: #5e35b1;
+  --bg: #fce4e4;      --border: #ef9a9a;       --text-muted: #5e35b1;
+  --accent: #e53935;
 }
+
+/* ─── SOS Help Button ────────────────────────────────────────────────────────── */
+.help-sos-btn {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+  background: #c62828; color: #fff; border: none; border-radius: 50%;
+  width: 56px; height: 56px; font-size: 1.4rem; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.15s;
+}
+.help-sos-btn:hover { transform: scale(1.1); }
+.help-modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 10000; align-items: center; justify-content: center;
+}
+.help-modal-overlay.open { display: flex; }
+.help-modal-card {
+  background: var(--bg-card); border-radius: 12px; padding: 2rem;
+  width: min(440px, 90vw); box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+.help-modal-card h3 { margin-bottom: 1.25rem; color: #c62828; }
+.help-modal-card .form-group { margin-bottom: 1rem; }
+.help-modal-card label { display: block; font-weight: 600; margin-bottom: 0.3rem; font-size: 0.9rem; }
+.help-modal-card textarea, .help-modal-card select, .help-modal-card input {
+  width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--border);
+  border-radius: var(--radius); font-size: 0.95rem; background: var(--bg);
+}
+.help-modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.25rem; }
+
+/* ─── Control Room ───────────────────────────────────────────────────────────── */
+.cr-stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+.cr-stat-card {
+  flex: 1; min-width: 130px; background: var(--bg-card); border-radius: var(--radius);
+  padding: 1.25rem; text-align: center; box-shadow: var(--shadow); border: 1px solid var(--border);
+}
+.cr-stat-card .cr-stat-num { font-size: 2rem; font-weight: 700; color: var(--primary); }
+.cr-stat-card .cr-stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+.cr-section { margin-bottom: 2rem; }
+.cr-section h3 { font-size: 1.05rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+.cr-priority-urgent { color: #c62828; font-weight: 700; }
+.cr-priority-normal { color: var(--text-muted); }
+.cr-refresh-bar { font-size: 0.82rem; color: var(--text-muted); text-align: right; margin-bottom: 1rem; }

@@ -1,0 +1,46 @@
+<% if (locals.currentEvent && locals.currentEvent.is_active) { %>
+<% var _volName = (locals.volunteerUser && locals.volunteerUser.name) ? locals.volunteerUser.name : ''; %>
+<% var _helpEventId = locals.currentEvent.id; %>
+
+<button class="help-sos-btn" id="helpSosBtn" title="জরুরি সাহায্য">🆘</button>
+
+<div class="help-modal-overlay" id="helpModalOverlay">
+  <div class="help-modal-card">
+    <h3>🆘 জরুরি সাহায্য অনুরোধ</h3>
+    <form method="POST" action="/validate/help-request">
+      <input type="hidden" name="event_id" value="<%= _helpEventId %>">
+      <div class="form-group">
+        <label for="helpName">আপনার নাম</label>
+        <input type="text" id="helpName" name="reporter_name" value="<%= _volName %>" placeholder="নাম লিখুন" required>
+      </div>
+      <div class="form-group">
+        <label for="helpPriority">অগ্রাধিকার</label>
+        <select id="helpPriority" name="priority">
+          <option value="urgent">🔴 জরুরি (Urgent)</option>
+          <option value="normal" selected>🟡 সাধারণ (Normal)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="helpMessage">বার্তা</label>
+        <textarea id="helpMessage" name="message" rows="4" placeholder="সমস্যার বিবরণ লিখুন..." required></textarea>
+      </div>
+      <div class="help-modal-footer">
+        <button type="button" class="btn btn-secondary" id="helpModalClose">বাতিল</button>
+        <button type="submit" class="btn btn-danger">পাঠান</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function() {
+  var btn = document.getElementById('helpSosBtn');
+  var overlay = document.getElementById('helpModalOverlay');
+  var closeBtn = document.getElementById('helpModalClose');
+  if (!btn || !overlay) return;
+  btn.addEventListener('click', function() { overlay.classList.add('open'); });
+  closeBtn.addEventListener('click', function() { overlay.classList.remove('open'); });
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.classList.remove('open'); });
+})();
+</script>
+<% } %>

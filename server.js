@@ -63,13 +63,13 @@ app.use(require('./middleware/i18n'));
 
 // Tier class — compute once per request for non-admin routes (1-min cache)
 const _eventSvc = require('./services/eventService');
-const _tierState = { cls: 'tier-bd', at: 0 };
+const _tierState = { cls: 'tier-bd', at: 0, ev: null };
 app.use(async (req, res, next) => {
   const now = Date.now();
   if (now - _tierState.at > 60 * 1000) {
     try {
       const evts = await _eventSvc.getActiveEvents();
-      const ev = evts[0];
+      const ev = evts[0] || null;
       let cls = 'tier-bd';
       if (ev) {
         const eb = ev.early_bird_deadline ? +new Date(ev.early_bird_deadline) : null;
@@ -79,10 +79,19 @@ app.use(async (req, res, next) => {
         else if (mid && now < mid && (!eb || now >= eb)) cls = 'tier-nilkantha';
         else if (evd && now < evd && (!mid || now >= mid)) cls = 'tier-kokila';
       }
-      _tierState.cls = cls; _tierState.at = now;
+      _tierState.cls = cls; _tierState.at = now; _tierState.ev = ev;
     } catch {}
   }
   res.locals.tierClass = _tierState.cls;
+  const ev = _tierState.ev;
+  res.locals.currentEvent = ev;
+  if (ev && ev.event_date) {
+    const t = new Date(ev.event_date).getTime();
+    res.locals.isLive = now >= t - 2 * 3600000 && now <= t + 12 * 3600000;
+  } else {
+    res.locals.isLive = false;
+  }
+  res.locals.volunteerUser = req.session?.volunteerUser || null;
   next();
 });
 

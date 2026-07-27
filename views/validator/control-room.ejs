@@ -1,0 +1,155 @@
+<%- include('../partials/head') %>
+<body class="<%= tierClass %>">
+<%- include('../partials/nav-public') %>
+<%- include('../partials/flash') %>
+
+<main class="container" style="padding-top:1.5rem;padding-bottom:3rem">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+    <div>
+      <h1 style="margin:0;font-size:1.5rem">কন্ট্রোল রুম</h1>
+      <% if (event) { %><p style="color:var(--text-muted);margin:0.25rem 0 0;font-size:0.9rem"><%= event.title %></p><% } %>
+    </div>
+    <div style="display:flex;gap:0.75rem;align-items:center">
+      <span class="cr-refresh-bar" id="refreshLabel">৩০ সেকেন্ডে রিফ্রেশ</span>
+      <form action="/validate/logout" method="POST" style="margin:0">
+        <button type="submit" class="btn btn-outline" style="font-size:0.85rem;padding:0.3rem 0.8rem">Log Out</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="cr-stats">
+    <div class="cr-stat-card">
+      <div class="cr-stat-num"><%= stats.totalRegs %></div>
+      <div class="cr-stat-label">মোট নিবন্ধন</div>
+    </div>
+    <div class="cr-stat-card">
+      <div class="cr-stat-num"><%= stats.paidRegs %></div>
+      <div class="cr-stat-label">পেমেন্ট সম্পন্ন</div>
+    </div>
+    <div class="cr-stat-card">
+      <div class="cr-stat-num"><%= stats.checkedIn %></div>
+      <div class="cr-stat-label">চেক-ইন সম্পন্ন</div>
+    </div>
+    <div class="cr-stat-card">
+      <div class="cr-stat-num" style="color:<%= stats.openHelp > 0 ? '#c62828' : 'var(--success)' %>"><%= stats.openHelp %></div>
+      <div class="cr-stat-label">খোলা সাহায্য অনুরোধ</div>
+    </div>
+  </div>
+
+  <!-- Open Help Requests -->
+  <div class="cr-section">
+    <h3>🆘 সাহায্য অনুরোধ (সক্রিয়) — <%= openRequests.length %></h3>
+    <% if (openRequests.length === 0) { %>
+      <p style="color:var(--text-muted);font-style:italic">কোনো সক্রিয় অনুরোধ নেই।</p>
+    <% } else { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>রিপোর্টার</th>
+            <th>অগ্রাধিকার</th>
+            <th>বার্তা</th>
+            <th>সময়</th>
+            <th>অ্যাকশন</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% openRequests.forEach(function(hr) { %>
+          <tr>
+            <td><%= hr.reporter_name || '—' %></td>
+            <td class="cr-priority-<%= hr.priority %>"><%= hr.priority === 'urgent' ? '🔴 জরুরি' : '🟡 সাধারণ' %></td>
+            <td><%= hr.message %></td>
+            <td style="white-space:nowrap;font-size:0.82rem;color:var(--text-muted)">
+              <%= new Date(hr.created_at).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' }) %>
+            </td>
+            <td>
+              <form method="POST" action="/validate/control-room/resolve/<%= hr.id %>" style="margin:0">
+                <button type="submit" class="btn btn-sm btn-success">সমাধান</button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>
+
+  <!-- Resolved Help Requests -->
+  <% if (resolvedRequests.length > 0) { %>
+  <div class="cr-section">
+    <details>
+      <summary style="cursor:pointer;font-weight:600;color:var(--text-muted)">সমাধান হওয়া অনুরোধ (<%=resolvedRequests.length%>)</summary>
+      <div class="table-wrap" style="margin-top:0.75rem">
+        <table class="table">
+          <thead>
+            <tr><th>রিপোর্টার</th><th>অগ্রাধিকার</th><th>বার্তা</th><th>সময়</th></tr>
+          </thead>
+          <tbody>
+            <% resolvedRequests.forEach(function(hr) { %>
+            <tr style="opacity:0.6">
+              <td><%= hr.reporter_name || '—' %></td>
+              <td><%= hr.priority === 'urgent' ? '🔴 জরুরি' : '🟡 সাধারণ' %></td>
+              <td><%= hr.message %></td>
+              <td style="white-space:nowrap;font-size:0.82rem"><%= new Date(hr.created_at).toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' }) %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+  <% } %>
+
+  <!-- Volunteer Roster -->
+  <div class="cr-section">
+    <h3>👥 স্বেচ্ছাসেবী তালিকা — <%= volunteers.length %></h3>
+    <% if (volunteers.length === 0) { %>
+      <p style="color:var(--text-muted);font-style:italic">কোনো স্বেচ্ছাসেবী নেই।</p>
+    <% } else { %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>নাম</th><th>ইমেইল</th><th>কাজ</th><th>অবস্থা</th></tr>
+        </thead>
+        <tbody>
+          <% volunteers.forEach(function(v) { %>
+          <tr>
+            <td><%= v.name %></td>
+            <td style="font-size:0.85rem;color:var(--text-muted)"><%= v.email %></td>
+            <td><%= v.assigned_task || '—' %></td>
+            <td>
+              <% if (v.status === 'approved') { %>
+                <span class="badge badge-open">অনুমোদিত</span>
+              <% } else { %>
+                <span class="badge badge-closed"><%= v.status %></span>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>
+<%- include('../partials/help-button') %>
+
+<script>
+(function() {
+  var secs = 30;
+  var label = document.getElementById('refreshLabel');
+  function tick() {
+    secs--;
+    if (secs <= 0) { location.reload(); return; }
+    if (label) label.textContent = secs + ' সেকেন্ডে রিফ্রেশ';
+    setTimeout(tick, 1000);
+  }
+  setTimeout(tick, 1000);
+})();
+</script>
+</body>
+</html>

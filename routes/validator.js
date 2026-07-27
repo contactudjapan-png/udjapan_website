@@ -8,6 +8,8 @@ const eventService = require('../services/eventService');
 const settingsService = require('../services/settingsService');
 const instrumentService = require('../services/instrumentService');
 const competitionService = require('../services/competitionService');
+const helpRequestService = require('../services/helpRequestService');
+const volunteerService = require('../services/volunteerService');
 
 function requireValidator(req, res, next) {
   if (req.session.adminUser || req.session.volunteerUser) return next();
@@ -24,7 +26,7 @@ function getVolunteerRedirect(session) {
   if (roles.competition) return '/validate/competitions';
   if (roles.anchor) return '/validate/instruments';
   if (roles.performer) return '/validate/instruments';
-  if (roles.controlRoom) return '/validate/instruments';
+  if (roles.controlRoom) return '/validate/control-room';
   return '/validate/no-access';
 }
 
@@ -49,7 +51,13 @@ function requireStallAccess(req, res, next) {
 function requireMusicAccess(req, res, next) {
   if (req.session.adminUser) return next();
   const roles = req.session.volunteerUser?.roles || {};
-  if (roles.music || roles.anchor || roles.performer || roles.controlRoom) return next();
+  if (roles.music || roles.anchor || roles.performer) return next();
+  res.redirect(getVolunteerRedirect(req.session));
+}
+
+function requireControlRoomAccess(req, res, next) {
+  if (req.session.adminUser) return next();
+  if (req.session.volunteerUser?.roles?.controlRoom) return next();
   res.redirect(getVolunteerRedirect(req.session));
 }
 
@@ -327,6 +335,69 @@ router.post('/competitions/:id/winner', requireCompetitionAccess, async (req, re
     });
     req.flash('success', 'বিজয়ী সংরক্ষিত হয়েছে।');
     res.redirect('/validate/competitions');
+  } catch (err) { next(err); }
+});
+
+// ── Help Requests ────────────────────────────────────────────────────────────
+
+router.post('/help-request', async (req, res, next) => {
+  try {
+    const { event_id, reporter_name, priority, message } = req.body;
+    if (!message || !event_id) {
+      req.flash('error', 'বার্তা এবং ইভেন্ট আবশ্যক।');
+      return res.redirect('back');
+    }
+    await helpRequestService.createHelpRequest(event_id, { reporter_name, priority, message });
+    req.flash('success', 'সাহায্যের অনুরোধ পাঠানো হয়েছে।');
+    res.redirect('back');
+  } catch (err) { next(err); }
+});
+
+router.post('/control-room/resolve/:id', requireValidator, async (req, res, next) => {
+  try {
+    await helpRequestService.resolveHelpRequest(req.params.id);
+    req.flash('success', 'অনুরোধটি সমাধান করা হয়েছে।');
+    res.redirect('/validate/control-room');
+  } catch (err) { next(err); }
+});
+
+// ── Control Room ─────────────────────────────────────────────────────────────
+
+router.get('/control-room', requireControlRoomAccess, async (req, res, next) => {
+  try {
+    const user = req.session.volunteerUser || req.session.adminUser;
+    const eventIds = req.session.adminUser
+      ? (await db.from('events').select('id').eq('is_active', true)).data?.map(e => e.id) || []
+      : req.session.volunteerUser.event_ids;
+
+    const eventId = eventIds[0];
+    if (!eventId) {
+      req.flash('error', 'কোনো সক্রিয় ইভেন্ট পাওয়া যায়নি।');
+      return res.redirect('/validate/login');
+    }
+
+    const { data: eventData } = await db.from('events').select('*').eq('id', eventId).single();
+
+    const [totalRegs, paidRegs, helpRequests, volunteers, scanLogs] = await Promise.all([
+      registrationService.countByEvent(eventId),
+      registrationService.countPaidByEvent(eventId),
+      helpRequestService.getHelpRequestsByEvent(eventId),
+      volunteerService.getVolunteersByEvent(eventId),
+      db.from('scan_logs').select('*').eq('event_id', eventId).then(r => r.data || []).catch(() => []),
+    ]);
+
+    const openRequests = helpRequests.filter(h => !h.resolved);
+    const resolvedRequests = helpRequests.filter(h => h.resolved);
+
+    res.render('validator/control-room', {
+      title: 'কন্ট্রোল রুম',
+      user,
+      event: eventData,
+      stats: { totalRegs, paidRegs, checkedIn: scanLogs.length, openHelp: openRequests.length },
+      openRequests,
+      resolvedRequests,
+      volunteers: volunteers || [],
+    });
   } catch (err) { next(err); }
 });
 

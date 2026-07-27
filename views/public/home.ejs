@@ -4,6 +4,7 @@
 <%- include('../partials/flash') %>
 
 <% const _event = locals.currentEvent || null; %>
+<% const _isLive = locals.isLive || false; %>
 <% const _ads = locals.ads || []; %>
 <% const _others = locals.otherEvents || []; %>
 <% const _announcements = locals.announcements || []; %>
@@ -15,6 +16,32 @@
   </main>
 <% } else { %>
 
+<%
+  var _desc = _event.description || '';
+  if (locale === 'en' && _event.description_en) _desc = _event.description_en;
+  else if (locale === 'de' && _event.description_de) _desc = _event.description_de;
+%>
+
+<% if (_isLive) { %>
+<!-- ── Live Hero ──────────────────────────────────── -->
+<section class="home-hero-live">
+  <div class="home-hero-live-inner">
+    <span class="live-badge">🔴 LIVE NOW</span>
+    <h1><%= _event.title %></h1>
+    <p class="live-meta">
+      📅 <%= new Date(_event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin' }) %>
+      <% if (_event.location) { %> &nbsp;📍 <%= _event.location %><% } %>
+    </p>
+    <div class="live-actions">
+      <% if (_event.registration_open) { %>
+        <a href="/event/<%= _event.id %>" class="btn btn-primary"><%- t('home.register') %></a>
+      <% } %>
+      <a href="/event/<%= _event.id %>/volunteer" class="btn btn-secondary">স্বেচ্ছাসেবী</a>
+      <a href="/event/<%= _event.id %>/polls" class="btn btn-secondary">পোল</a>
+    </div>
+  </div>
+</section>
+<% } else { %>
 <!-- ── Hero Banner ─────────────────────────────────── -->
 <%
   var _bannerUrl = _event.banner_url || null;
@@ -41,6 +68,17 @@
     <% } %>
   </div>
 </section>
+<% } %>
+
+<!-- ── About (full-width) ───────────────────────────── -->
+<% if (_desc) { %>
+<section class="home-about-full">
+  <div class="container">
+    <h2><%- t('home.about') %></h2>
+    <div id="eventDesc" class="rich-content"><%- _desc %></div>
+  </div>
+</section>
+<% } %>
 
 <!-- ── Body: left panel | main | right panel ───────── -->
 <div class="home-body container">
@@ -70,17 +108,9 @@
 
   <main class="home-main">
 
-    <!-- About -->
-    <%
-      var _desc = _event.description || '';
-      if (locale === 'en' && _event.description_en) _desc = _event.description_en;
-      else if (locale === 'de' && _event.description_de) _desc = _event.description_de;
-    %>
-    <% if (_desc) { %>
-    <section class="home-about">
-      <h2><%- t('home.about') %></h2>
-      <div id="eventDesc" class="rich-content"><%- _desc %></div>
-    </section>
+    <!-- About (in-panel, hidden when full-width about is shown) -->
+    <% if (!_desc) { %>
+    <div style="padding:1rem 0;color:var(--text-muted);font-size:0.95rem;"><%- t('home.coming_soon_sub') %></div>
     <% } %>
 
     <% if (_event.early_bird_deadline || _event.mid_deadline || _event.event_date) { %>
