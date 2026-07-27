@@ -855,12 +855,10 @@ main { flex: 1; }
 .star-display .empty { color: #ddd; }
 
 
-/* ─── Quill Rich Text Editor ─────────────────────────────────────────────────── */
-.ql-container { font-family: inherit; font-size: 0.95rem; }
-.ql-editor { min-height: 120px; background: var(--bg-input, #fff); color: var(--text, #111); }
-.ql-toolbar { background: var(--bg-card, #f8f8f8); border-color: var(--border, #ddd) !important; }
-.ql-container.ql-snow { border-color: var(--border, #ddd) !important; border-radius: 0 0 var(--radius, 6px) var(--radius, 6px); }
-.ql-toolbar.ql-snow { border-color: var(--border, #ddd) !important; border-radius: var(--radius, 6px) var(--radius, 6px) 0 0; }
+/* ─── Jodit Rich Text Editor ─────────────────────────────────────────────────── */
+.jodit-container { font-family: inherit !important; border-color: var(--border, #ddd) !important; border-radius: var(--radius, 6px) !important; }
+.jodit-wysiwyg { font-family: inherit !important; font-size: 0.95rem !important; color: var(--text, #111) !important; background: #fff !important; }
+.jodit-toolbar__box { background: var(--bg-card, #f8f8f8) !important; border-color: var(--border, #ddd) !important; border-radius: var(--radius, 6px) var(--radius, 6px) 0 0 !important; }
 
 
 /* ─── Popup Advertisement ────────────────────────────────────────────────────── */
