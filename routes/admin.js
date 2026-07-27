@@ -248,7 +248,9 @@ router.get('/events/:id/expenses', async (req, res, next) => {
 router.get('/events/:id/expenses/new', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
-    res.render('admin/expense-form', { title: 'Add Expense', event });
+    const raw = await settingsService.getExpenseCategories();
+    const categories = (raw || '').split('\n').map(c => c.trim()).filter(Boolean);
+    res.render('admin/expense-form', { title: 'Add Expense', event, categories });
   } catch (err) { next(err); }
 });
 
@@ -425,6 +427,21 @@ router.post('/settings/stall-obs-types', async (req, res, next) => {
     await settingsService.setStallObsTypes((req.body.stall_obs_types || '').trim());
     req.flash('success', 'পর্যবেক্ষণ ধরন সংরক্ষিত হয়েছে।');
     res.redirect('/admin/settings/stall-obs-types');
+  } catch (err) { next(err); }
+});
+
+router.get('/settings/expense-categories', async (req, res, next) => {
+  try {
+    const expenseCategories = await settingsService.getExpenseCategories();
+    res.render('admin/expense-categories', { title: 'খরচের ক্যাটাগরি', expenseCategories });
+  } catch (err) { next(err); }
+});
+
+router.post('/settings/expense-categories', async (req, res, next) => {
+  try {
+    await settingsService.setExpenseCategories((req.body.expense_categories || '').trim());
+    req.flash('success', 'খরচের ক্যাটাগরি সংরক্ষিত হয়েছে।');
+    res.redirect('/admin/settings/expense-categories');
   } catch (err) { next(err); }
 });
 

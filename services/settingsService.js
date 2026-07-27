@@ -22,6 +22,8 @@ const getQRTaskNames = () => getSetting('qr_task_names');
 const setQRTaskNames = (v) => setSetting('qr_task_names', v);
 const getStallObsTypes = () => getSetting('stall_obs_types');
 const setStallObsTypes = (v) => setSetting('stall_obs_types', v);
+const getExpenseCategories = () => getSetting('expense_categories');
+const setExpenseCategories = (v) => setSetting('expense_categories', v);
 
 // Combined list for dropdown (all roles)
 async function getAllTaskGroups() {
@@ -35,5 +37,6 @@ module.exports = {
   getRegTaskNames, setRegTaskNames,
   getQRTaskNames, setQRTaskNames,
   getStallObsTypes, setStallObsTypes,
+  getExpenseCategories, setExpenseCategories,
   getAllTaskGroups,
 };

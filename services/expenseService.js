@@ -14,7 +14,7 @@ async function getTotalByEvent(eventId) {
   return expenses.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
 }
 
-async function createExpense(eventId, { description, amount }, file) {
+async function createExpense(eventId, { description, amount, category }, file) {
   let receipt_url = null;
   if (file) {
     const ext = path.extname(file.originalname).toLowerCase();
@@ -26,6 +26,7 @@ async function createExpense(eventId, { description, amount }, file) {
     event_id: eventId,
     description,
     amount: parseFloat(amount),
+    category: category || null,
     receipt_url,
   }).select().single();
   if (error) throw new Error(error.message);

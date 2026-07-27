@@ -8,6 +8,17 @@
   <h1>খরচ যোগ করুন — <%= event.title %></h1>
 
   <form action="/admin/events/<%= event.id %>/expenses/new" method="POST" enctype="multipart/form-data" class="admin-form">
+    <% if (categories && categories.length > 0) { %>
+    <div class="form-group">
+      <label for="category">ক্যাটাগরি</label>
+      <select id="category" name="category">
+        <option value="">— ক্যাটাগরি বাছুন —</option>
+        <% categories.forEach(cat => { %>
+          <option value="<%= cat %>"><%= cat %></option>
+        <% }) %>
+      </select>
+    </div>
+    <% } %>
     <div class="form-group">
       <label for="description">বিবরণ *</label>
       <input type="text" id="description" name="description" required placeholder="যেমন: ভেন্যু ভাড়া">

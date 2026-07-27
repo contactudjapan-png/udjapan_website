@@ -17,11 +17,12 @@
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>বিবরণ</th><th>পরিমাণ</th><th>রসিদ</th><th>তারিখ</th><th>কার্যক্রম</th>
+        <th>ক্যাটাগরি</th><th>বিবরণ</th><th>পরিমাণ</th><th>রসিদ</th><th>তারিখ</th><th>কার্যক্রম</th>
       </tr></thead>
       <tbody>
       <% expenses.forEach(exp => { %>
         <tr>
+          <td><%= exp.category || '—' %></td>
           <td><%= exp.description %></td>
           <td>€<%= parseFloat(exp.amount).toLocaleString('en-US', {minimumFractionDigits:2}) %></td>
           <td>
