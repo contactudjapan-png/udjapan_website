@@ -4,7 +4,7 @@
   var _ebTs  = locals.currentEvent && locals.currentEvent.early_bird_deadline ? new Date(locals.currentEvent.early_bird_deadline).getTime() : null;
   var _midTs = locals.currentEvent && locals.currentEvent.mid_deadline        ? new Date(locals.currentEvent.mid_deadline).getTime()        : null;
   var _evdTs = locals.currentEvent && locals.currentEvent.event_date          ? new Date(locals.currentEvent.event_date).getTime()          : null;
-  var _tierCls = '';
+  var _tierCls = 'tier-bd';
   if (_ebTs  && _nowTs < _ebTs)  _tierCls = 'tier-halide';
   else if (_midTs && _nowTs < _midTs && (!_ebTs  || _nowTs >= _ebTs))  _tierCls = 'tier-nilkantha';
   else if (_evdTs && _nowTs < _evdTs && (!_midTs || _nowTs >= _midTs)) _tierCls = 'tier-kokila';

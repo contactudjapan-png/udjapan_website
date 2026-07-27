@@ -954,6 +954,11 @@ main { flex: 1; }
 }
 
 /* ─── Site-wide tier palettes ────────────────────────────────────────────────── */
+body.tier-bd {
+  --primary: #CE1126; --primary-dark: #a50e1e; --primary-light: #e8394d;
+  --green: #006A4E;   --green-dark: #004d38;
+  --bg: #f0f7f4;      --border: #c2dbd2;       --text-muted: #4a6b5a;
+}
 body.tier-halide {
   --primary: #e65100; --primary-dark: #bf360c; --primary-light: #ff8a50;
   --green: #b8860b;   --green-dark: #8b6914;
