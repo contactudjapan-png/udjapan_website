@@ -115,8 +115,16 @@ function toBerlinInput(dateStr) {
     <h2>পেমেন্ট তথ্য</h2>
     <form action="/admin/events/<%= event.id %>/edit/payment" method="POST" enctype="multipart/form-data" class="admin-form">
       <div class="form-group">
-        <label for="payment_description">পেমেন্ট নির্দেশনা</label>
+        <label for="payment_description">পেমেন্ট নির্দেশনা (বাংলা)</label>
         <textarea id="payment_description" name="payment_description" rows="4" data-rich placeholder="পেমেন্ট সম্পর্কিত নির্দেশনা বা বার্তা (পাবলিক পেজে ফর্মের উপরে দেখাবে)"><%= event.payment_description || '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label for="payment_description_en">Payment Instructions (English)</label>
+        <textarea id="payment_description_en" name="payment_description_en" rows="4" data-rich placeholder="Payment instructions shown on the public page"><%= event.payment_description_en || '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label for="payment_description_de">Zahlungsanweisungen (Deutsch)</label>
+        <textarea id="payment_description_de" name="payment_description_de" rows="4" data-rich placeholder="Zahlungshinweise auf der öffentlichen Seite"><%= event.payment_description_de || '' %></textarea>
       </div>
       <p class="section-hint">খালি রাখলে মূল্য প্রদর্শিত হবে না। প্রতিটি স্তর তার নির্ধারিত সময়সীমা পর্যন্ত সক্রিয় থাকে।</p>
       <div class="form-row">

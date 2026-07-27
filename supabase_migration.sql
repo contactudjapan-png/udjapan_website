@@ -1,6 +1,8 @@
 -- ── New columns on existing tables ──────────────────────────────────────────
 
 ALTER TABLE events ADD COLUMN IF NOT EXISTS description_en TEXT DEFAULT NULL;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS payment_description_en TEXT DEFAULT NULL;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS payment_description_de TEXT DEFAULT NULL;
 ALTER TABLE events ADD COLUMN IF NOT EXISTS description_de TEXT DEFAULT NULL;
 ALTER TABLE events ADD COLUMN IF NOT EXISTS banner_url_nilkantha TEXT DEFAULT NULL;
 ALTER TABLE events ADD COLUMN IF NOT EXISTS banner_url_kokila TEXT DEFAULT NULL;

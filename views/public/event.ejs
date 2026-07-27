@@ -22,9 +22,14 @@
     <h2 style="margin-top:0"><%- t('event.payment_heading') %></h2>
     <p class="section-hint"><%- t('event.payment_hint') %></p>
 
-    <% if (event.payment_description) { %>
+    <%
+      var _payDesc = event.payment_description || '';
+      if (locale === 'en' && event.payment_description_en) _payDesc = event.payment_description_en;
+      else if (locale === 'de' && event.payment_description_de) _payDesc = event.payment_description_de;
+    %>
+    <% if (_payDesc) { %>
       <div style="margin-bottom:1.25rem;padding:1rem;background:var(--bg);border-radius:var(--radius);line-height:1.8">
-        <%- event.payment_description.replace(/\n/g, '<br>') %>
+        <%- _payDesc.replace(/\n/g, '<br>') %>
       </div>
     <% } %>
 
