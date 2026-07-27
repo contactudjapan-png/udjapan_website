@@ -13,7 +13,7 @@
     </div>
     <div class="form-group">
       <label for="description">বিবরণ</label>
-      <textarea id="description" name="description" rows="2"><%= ad ? (ad.description || '') : '' %></textarea>
+      <textarea id="description" name="description" rows="2" data-rich><%= ad ? (ad.description || '') : '' %></textarea>
     </div>
     <div class="form-group">
       <label for="link_url">লিংক (ক্লিক করলে যাবে)</label>
@@ -40,6 +40,7 @@
   </form>
 </main>
 
+<%- include('../partials/rich-editor') %>
 <%- include('../partials/footer') %>
 </body>
 </html>

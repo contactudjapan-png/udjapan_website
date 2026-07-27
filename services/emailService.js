@@ -64,7 +64,7 @@ async function sendPromotionEmail(recipients, subject, body, eventTitle) {
       subject,
       html: `
         <h2>${eventTitle}</h2>
-        ${body.replace(/\n/g, '<br>')}
+        ${body}
         <hr>
         <small>You received this because you registered for ${eventTitle}.</small>
       `,

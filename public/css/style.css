@@ -238,60 +238,35 @@ a:hover { text-decoration: underline; }
 .home-about h2 { margin-bottom: 0.75rem; }
 .home-about p { color: var(--text-muted); line-height: 1.8; }
 
-/* ─── Home – Announcements Panel (left) ─────────────────────────────────────── */
-.home-announcements {
-  position: fixed;
-  left: 1.25rem;
-  top: calc(var(--nav-h) + 1.25rem);
-  width: 240px;
-  max-height: calc(100vh - var(--nav-h) - 2.5rem);
-  overflow-y: auto;
-  z-index: 20;
+/* ─── Home – Panels Row (below banner) ───────────────────────────────────────── */
+.home-panels {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem 0 0;
+  align-items: flex-start;
+}
+.home-panel {
+  flex: 1;
   background: var(--bg-card);
   border-radius: var(--radius);
-  padding: 1rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  padding: 1.25rem;
   border: 1px solid var(--border);
-  transition: max-height 0.25s ease, padding 0.25s ease;
+  min-width: 0;
 }
-.home-announcements.minimized {
-  max-height: 52px;
-  overflow: hidden;
-  padding-bottom: 0.75rem;
-}
-.home-announcements.minimized .sidebar-content { display: none; }
-.announcement-item {
-  padding: 0.6rem 0;
-  border-bottom: 1px solid var(--border);
-}
-.announcement-item:last-child { border-bottom: none; }
-.announcement-item strong { font-size: 0.9rem; display: block; margin-bottom: 0.25rem; }
-.announcement-item p { font-size: 0.82rem; color: var(--text-muted); margin: 0; white-space: pre-wrap; }
-
-/* ─── Home – Sidebar Ads ─────────────────────────────────────────────────────── */
-.home-sidebar {
-  position: fixed;
-  right: 1.25rem;
-  top: calc(var(--nav-h) + 1.25rem);
-  width: 240px;
-  max-height: calc(100vh - var(--nav-h) - 2.5rem);
-  overflow-y: auto;
-  z-index: 20;
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  padding: 1rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  border: 1px solid var(--border);
-  transition: max-height 0.25s ease, padding 0.25s ease;
-}
-.sidebar-header {
+.home-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.75rem;
 }
-.sidebar-header .sidebar-ads-title { margin: 0; }
-.sidebar-toggle {
+.home-panel-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin: 0;
+}
+.panel-toggle {
   background: none;
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -306,21 +281,14 @@ a:hover { text-decoration: underline; }
   justify-content: center;
   flex-shrink: 0;
 }
-.sidebar-toggle:hover { background: var(--bg); color: var(--text); }
-.home-sidebar.minimized {
-  max-height: 52px;
-  overflow: hidden;
-  padding-bottom: 0.75rem;
+.panel-toggle:hover { background: var(--bg); color: var(--text); }
+.announcement-item {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
 }
-.home-sidebar.minimized .sidebar-content { display: none; }
-
-.sidebar-ads-title {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  margin: 0;
-}
+.announcement-item:last-child { border-bottom: none; }
+.announcement-item strong { font-size: 0.9rem; display: block; margin-bottom: 0.25rem; }
+.announcement-item div { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
 
 .ads-grid {
   display: grid;
@@ -833,8 +801,7 @@ main { flex: 1; }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────────── */
 @media (max-width: 860px) {
-  .home-sidebar { display: none; }
-  .home-announcements { display: none; }
+  .home-panels { flex-direction: column; }
 }
 
 @media (max-width: 640px) {
@@ -862,3 +829,11 @@ main { flex: 1; }
 .star-rating label:hover ~ label { color: #f5b301; }
 .star-display { color: #f5b301; font-size: 1rem; letter-spacing: 1px; }
 .star-display .empty { color: #ddd; }
+
+
+/* ─── Quill Rich Text Editor ─────────────────────────────────────────────────── */
+.ql-container { font-family: inherit; font-size: 0.95rem; }
+.ql-editor { min-height: 120px; background: var(--bg-input, #fff); color: var(--text, #111); }
+.ql-toolbar { background: var(--bg-card, #f8f8f8); border-color: var(--border, #ddd) !important; }
+.ql-container.ql-snow { border-color: var(--border, #ddd) !important; border-radius: 0 0 var(--radius, 6px) var(--radius, 6px); }
+.ql-toolbar.ql-snow { border-color: var(--border, #ddd) !important; border-radius: var(--radius, 6px) var(--radius, 6px) 0 0; }

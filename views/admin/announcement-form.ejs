@@ -16,7 +16,7 @@
     </div>
     <div class="form-group">
       <label for="content">বিষয়বস্তু *</label>
-      <textarea id="content" name="content" rows="5" required placeholder="ঘোষণার বিস্তারিত লিখুন..."><%= announcement ? announcement.content : '' %></textarea>
+      <textarea id="content" name="content" rows="5" required data-rich placeholder="ঘোষণার বিস্তারিত লিখুন..."><%= announcement ? announcement.content : '' %></textarea>
     </div>
     <div class="form-group">
       <label for="sort_order">ক্রম</label>
@@ -35,6 +35,7 @@
   </form>
 </main>
 
+<%- include('../partials/rich-editor') %>
 <%- include('../partials/footer') %>
 </body>
 </html>

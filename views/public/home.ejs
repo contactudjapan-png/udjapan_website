@@ -36,7 +36,79 @@
   </div>
 </section>
 
-<!-- ── Main + Sidebar ──────────────────────────────── -->
+<!-- ── Announcements + Ads (below banner) ──────────── -->
+<% if (_announcements.length > 0 || _ads.length > 0) { %>
+<div class="home-panels container">
+
+  <% if (_announcements.length > 0) { %>
+  <aside class="home-panel" id="annPanel">
+    <div class="home-panel-header">
+      <h3 class="home-panel-title">📢 ঘোষণা</h3>
+      <button class="panel-toggle" id="annToggle">−</button>
+    </div>
+    <div class="home-panel-body" id="annBody">
+      <% _announcements.forEach(ann => { %>
+        <div class="announcement-item">
+          <strong><%= ann.title %></strong>
+          <div><%- ann.content %></div>
+        </div>
+      <% }) %>
+    </div>
+  </aside>
+  <% } %>
+
+  <% if (_ads.length > 0) { %>
+  <aside class="home-panel" id="adPanel">
+    <div class="home-panel-header">
+      <h3 class="home-panel-title">স্পনসর ও বিজ্ঞাপন</h3>
+      <button class="panel-toggle" id="adToggle">−</button>
+    </div>
+    <div class="home-panel-body" id="adBody">
+      <% _ads.forEach(ad => { %>
+        <% if (ad.link_url) { %>
+          <a href="<%= ad.link_url %>" target="_blank" rel="noopener" class="ad-card">
+        <% } else { %>
+          <div class="ad-card">
+        <% } %>
+          <% if (ad.image_url) { %>
+            <img src="<%= ad.image_url %>" alt="<%= ad.title %>" class="ad-card-img">
+          <% } else { %>
+            <div class="ad-card-placeholder">বিজ্ঞাপন</div>
+          <% } %>
+          <div class="ad-card-body">
+            <strong><%= ad.title %></strong>
+            <% if (ad.description) { %><div><%- ad.description %></div><% } %>
+          </div>
+        <% if (ad.link_url) { %></a><% } else { %></div><% } %>
+      <% }) %>
+    </div>
+  </aside>
+  <% } %>
+
+<script>
+(function() {
+  function initToggle(panelId, toggleId, bodyId, key) {
+    var panel = document.getElementById(panelId);
+    var toggle = document.getElementById(toggleId);
+    var body = document.getElementById(bodyId);
+    if (!panel) return;
+    function setMin(min) {
+      body.style.display = min ? 'none' : '';
+      toggle.textContent = min ? '+' : '−';
+      localStorage.setItem(key, min ? '1' : '0');
+    }
+    toggle.addEventListener('click', function() { setMin(body.style.display !== 'none'); });
+    if (localStorage.getItem(key) === '1') setMin(true);
+  }
+  initToggle('annPanel', 'annToggle', 'annBody', 'annMin');
+  initToggle('adPanel', 'adToggle', 'adBody', 'adMin');
+})();
+</script>
+
+</div>
+<% } %>
+
+<!-- ── Main Content ─────────────────────────────────── -->
 <div class="home-body container">
   <main class="home-main">
 
@@ -44,7 +116,7 @@
     <% if (_event.description) { %>
     <section class="home-about">
       <h2>ইভেন্ট সম্পর্কে</h2>
-      <div><%- _event.description.replace(/\n/g, '<br>') %></div>
+      <div><%- _event.description %></div>
     </section>
     <% } %>
 
@@ -77,100 +149,8 @@
     <% } %>
 
   </main>
-
 </div>
 
-<% } %>
-
-<% if (_announcements.length > 0) { %>
-<aside class="home-announcements" id="annPanel">
-  <div class="sidebar-header">
-    <h3 class="sidebar-ads-title">📢 ঘোষণা</h3>
-    <button class="sidebar-toggle" id="annToggle" title="মিনিমাইজ করুন">−</button>
-  </div>
-  <div class="sidebar-content" id="annContent">
-    <% _announcements.forEach(ann => { %>
-      <div class="announcement-item">
-        <strong><%= ann.title %></strong>
-        <p><%= ann.content %></p>
-      </div>
-    <% }) %>
-  </div>
-</aside>
-<script>
-(function() {
-  const panel = document.getElementById('annPanel');
-  const toggle = document.getElementById('annToggle');
-  const KEY = 'annPanelMinimized';
-
-  function setMinimized(min) {
-    if (min) {
-      panel.classList.add('minimized');
-      toggle.textContent = '+';
-      toggle.title = 'প্রসারিত করুন';
-    } else {
-      panel.classList.remove('minimized');
-      toggle.textContent = '−';
-      toggle.title = 'মিনিমাইজ করুন';
-    }
-    localStorage.setItem(KEY, min ? '1' : '0');
-  }
-
-  if (localStorage.getItem(KEY) === '1') setMinimized(true);
-  toggle.addEventListener('click', () => setMinimized(!panel.classList.contains('minimized')));
-})();
-</script>
-<% } %>
-
-<% if (_ads.length > 0) { %>
-<aside class="home-sidebar" id="adSidebar">
-  <div class="sidebar-header">
-    <h3 class="sidebar-ads-title">স্পনসর ও বিজ্ঞাপন</h3>
-    <button class="sidebar-toggle" id="sidebarToggle" title="মিনিমাইজ করুন">−</button>
-  </div>
-  <div class="sidebar-content" id="sidebarContent">
-    <% _ads.forEach(ad => { %>
-      <% if (ad.link_url) { %>
-        <a href="<%= ad.link_url %>" target="_blank" rel="noopener" class="ad-card">
-      <% } else { %>
-        <div class="ad-card">
-      <% } %>
-        <% if (ad.image_url) { %>
-          <img src="<%= ad.image_url %>" alt="<%= ad.title %>" class="ad-card-img">
-        <% } else { %>
-          <div class="ad-card-placeholder">বিজ্ঞাপন</div>
-        <% } %>
-        <div class="ad-card-body">
-          <strong><%= ad.title %></strong>
-          <% if (ad.description) { %><p><%= ad.description %></p><% } %>
-        </div>
-      <% if (ad.link_url) { %></a><% } else { %></div><% } %>
-    <% }) %>
-  </div>
-</aside>
-<script>
-(function() {
-  const sidebar = document.getElementById('adSidebar');
-  const toggle = document.getElementById('sidebarToggle');
-  const KEY = 'adSidebarMinimized';
-
-  function setMinimized(min) {
-    if (min) {
-      sidebar.classList.add('minimized');
-      toggle.textContent = '+';
-      toggle.title = 'প্রসারিত করুন';
-    } else {
-      sidebar.classList.remove('minimized');
-      toggle.textContent = '−';
-      toggle.title = 'মিনিমাইজ করুন';
-    }
-    localStorage.setItem(KEY, min ? '1' : '0');
-  }
-
-  if (localStorage.getItem(KEY) === '1') setMinimized(true);
-  toggle.addEventListener('click', () => setMinimized(!sidebar.classList.contains('minimized')));
-})();
-</script>
 <% } %>
 
 <%- include('../partials/footer') %>

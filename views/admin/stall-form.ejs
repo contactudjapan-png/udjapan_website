@@ -14,7 +14,7 @@
     </div>
     <div class="form-group">
       <label for="description">বিবরণ</label>
-      <textarea id="description" name="description" rows="3"><%= stall ? (stall.description || '') : '' %></textarea>
+      <textarea id="description" name="description" rows="3" data-rich><%= stall ? (stall.description || '') : '' %></textarea>
     </div>
     <div class="form-group">
       <label for="location_info">অবস্থান / স্পট</label>
@@ -39,7 +39,7 @@
     <hr>
     <div class="form-group">
       <label for="notes">পর্যবেক্ষণ নোট</label>
-      <textarea id="notes" name="notes" rows="4" placeholder="স্টল পরিদর্শনের নোট, সমস্যা বা মন্তব্য..."><%= stall ? (stall.notes || '') : '' %></textarea>
+      <textarea id="notes" name="notes" rows="4" data-rich placeholder="স্টল পরিদর্শনের নোট, সমস্যা বা মন্তব্য..."><%= stall ? (stall.notes || '') : '' %></textarea>
     </div>
 
     <button type="submit" class="btn btn-primary"><%= stall ? 'পরিবর্তন সংরক্ষণ' : 'স্টল তৈরি করুন' %></button>
@@ -47,6 +47,7 @@
   </form>
 </main>
 
+<%- include('../partials/rich-editor') %>
 <%- include('../partials/footer') %>
 </body>
 </html>

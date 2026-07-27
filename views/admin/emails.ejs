@@ -21,13 +21,14 @@
     </div>
     <div class="form-group">
       <label for="body">Message *</label>
-      <textarea id="body" name="body" rows="10" required placeholder="Write your message here..."></textarea>
+      <textarea id="body" name="body" rows="10" required data-rich placeholder="Write your message here..."></textarea>
     </div>
     <button type="submit" class="btn btn-primary">Send Email</button>
     <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-outline">Cancel</a>
   </form>
 </main>
 
+<%- include('../partials/rich-editor') %>
 <%- include('../partials/footer') %>
 </body>
 </html>
