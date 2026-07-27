@@ -229,8 +229,8 @@ router.get('/events/:id/registrations/new', async (req, res, next) => {
 
 router.post('/events/:id/registrations/new', async (req, res, next) => {
   try {
-    const { name, email, payment_reference } = req.body;
-    await registrationService.createRegistration(req.params.id, { name, email, payment_reference });
+    const { name, email, phone, payment_reference, amount, transaction_id } = req.body;
+    await registrationService.createRegistration(req.params.id, { name, email, phone, payment_reference, amount, transaction_id });
     req.flash('success', 'Registration added.');
     res.redirect(`/admin/events/${req.params.id}/registrations`);
   } catch (err) {

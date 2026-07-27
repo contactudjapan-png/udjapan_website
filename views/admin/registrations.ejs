@@ -21,13 +21,14 @@
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>নাম</th><th>ইমেইল</th><th>পরিমাণ</th><th>লেনদেন আইডি</th><th>অবস্থা</th><th>নিবন্ধিত</th><th>কার্যক্রম</th>
+        <th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>পরিমাণ</th><th>লেনদেন আইডি</th><th>অবস্থা</th><th>নিবন্ধিত</th><th>কার্যক্রম</th>
       </tr></thead>
       <tbody>
       <% registrations.forEach(reg => { %>
         <tr>
           <td><%= reg.name %></td>
           <td><%= reg.email %></td>
+          <td><%= reg.phone || '—' %></td>
           <td><% if (reg.amount) { %>€<%= parseFloat(reg.amount).toFixed(2) %><% } else { %>—<% } %></td>
           <td><% if (reg.transaction_id) { %><code style="font-size:0.78rem"><%= reg.transaction_id %></code><% } else { %><%= reg.payment_reference || '—' %><% } %></td>
           <td>

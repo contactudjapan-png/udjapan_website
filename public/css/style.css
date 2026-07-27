@@ -85,15 +85,24 @@ a:hover { text-decoration: underline; }
 .sidebar-section {
   padding: 0.5rem 0;
   border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-left: 3px solid transparent;
 }
+.sidebar-section:nth-child(2) { border-left-color: #7ec8a4; background: rgba(126,200,164,0.07); } /* প্রধান — teal */
+.sidebar-section:nth-child(3) { border-left-color: #f4c842; background: rgba(244,200,66,0.07); }  /* বিষয়বস্তু — amber */
+.sidebar-section:nth-child(4) { border-left-color: #7fafd6; background: rgba(127,175,214,0.07); } /* সেটিংস — blue */
+.sidebar-section:nth-child(5) { border-left-color: #d67f7f; background: rgba(214,127,127,0.07); } /* লগ — red */
 .sidebar-group-label {
   display: block;
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.55);
   padding: 0.5rem 1rem 0.25rem;
 }
+.sidebar-section:nth-child(2) .sidebar-group-label { color: #7ec8a4; }
+.sidebar-section:nth-child(3) .sidebar-group-label { color: #f4c842; }
+.sidebar-section:nth-child(4) .sidebar-group-label { color: #7fafd6; }
+.sidebar-section:nth-child(5) .sidebar-group-label { color: #d67f7f; }
 .nav-admin .nav-link {
   display: block;
   padding: 0.45rem 1rem;

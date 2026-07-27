@@ -17,8 +17,8 @@ function getVolunteerRedirect(session) {
   if (session.adminUser) return '/validate';
   const roles = session.volunteerUser?.roles || {};
   if (roles.qr) return '/validate';
-  if (roles.stall) return '/validate/stalls';
   if (roles.reg) return '/validate/register';
+  if (roles.stall) return '/validate/stalls';
   if (roles.music) return '/validate/instruments';
   return '/validate/no-access';
 }
