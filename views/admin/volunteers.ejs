@@ -48,13 +48,25 @@
               </form>
             </div>
             <form action="/admin/volunteers/<%= vol.id %>/assign-task" method="POST" class="task-assign-form">
-              <% const taskOptions = volTaskTypes ? volTaskTypes.split('\n').map(s => s.trim()).filter(Boolean) : []; %>
-              <% if (taskOptions.length > 0) { %>
+              <% const hasAnyTasks = taskGroups && (taskGroups.stall.length || taskGroups.reg.length || taskGroups.qr.length); %>
+              <% if (hasAnyTasks) { %>
                 <select name="task" class="inline-input">
                   <option value="">— কাজ বেছে নিন —</option>
-                  <% taskOptions.forEach(opt => { %>
-                    <option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option>
-                  <% }) %>
+                  <% if (taskGroups.stall.length) { %>
+                  <optgroup label="স্টল পর্যবেক্ষণ">
+                    <% taskGroups.stall.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
+                  </optgroup>
+                  <% } %>
+                  <% if (taskGroups.reg.length) { %>
+                  <optgroup label="রেজিস্ট্রেশন">
+                    <% taskGroups.reg.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
+                  </optgroup>
+                  <% } %>
+                  <% if (taskGroups.qr.length) { %>
+                  <optgroup label="QR যাচাইকারী">
+                    <% taskGroups.qr.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
+                  </optgroup>
+                  <% } %>
                 </select>
               <% } else { %>
                 <input type="text" name="task" value="<%= vol.assigned_task || '' %>" placeholder="কাজ নির্ধারণ..." class="inline-input">

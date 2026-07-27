@@ -349,8 +349,8 @@ router.get('/events/:id/volunteers', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
     const volunteers = await volunteerService.getVolunteersByEvent(req.params.id);
-    const volTaskTypes = await settingsService.getVolTaskTypes();
-    res.render('admin/volunteers', { title: `Volunteers — ${event.title}`, event, volunteers, volTaskTypes });
+    const taskGroups = await settingsService.getAllTaskGroups();
+    res.render('admin/volunteers', { title: `Volunteers — ${event.title}`, event, volunteers, taskGroups });
   } catch (err) { next(err); }
 });
 
@@ -358,14 +358,22 @@ router.get('/events/:id/volunteers', async (req, res, next) => {
 
 router.get('/settings/volunteer-tasks', async (req, res, next) => {
   try {
-    const volTaskTypes = await settingsService.getVolTaskTypes();
-    res.render('admin/volunteer-tasks', { title: 'স্বেচ্ছাসেবী কাজের তালিকা', volTaskTypes });
+    const [stallTaskNames, regTaskNames, qrTaskNames] = await Promise.all([
+      settingsService.getStallTaskNames(),
+      settingsService.getRegTaskNames(),
+      settingsService.getQRTaskNames(),
+    ]);
+    res.render('admin/volunteer-tasks', { title: 'স্বেচ্ছাসেবী কাজের তালিকা', stallTaskNames, regTaskNames, qrTaskNames });
   } catch (err) { next(err); }
 });
 
 router.post('/settings/volunteer-tasks', async (req, res, next) => {
   try {
-    await settingsService.setVolTaskTypes((req.body.vol_task_types || '').trim());
+    await Promise.all([
+      settingsService.setStallTaskNames((req.body.stall_task_names || '').trim()),
+      settingsService.setRegTaskNames((req.body.reg_task_names || '').trim()),
+      settingsService.setQRTaskNames((req.body.qr_task_names || '').trim()),
+    ]);
     req.flash('success', 'কাজের তালিকা সংরক্ষিত হয়েছে।');
     res.redirect('/admin/settings/volunteer-tasks');
   } catch (err) { next(err); }

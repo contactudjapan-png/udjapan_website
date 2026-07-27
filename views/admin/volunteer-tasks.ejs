@@ -5,12 +5,25 @@
 
 <main class="admin-container">
   <h1>স্বেচ্ছাসেবী কাজের তালিকা</h1>
-  <p style="color:var(--text-muted)">এই তালিকা সকল ইভেন্টের স্বেচ্ছাসেবী নিয়োগে ব্যবহৃত হবে।</p>
+  <p style="color:var(--text-muted)">প্রতিটি ভূমিকার জন্য কাজের নাম আলাদা লাইনে লিখুন। স্বেচ্ছাসেবী লগইনের সময় ভূমিকা নির্ধারিত হবে।</p>
 
-  <form action="/admin/settings/volunteer-tasks" method="POST" class="admin-form" style="max-width:480px">
-    <div class="form-group">
-      <label for="vol_task_types">কাজের বিকল্পসমূহ (প্রতি লাইনে একটি)</label>
-      <textarea id="vol_task_types" name="vol_task_types" rows="12"><%= volTaskTypes %></textarea>
+  <form action="/admin/settings/volunteer-tasks" method="POST" class="admin-form" style="max-width:600px">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="stall_task_names">স্টল পর্যবেক্ষণ কাজ</label>
+        <small style="color:var(--text-muted)">এই কাজ পেলে স্টল পেজে যাবে</small>
+        <textarea id="stall_task_names" name="stall_task_names" rows="6"><%= stallTaskNames %></textarea>
+      </div>
+      <div class="form-group">
+        <label for="reg_task_names">রেজিস্ট্রেশন কাজ</label>
+        <small style="color:var(--text-muted)">এই কাজ পেলে রেজিস্ট্রেশন পেজে যাবে</small>
+        <textarea id="reg_task_names" name="reg_task_names" rows="6"><%= regTaskNames %></textarea>
+      </div>
+    </div>
+    <div class="form-group" style="max-width:280px">
+      <label for="qr_task_names">QR যাচাইকারী কাজ</label>
+      <small style="color:var(--text-muted)">এই কাজ পেলে QR স্ক্যানারে যাবে</small>
+      <textarea id="qr_task_names" name="qr_task_names" rows="4"><%= qrTaskNames %></textarea>
     </div>
     <button type="submit" class="btn btn-primary">সংরক্ষণ করুন</button>
   </form>

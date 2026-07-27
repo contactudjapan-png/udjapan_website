@@ -14,34 +14,28 @@ function requireValidator(req, res, next) {
 
 function getVolunteerRedirect(session) {
   if (session.adminUser) return '/validate';
-  const tasks = (session.volunteerUser?.tasks || []).map(t => (t || '').toLowerCase());
-  const hasStall = tasks.some(t => t.includes('স্টল') || t.includes('stall'));
-  const hasReg = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
-  const hasQR = tasks.some(t => t.includes('qr') || t.includes('যাচাই') || t.includes('validation') || t.includes('scanner'));
-  if (hasQR) return '/validate';
-  if (hasStall) return '/validate/stalls';
-  if (hasReg) return '/validate/register';
+  const roles = session.volunteerUser?.roles || {};
+  if (roles.qr) return '/validate';
+  if (roles.stall) return '/validate/stalls';
+  if (roles.reg) return '/validate/register';
   return '/validate/no-access';
 }
 
 function requireQRAccess(req, res, next) {
   if (req.session.adminUser) return next();
-  const tasks = (req.session.volunteerUser?.tasks || []).map(t => (t || '').toLowerCase());
-  if (tasks.some(t => t.includes('qr') || t.includes('যাচাই') || t.includes('validation') || t.includes('scanner'))) return next();
+  if (req.session.volunteerUser?.roles?.qr) return next();
   res.redirect(getVolunteerRedirect(req.session));
 }
 
 function requireRegistrationAccess(req, res, next) {
   if (req.session.adminUser) return next();
-  const tasks = (req.session.volunteerUser?.tasks || []).map(t => (t || '').toLowerCase());
-  if (tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'))) return next();
+  if (req.session.volunteerUser?.roles?.reg) return next();
   res.redirect(getVolunteerRedirect(req.session));
 }
 
 function requireStallAccess(req, res, next) {
   if (req.session.adminUser) return next();
-  const tasks = (req.session.volunteerUser?.tasks || []).map(t => (t || '').toLowerCase());
-  if (tasks.some(t => t.includes('স্টল') || t.includes('stall'))) return next();
+  if (req.session.volunteerUser?.roles?.stall) return next();
   res.redirect(getVolunteerRedirect(req.session));
 }
 
@@ -81,20 +75,21 @@ router.post('/login', async (req, res) => {
     }
     const activeEventIds = new Set(activeEvents.map(e => e.id));
     const activeVolunteers = volunteers.filter(v => activeEventIds.has(v.event_id));
-    const tasks = activeVolunteers.map(v => (v.assigned_task || '').toLowerCase());
-    const hasStall = tasks.some(t => t.includes('স্টল') || t.includes('stall'));
-    const hasReg = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
-    const hasQR = tasks.some(t => t.includes('qr') || t.includes('যাচাই') || t.includes('validation') || t.includes('scanner'));
+    const volunteerTasks = activeVolunteers.map(v => (v.assigned_task || '').trim());
+    const taskGroups = await settingsService.getAllTaskGroups();
+    const hasStall = volunteerTasks.some(t => taskGroups.stall.includes(t));
+    const hasReg = volunteerTasks.some(t => taskGroups.reg.includes(t));
+    const hasQR = volunteerTasks.some(t => taskGroups.qr.includes(t));
     if (!hasStall && !hasReg && !hasQR) {
       req.session.volunteerUser = null;
-      req.flash('error', 'আপনার কাজের ধরন স্বেচ্ছাসেবী কর্নারে প্রবেশযোগ্য নয়। অ্যাডমিনের সাথে যোগাযোগ করুন।');
-      return res.redirect('/validate/login');
+      return res.redirect('/validate/no-access');
     }
     req.session.volunteerUser = {
       email,
       name: activeVolunteers[0].name,
-      tasks: activeVolunteers.map(v => v.assigned_task || ''),
+      tasks: volunteerTasks,
       event_ids: activeVolunteers.map(v => v.event_id),
+      roles: { stall: hasStall, reg: hasReg, qr: hasQR },
     };
     res.redirect(getVolunteerRedirect(req.session));
   } catch (err) {
