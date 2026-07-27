@@ -423,23 +423,31 @@ router.get('/events/:id/volunteers', async (req, res, next) => {
 
 router.get('/settings/volunteer-tasks', async (req, res, next) => {
   try {
-    const [stallTaskNames, regTaskNames, qrTaskNames, musicTaskNames] = await Promise.all([
-      settingsService.getStallTaskNames(),
-      settingsService.getRegTaskNames(),
-      settingsService.getQRTaskNames(),
-      settingsService.getMusicTaskNames(),
-    ]);
-    res.render('admin/volunteer-tasks', { title: 'স্বেচ্ছাসেবী কাজের তালিকা', stallTaskNames, regTaskNames, qrTaskNames, musicTaskNames });
+    const taskGroups = await settingsService.getAllTaskGroups();
+    const tasks = [
+      ...taskGroups.stall.map(n => ({ name: n, role: 'stall' })),
+      ...taskGroups.reg.map(n => ({ name: n, role: 'reg' })),
+      ...taskGroups.qr.map(n => ({ name: n, role: 'qr' })),
+      ...taskGroups.music.map(n => ({ name: n, role: 'music' })),
+    ];
+    res.render('admin/volunteer-tasks', { title: 'স্বেচ্ছাসেবী কাজের তালিকা', tasks });
   } catch (err) { next(err); }
 });
 
 router.post('/settings/volunteer-tasks', async (req, res, next) => {
   try {
+    const names = [].concat(req.body.task_name || []);
+    const roles = [].concat(req.body.task_role || []);
+    const grouped = { stall: [], reg: [], qr: [], music: [] };
+    names.forEach((name, i) => {
+      const role = roles[i];
+      if (grouped[role] && name.trim()) grouped[role].push(name.trim());
+    });
     await Promise.all([
-      settingsService.setStallTaskNames((req.body.stall_task_names || '').trim()),
-      settingsService.setRegTaskNames((req.body.reg_task_names || '').trim()),
-      settingsService.setQRTaskNames((req.body.qr_task_names || '').trim()),
-      settingsService.setMusicTaskNames((req.body.music_task_names || '').trim()),
+      settingsService.setStallTaskNames(grouped.stall.join('\n')),
+      settingsService.setRegTaskNames(grouped.reg.join('\n')),
+      settingsService.setQRTaskNames(grouped.qr.join('\n')),
+      settingsService.setMusicTaskNames(grouped.music.join('\n')),
     ]);
     req.flash('success', 'কাজের তালিকা সংরক্ষিত হয়েছে।');
     res.redirect('/admin/settings/volunteer-tasks');

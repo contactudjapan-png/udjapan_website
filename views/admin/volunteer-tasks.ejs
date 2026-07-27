@@ -5,34 +5,78 @@
 
 <main class="admin-container">
   <h1>স্বেচ্ছাসেবী কাজের তালিকা</h1>
-  <p style="color:var(--text-muted)">প্রতিটি ভূমিকার জন্য কাজের নাম আলাদা লাইনে লিখুন। স্বেচ্ছাসেবী লগইনের সময় ভূমিকা নির্ধারিত হবে।</p>
+  <p style="color:var(--text-muted);margin-bottom:1.5rem">প্রতিটি কাজের নাম ও ভূমিকা নির্ধারণ করুন। ভূমিকা অনুযায়ী স্বেচ্ছাসেবী লগইনের পর সঠিক পেজে পাঠানো হবে।</p>
 
-  <form action="/admin/settings/volunteer-tasks" method="POST" class="admin-form" style="max-width:600px">
-    <div class="form-row">
-      <div class="form-group">
-        <label for="stall_task_names">স্টল পর্যবেক্ষণ কাজ</label>
-        <small style="color:var(--text-muted)">এই কাজ পেলে স্টল পেজে যাবে</small>
-        <textarea id="stall_task_names" name="stall_task_names" rows="6"><%= stallTaskNames %></textarea>
-      </div>
-      <div class="form-group">
-        <label for="reg_task_names">রেজিস্ট্রেশন কাজ</label>
-        <small style="color:var(--text-muted)">এই কাজ পেলে রেজিস্ট্রেশন পেজে যাবে</small>
-        <textarea id="reg_task_names" name="reg_task_names" rows="6"><%= regTaskNames %></textarea>
-      </div>
+  <form action="/admin/settings/volunteer-tasks" method="POST" class="admin-form" style="max-width:640px">
+    <div id="task-list" style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem">
+      <% if (tasks.length === 0) { %>
+        <div class="task-row" style="display:flex;gap:0.5rem;align-items:center">
+          <input type="text" name="task_name" placeholder="কাজের নাম" class="inline-input" style="flex:1">
+          <select name="task_role" class="inline-input" style="width:200px">
+            <option value="stall">স্টল পর্যবেক্ষণ</option>
+            <option value="reg">রেজিস্ট্রেশন</option>
+            <option value="qr">QR যাচাইকারী</option>
+            <option value="music">সংগীত ও মঞ্চ</option>
+          </select>
+          <button type="button" class="btn btn-sm btn-danger remove-row" style="flex-shrink:0">&times;</button>
+        </div>
+      <% } else { %>
+        <% tasks.forEach(task => { %>
+          <div class="task-row" style="display:flex;gap:0.5rem;align-items:center">
+            <input type="text" name="task_name" value="<%= task.name %>" placeholder="কাজের নাম" class="inline-input" style="flex:1">
+            <select name="task_role" class="inline-input" style="width:200px">
+              <option value="stall" <%= task.role === 'stall' ? 'selected' : '' %>>স্টল পর্যবেক্ষণ</option>
+              <option value="reg" <%= task.role === 'reg' ? 'selected' : '' %>>রেজিস্ট্রেশন</option>
+              <option value="qr" <%= task.role === 'qr' ? 'selected' : '' %>>QR যাচাইকারী</option>
+              <option value="music" <%= task.role === 'music' ? 'selected' : '' %>>সংগীত ও মঞ্চ</option>
+            </select>
+            <button type="button" class="btn btn-sm btn-danger remove-row" style="flex-shrink:0">&times;</button>
+          </div>
+        <% }) %>
+      <% } %>
     </div>
-    <div class="form-group" style="max-width:280px">
-      <label for="qr_task_names">QR যাচাইকারী কাজ</label>
-      <small style="color:var(--text-muted)">এই কাজ পেলে QR স্ক্যানারে যাবে</small>
-      <textarea id="qr_task_names" name="qr_task_names" rows="4"><%= qrTaskNames %></textarea>
+
+    <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:1.5rem">
+      <button type="button" id="add-task" class="btn btn-outline btn-sm">+ কাজ যোগ করুন</button>
     </div>
-    <div class="form-group" style="max-width:280px">
-      <label for="music_task_names">সংগীত ও মঞ্চ কাজ</label>
-      <small style="color:var(--text-muted)">এই কাজ পেলে যন্ত্রপাতি পেজে যাবে</small>
-      <textarea id="music_task_names" name="music_task_names" rows="4"><%= musicTaskNames %></textarea>
-    </div>
+
     <button type="submit" class="btn btn-primary">সংরক্ষণ করুন</button>
   </form>
 </main>
+
+<script>
+(function () {
+  const list = document.getElementById('task-list');
+
+  function removeRow(btn) {
+    const row = btn.closest('.task-row');
+    if (list.querySelectorAll('.task-row').length > 1) row.remove();
+    else { row.querySelector('input').value = ''; }
+  }
+
+  list.addEventListener('click', function (e) {
+    if (e.target.classList.contains('remove-row')) removeRow(e.target);
+  });
+
+  document.getElementById('add-task').addEventListener('click', function () {
+    const row = document.createElement('div');
+    row.className = 'task-row';
+    row.style.cssText = 'display:flex;gap:0.5rem;align-items:center';
+    row.innerHTML = `
+      <input type="text" name="task_name" placeholder="কাজের নাম" class="inline-input" style="flex:1">
+      <select name="task_role" class="inline-input" style="width:200px">
+        <option value="stall">স্টল পর্যবেক্ষণ</option>
+        <option value="reg">রেজিস্ট্রেশন</option>
+        <option value="qr">QR যাচাইকারী</option>
+        <option value="music">সংগীত ও মঞ্চ</option>
+      </select>
+      <button type="button" class="btn btn-sm btn-danger remove-row" style="flex-shrink:0">&times;</button>
+    `;
+    list.appendChild(row);
+    row.querySelector('input').focus();
+  });
+})();
+</script>
 
 <%- include('../partials/footer') %>
 </body>
