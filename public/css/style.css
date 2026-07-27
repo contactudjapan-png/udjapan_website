@@ -228,6 +228,36 @@ a:hover { text-decoration: underline; }
 .home-about h2 { margin-bottom: 0.75rem; }
 .home-about p { color: var(--text-muted); line-height: 1.8; }
 
+/* ─── Home – Announcements Panel (left) ─────────────────────────────────────── */
+.home-announcements {
+  position: fixed;
+  left: 1.25rem;
+  top: calc(var(--nav-h) + 1.25rem);
+  width: 240px;
+  max-height: calc(100vh - var(--nav-h) - 2.5rem);
+  overflow-y: auto;
+  z-index: 20;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border: 1px solid var(--border);
+  transition: max-height 0.25s ease, padding 0.25s ease;
+}
+.home-announcements.minimized {
+  max-height: 52px;
+  overflow: hidden;
+  padding-bottom: 0.75rem;
+}
+.home-announcements.minimized .sidebar-content { display: none; }
+.announcement-item {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.announcement-item:last-child { border-bottom: none; }
+.announcement-item strong { font-size: 0.9rem; display: block; margin-bottom: 0.25rem; }
+.announcement-item p { font-size: 0.82rem; color: var(--text-muted); margin: 0; white-space: pre-wrap; }
+
 /* ─── Home – Sidebar Ads ─────────────────────────────────────────────────────── */
 .home-sidebar {
   position: fixed;
@@ -794,6 +824,7 @@ main { flex: 1; }
 /* ─── Responsive ─────────────────────────────────────────────────────────────── */
 @media (max-width: 860px) {
   .home-sidebar { display: none; }
+  .home-announcements { display: none; }
 }
 
 @media (max-width: 640px) {

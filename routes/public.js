@@ -8,18 +8,21 @@ const pollService = require('../services/pollService');
 const volunteerService = require('../services/volunteerService');
 const submissionService = require('../services/submissionService');
 const advertisementService = require('../services/advertisementService');
+const announcementService = require('../services/announcementService');
 
 
 
 // Home
 router.get('/', async (req, res, next) => {
   try {
-    const events = await eventService.getActiveEvents();
-    const ads = await advertisementService.getActiveAds();
-    // First active event is the "current" featured event
+    const [events, ads, announcements] = await Promise.all([
+      eventService.getActiveEvents(),
+      advertisementService.getActiveAds(),
+      announcementService.getActiveAnnouncements(),
+    ]);
     const currentEvent = events[0] || null;
     const otherEvents = events.slice(1);
-    res.render('public/home', { title: 'Udjapon', currentEvent, otherEvents, ads });
+    res.render('public/home', { title: 'Udjapon', currentEvent, otherEvents, ads, announcements });
   } catch (err) {
     next(err);
   }

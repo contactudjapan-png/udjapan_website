@@ -6,6 +6,7 @@
 <% const _event = locals.currentEvent || null; %>
 <% const _ads = locals.ads || []; %>
 <% const _others = locals.otherEvents || []; %>
+<% const _announcements = locals.announcements || []; %>
 
 <% if (!_event) { %>
   <main class="container" style="padding:80px 20px;text-align:center">
@@ -75,6 +76,46 @@
   </main>
 
 </div>
+
+<% if (_announcements.length > 0) { %>
+<aside class="home-announcements" id="annPanel">
+  <div class="sidebar-header">
+    <h3 class="sidebar-ads-title">📢 ঘোষণা</h3>
+    <button class="sidebar-toggle" id="annToggle" title="মিনিমাইজ করুন">−</button>
+  </div>
+  <div class="sidebar-content" id="annContent">
+    <% _announcements.forEach(ann => { %>
+      <div class="announcement-item">
+        <strong><%= ann.title %></strong>
+        <p><%= ann.content %></p>
+      </div>
+    <% }) %>
+  </div>
+</aside>
+<script>
+(function() {
+  const panel = document.getElementById('annPanel');
+  const toggle = document.getElementById('annToggle');
+  const KEY = 'annPanelMinimized';
+
+  function setMinimized(min) {
+    if (min) {
+      panel.classList.add('minimized');
+      toggle.textContent = '+';
+      toggle.title = 'প্রসারিত করুন';
+    } else {
+      panel.classList.remove('minimized');
+      toggle.textContent = '−';
+      toggle.title = 'মিনিমাইজ করুন';
+    }
+    localStorage.setItem(KEY, min ? '1' : '0');
+  }
+
+  if (localStorage.getItem(KEY) === '1') setMinimized(true);
+  toggle.addEventListener('click', () => setMinimized(!panel.classList.contains('minimized')));
+})();
+</script>
+<% } %>
 
 <% if (_ads.length > 0) { %>
 <aside class="home-sidebar" id="adSidebar">

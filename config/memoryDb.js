@@ -240,6 +240,7 @@ class MemoryDB {
       scan_logs: [],
       email_log: [],
       advertisements: [],
+      announcements: [],
     };
     this.storage = new MemoryStorage(uploadsDir);
     this.auth = new MemoryAuth();

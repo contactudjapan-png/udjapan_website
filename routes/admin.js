@@ -18,6 +18,7 @@ const reportService = require('../services/reportService');
 const submissionService = require('../services/submissionService');
 const importService = require('../services/importService');
 const advertisementService = require('../services/advertisementService');
+const announcementService = require('../services/announcementService');
 const settingsService = require('../services/settingsService');
 
 // ─── Auth ───────────────────────────────────────────────────────────────────
@@ -627,6 +628,50 @@ router.post('/ads/:id/delete', async (req, res, next) => {
     await advertisementService.deleteAd(req.params.id);
     req.flash('success', 'বিজ্ঞাপন মুছে ফেলা হয়েছে।');
     res.redirect('/admin/ads');
+  } catch (err) { next(err); }
+});
+
+// ─── Announcements ────────────────────────────────────────────────────────────
+
+router.get('/announcements', async (req, res, next) => {
+  try {
+    const announcements = await announcementService.getAllAnnouncements();
+    res.render('admin/announcements', { title: 'ঘোষণা', announcements });
+  } catch (err) { next(err); }
+});
+
+router.get('/announcements/new', (req, res) => {
+  res.render('admin/announcement-form', { title: 'নতুন ঘোষণা', announcement: null });
+});
+
+router.post('/announcements/new', async (req, res, next) => {
+  try {
+    await announcementService.createAnnouncement(req.body);
+    req.flash('success', 'ঘোষণা তৈরি হয়েছে।');
+    res.redirect('/admin/announcements');
+  } catch (err) { next(err); }
+});
+
+router.get('/announcements/:id/edit', async (req, res, next) => {
+  try {
+    const announcement = await announcementService.getAnnouncementById(req.params.id);
+    res.render('admin/announcement-form', { title: 'ঘোষণা সম্পাদনা', announcement });
+  } catch (err) { next(err); }
+});
+
+router.post('/announcements/:id/edit', async (req, res, next) => {
+  try {
+    await announcementService.updateAnnouncement(req.params.id, req.body);
+    req.flash('success', 'ঘোষণা আপডেট হয়েছে।');
+    res.redirect('/admin/announcements');
+  } catch (err) { next(err); }
+});
+
+router.post('/announcements/:id/delete', async (req, res, next) => {
+  try {
+    await announcementService.deleteAnnouncement(req.params.id);
+    req.flash('success', 'ঘোষণা মুছে ফেলা হয়েছে।');
+    res.redirect('/admin/announcements');
   } catch (err) { next(err); }
 });
 

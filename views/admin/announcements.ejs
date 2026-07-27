@@ -1,0 +1,41 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <div class="section-header">
+    <h1>ঘোষণা</h1>
+    <a href="/admin/announcements/new" class="btn btn-primary">+ নতুন ঘোষণা</a>
+  </div>
+
+  <% if (announcements.length === 0) { %>
+    <div class="empty-state"><p>কোনো ঘোষণা যোগ করা হয়নি।</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>শিরোনাম</th><th>বিষয়বস্তু</th><th>ক্রম</th><th>অবস্থা</th><th>কার্যক্রম</th>
+      </tr></thead>
+      <tbody>
+      <% announcements.forEach(ann => { %>
+        <tr>
+          <td><strong><%= ann.title %></strong></td>
+          <td style="max-width:300px;white-space:pre-wrap;font-size:0.9rem"><%= ann.content %></td>
+          <td><%= ann.sort_order %></td>
+          <td><span class="badge <%= ann.is_active ? 'badge-open' : 'badge-closed' %>"><%= ann.is_active ? 'সক্রিয়' : 'নিষ্ক্রিয়' %></span></td>
+          <td class="action-cell">
+            <a href="/admin/announcements/<%= ann.id %>/edit" class="btn btn-sm">সম্পাদনা</a>
+            <form action="/admin/announcements/<%= ann.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('ঘোষণাটি মুছে ফেলবেন?')">
+              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>
