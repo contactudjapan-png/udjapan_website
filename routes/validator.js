@@ -45,6 +45,12 @@ function requireStallAccess(req, res, next) {
   res.redirect(getVolunteerRedirect(req.session));
 }
 
+// Prevent browser caching so back button always re-checks session
+router.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
 // ── Login ────────────────────────────────────────────────────────────────────
 
 router.get('/login', (req, res) => {
