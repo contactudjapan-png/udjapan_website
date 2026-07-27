@@ -5,3 +5,4 @@ public/uploads/
 .vercel
 memory/
 supabase_seed.sql
+supabase_migration_scan_logs.sql

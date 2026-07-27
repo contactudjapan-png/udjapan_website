@@ -54,6 +54,14 @@ async function updateEvent(id, eventData) {
     location: eventData.location || '',
     max_capacity: parseInt(eventData.max_capacity) || null,
     is_active: eventData.is_active === 'on' || eventData.is_active === true,
+  };
+  const { data, error } = await db.from('events').update(payload).eq('id', id).select().single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+async function updateEventPayment(id, eventData) {
+  const payload = {
     registration_open: eventData.registration_open === 'on' || eventData.registration_open === true,
     ...parsePricingFields(eventData),
   };
@@ -94,6 +102,7 @@ module.exports = {
   getEventById,
   createEvent,
   updateEvent,
+  updateEventPayment,
   deleteEvent,
   updateBannerUrl,
   updatePaypalQrUrl,
