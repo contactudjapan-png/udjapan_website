@@ -12,8 +12,24 @@
       <input type="text" id="title" name="title" required value="<%= ad ? ad.title : '' %>" placeholder="যেমন: স্পনসর ব্যানার">
     </div>
     <div class="form-group">
-      <label for="description">বিবরণ</label>
+      <label for="description">বিবরণ (বাংলা)</label>
       <textarea id="description" name="description" rows="2" data-rich><%= ad ? (ad.description || '') : '' %></textarea>
+    </div>
+    <div class="form-group">
+      <label for="title_en">Title (English)</label>
+      <input type="text" id="title_en" name="title_en" value="<%= ad ? (ad.title_en || '') : '' %>" placeholder="Sponsor banner">
+    </div>
+    <div class="form-group">
+      <label for="description_en">Description (English)</label>
+      <textarea id="description_en" name="description_en" rows="2" data-rich><%= ad ? (ad.description_en || '') : '' %></textarea>
+    </div>
+    <div class="form-group">
+      <label for="title_de">Titel (Deutsch)</label>
+      <input type="text" id="title_de" name="title_de" value="<%= ad ? (ad.title_de || '') : '' %>" placeholder="Sponsor-Banner">
+    </div>
+    <div class="form-group">
+      <label for="description_de">Beschreibung (Deutsch)</label>
+      <textarea id="description_de" name="description_de" rows="2" data-rich><%= ad ? (ad.description_de || '') : '' %></textarea>
     </div>
     <div class="form-group">
       <label for="link_url">লিংক (ক্লিক করলে যাবে)</label>

@@ -59,14 +59,41 @@ function toBerlinInput(dateStr) {
         </label>
       </div>
       <% if (event) { %>
+      <h3 style="margin-top:1.5rem;margin-bottom:0.75rem">ব্যানার ছবি (সময়ভিত্তিক)</h3>
+      <p class="section-hint" style="margin-bottom:1rem">প্রতিটি মূল্য-স্তরে আলাদা ব্যানার দেখানো হবে। খালি রাখলে হলদে বউ ব্যানারটি ব্যবহার হবে।</p>
       <div class="form-row">
         <div class="form-group">
-          <label>ব্যানার ছবি</label>
+          <label>🟡 হলদে বউ ব্যানার (ডিফল্ট)</label>
           <% if (event.banner_url) { %>
-            <img src="<%= event.banner_url %>" alt="ব্যানার" class="preview-img">
+            <img src="<%= event.banner_url %>" alt="হলদে বউ ব্যানার" class="preview-img">
           <% } %>
           <input type="file" name="banner" accept="image/*">
         </div>
+        <div class="form-group">
+          <label>🔵 নীলকণ্ঠ ব্যানার</label>
+          <% if (event.banner_url_nilkantha) { %>
+            <img src="<%= event.banner_url_nilkantha %>" alt="নীলকণ্ঠ ব্যানার" class="preview-img">
+          <% } %>
+          <input type="file" name="banner_nilkantha" accept="image/*">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>🟤 কোকিলা ব্যানার</label>
+          <% if (event.banner_url_kokila) { %>
+            <img src="<%= event.banner_url_kokila %>" alt="কোকিলা ব্যানার" class="preview-img">
+          <% } %>
+          <input type="file" name="banner_kokila" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>🔴 ইভেন্ট-পরবর্তী ব্যানার</label>
+          <% if (event.banner_url_bd) { %>
+            <img src="<%= event.banner_url_bd %>" alt="ইভেন্ট-পরবর্তী ব্যানার" class="preview-img">
+          <% } %>
+          <input type="file" name="banner_bd" accept="image/*">
+        </div>
+      </div>
+      <div class="form-row" style="margin-top:0.5rem">
         <div class="form-group">
           <label>পপআপ ছবি</label>
           <% if (event.popup_image_url) { %>

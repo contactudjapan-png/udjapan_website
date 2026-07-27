@@ -24,10 +24,14 @@ async function getAdById(id) {
   return data;
 }
 
-async function createAd({ title, description, image_url, link_url, sort_order }) {
+async function createAd({ title, title_en, title_de, description, description_en, description_de, image_url, link_url, sort_order }) {
   const { data, error } = await db.from('advertisements').insert({
     title: title || '',
+    title_en: title_en || null,
+    title_de: title_de || null,
     description: description || '',
+    description_en: description_en || null,
+    description_de: description_de || null,
     image_url: image_url || null,
     link_url: link_url || null,
     sort_order: parseInt(sort_order) || 0,
@@ -37,10 +41,14 @@ async function createAd({ title, description, image_url, link_url, sort_order })
   return data;
 }
 
-async function updateAd(id, { title, description, image_url, link_url, sort_order, is_active }) {
+async function updateAd(id, { title, title_en, title_de, description, description_en, description_de, image_url, link_url, sort_order, is_active }) {
   const update = {
     title: title || '',
+    title_en: title_en || null,
+    title_de: title_de || null,
     description: description || '',
+    description_en: description_en || null,
+    description_de: description_de || null,
     link_url: link_url || null,
     sort_order: parseInt(sort_order) || 0,
     is_active: is_active === 'on' || is_active === true,

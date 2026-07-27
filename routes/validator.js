@@ -6,6 +6,7 @@ const registrationService = require('../services/registrationService');
 const emailService = require('../services/emailService');
 const eventService = require('../services/eventService');
 const settingsService = require('../services/settingsService');
+const instrumentService = require('../services/instrumentService');
 
 function requireValidator(req, res, next) {
   if (req.session.adminUser || req.session.volunteerUser) return next();
@@ -18,6 +19,7 @@ function getVolunteerRedirect(session) {
   if (roles.qr) return '/validate';
   if (roles.stall) return '/validate/stalls';
   if (roles.reg) return '/validate/register';
+  if (roles.music) return '/validate/instruments';
   return '/validate/no-access';
 }
 
@@ -36,6 +38,12 @@ function requireRegistrationAccess(req, res, next) {
 function requireStallAccess(req, res, next) {
   if (req.session.adminUser) return next();
   if (req.session.volunteerUser?.roles?.stall) return next();
+  res.redirect(getVolunteerRedirect(req.session));
+}
+
+function requireMusicAccess(req, res, next) {
+  if (req.session.adminUser) return next();
+  if (req.session.volunteerUser?.roles?.music) return next();
   res.redirect(getVolunteerRedirect(req.session));
 }
 
@@ -80,7 +88,8 @@ router.post('/login', async (req, res) => {
     const hasStall = volunteerTasks.some(t => taskGroups.stall.includes(t));
     const hasReg = volunteerTasks.some(t => taskGroups.reg.includes(t));
     const hasQR = volunteerTasks.some(t => taskGroups.qr.includes(t));
-    if (!hasStall && !hasReg && !hasQR) {
+    const hasMusic = volunteerTasks.some(t => taskGroups.music.includes(t));
+    if (!hasStall && !hasReg && !hasQR && !hasMusic) {
       req.session.volunteerUser = null;
       return res.redirect('/validate/no-access');
     }
@@ -89,7 +98,7 @@ router.post('/login', async (req, res) => {
       name: activeVolunteers[0].name,
       tasks: volunteerTasks,
       event_ids: activeVolunteers.map(v => v.event_id),
-      roles: { stall: hasStall, reg: hasReg, qr: hasQR },
+      roles: { stall: hasStall, reg: hasReg, qr: hasQR, music: hasMusic },
     };
     res.redirect(getVolunteerRedirect(req.session));
   } catch (err) {
@@ -227,6 +236,46 @@ router.post('/stalls/observations', requireStallAccess, async (req, res, next) =
     await stallObservationService.createObservation(stall_id, event_id, submittedBy, observation_type, notes, rating);
     req.flash('success', 'পর্যবেক্ষণ জমা হয়েছে।');
     res.redirect('/validate/stalls');
+  } catch (err) { next(err); }
+});
+
+// ── Instruments (music/stage volunteers only) ─────────────────────────────────
+
+router.get('/instruments', requireMusicAccess, async (req, res, next) => {
+  try {
+    const user = req.session.volunteerUser || req.session.adminUser;
+    let eventIds = req.session.adminUser
+      ? (await db.from('events').select('id').eq('is_active', true)).data?.map(e => e.id) || []
+      : req.session.volunteerUser.event_ids;
+    const allInstruments = [];
+    for (const eid of eventIds) {
+      const instruments = await instrumentService.getInstrumentsByEvent(eid);
+      const { data: ev } = await db.from('events').select('title').eq('id', eid).single();
+      instruments.forEach(i => allInstruments.push({ ...i, event_title: ev?.title || '' }));
+    }
+    res.render('validator/instruments', { title: 'যন্ত্রপাতি তালিকা', user, instruments: allInstruments, eventIds });
+  } catch (err) { next(err); }
+});
+
+router.post('/instruments', requireMusicAccess, async (req, res, next) => {
+  try {
+    const { event_id, name, source, notes } = req.body;
+    if (!name || !event_id) {
+      req.flash('error', 'যন্ত্রের নাম ও ইভেন্ট আবশ্যক।');
+      return res.redirect('/validate/instruments');
+    }
+    const volunteer_email = req.session.volunteerUser?.email || req.session.adminUser?.email;
+    await instrumentService.addInstrument(event_id, { name: name.trim(), source: (source || '').trim(), notes: (notes || '').trim(), volunteer_email });
+    req.flash('success', 'যন্ত্র যোগ করা হয়েছে।');
+    res.redirect('/validate/instruments');
+  } catch (err) { next(err); }
+});
+
+router.post('/instruments/:id/delete', requireMusicAccess, async (req, res, next) => {
+  try {
+    await instrumentService.deleteInstrument(req.params.id);
+    req.flash('success', 'যন্ত্র মুছে ফেলা হয়েছে।');
+    res.redirect('/validate/instruments');
   } catch (err) { next(err); }
 });
 

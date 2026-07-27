@@ -24,10 +24,14 @@ async function getAnnouncementById(id) {
   return data;
 }
 
-async function createAnnouncement({ title, content, sort_order }) {
+async function createAnnouncement({ title, title_en, title_de, content, content_en, content_de, sort_order }) {
   const { data, error } = await db.from('announcements').insert({
     title: title || '',
+    title_en: title_en || null,
+    title_de: title_de || null,
     content: content || '',
+    content_en: content_en || null,
+    content_de: content_de || null,
     sort_order: parseInt(sort_order) || 0,
     is_active: true,
   }).select().single();
@@ -35,10 +39,14 @@ async function createAnnouncement({ title, content, sort_order }) {
   return data;
 }
 
-async function updateAnnouncement(id, { title, content, sort_order, is_active }) {
+async function updateAnnouncement(id, { title, title_en, title_de, content, content_en, content_de, sort_order, is_active }) {
   const { data, error } = await db.from('announcements').update({
     title: title || '',
+    title_en: title_en || null,
+    title_de: title_de || null,
     content: content || '',
+    content_en: content_en || null,
+    content_de: content_de || null,
     sort_order: parseInt(sort_order) || 0,
     is_active: is_active === 'on' || is_active === true,
   }).eq('id', id).select().single();

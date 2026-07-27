@@ -80,8 +80,8 @@ async function deleteEvent(id) {
   if (error) throw new Error(error.message);
 }
 
-async function updateBannerUrl(id, url) {
-  const { data, error } = await db.from('events').update({ banner_url: url }).eq('id', id).select().single();
+async function updateBannerUrl(id, url, field = 'banner_url') {
+  const { data, error } = await db.from('events').update({ [field]: url }).eq('id', id).select().single();
   if (error) throw new Error(error.message);
   return data;
 }

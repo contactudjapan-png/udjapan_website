@@ -119,14 +119,28 @@ router.get('/events/:id/edit', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-router.post('/events/:id/edit', upload.fields([{ name: 'banner', maxCount: 1 }, { name: 'popup_image', maxCount: 1 }]), async (req, res, next) => {
+router.post('/events/:id/edit', upload.fields([
+  { name: 'banner', maxCount: 1 },
+  { name: 'banner_nilkantha', maxCount: 1 },
+  { name: 'banner_kokila', maxCount: 1 },
+  { name: 'banner_bd', maxCount: 1 },
+  { name: 'popup_image', maxCount: 1 },
+]), async (req, res, next) => {
   try {
     await eventService.updateEvent(req.params.id, convertEventDates(req.body));
-    if (req.files && req.files.banner) {
-      const f = req.files.banner[0];
-      const ext = path.extname(f.originalname).toLowerCase();
-      const url = await eventService.uploadFileToBucket('banners', `${req.params.id}/banner${ext}`, f.buffer, f.mimetype);
-      await eventService.updateBannerUrl(req.params.id, url);
+    const bannerSlots = [
+      { field: 'banner',          dbField: 'banner_url',           slug: 'banner-halide' },
+      { field: 'banner_nilkantha', dbField: 'banner_url_nilkantha', slug: 'banner-nilkantha' },
+      { field: 'banner_kokila',   dbField: 'banner_url_kokila',    slug: 'banner-kokila' },
+      { field: 'banner_bd',       dbField: 'banner_url_bd',        slug: 'banner-bd' },
+    ];
+    for (const slot of bannerSlots) {
+      if (req.files && req.files[slot.field]) {
+        const f = req.files[slot.field][0];
+        const ext = path.extname(f.originalname).toLowerCase();
+        const url = await eventService.uploadFileToBucket('banners', `${req.params.id}/${slot.slug}${ext}`, f.buffer, f.mimetype);
+        await eventService.updateBannerUrl(req.params.id, url, slot.dbField);
+      }
     }
     if (req.files && req.files.popup_image) {
       const f = req.files.popup_image[0];
@@ -402,12 +416,13 @@ router.get('/events/:id/volunteers', async (req, res, next) => {
 
 router.get('/settings/volunteer-tasks', async (req, res, next) => {
   try {
-    const [stallTaskNames, regTaskNames, qrTaskNames] = await Promise.all([
+    const [stallTaskNames, regTaskNames, qrTaskNames, musicTaskNames] = await Promise.all([
       settingsService.getStallTaskNames(),
       settingsService.getRegTaskNames(),
       settingsService.getQRTaskNames(),
+      settingsService.getMusicTaskNames(),
     ]);
-    res.render('admin/volunteer-tasks', { title: 'স্বেচ্ছাসেবী কাজের তালিকা', stallTaskNames, regTaskNames, qrTaskNames });
+    res.render('admin/volunteer-tasks', { title: 'স্বেচ্ছাসেবী কাজের তালিকা', stallTaskNames, regTaskNames, qrTaskNames, musicTaskNames });
   } catch (err) { next(err); }
 });
 
@@ -417,6 +432,7 @@ router.post('/settings/volunteer-tasks', async (req, res, next) => {
       settingsService.setStallTaskNames((req.body.stall_task_names || '').trim()),
       settingsService.setRegTaskNames((req.body.reg_task_names || '').trim()),
       settingsService.setQRTaskNames((req.body.qr_task_names || '').trim()),
+      settingsService.setMusicTaskNames((req.body.music_task_names || '').trim()),
     ]);
     req.flash('success', 'কাজের তালিকা সংরক্ষিত হয়েছে।');
     res.redirect('/admin/settings/volunteer-tasks');

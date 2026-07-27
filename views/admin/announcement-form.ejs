@@ -15,8 +15,24 @@
       <input type="text" id="title" name="title" required value="<%= announcement ? announcement.title : '' %>" placeholder="ঘোষণার শিরোনাম">
     </div>
     <div class="form-group">
-      <label for="content">বিষয়বস্তু *</label>
+      <label for="content">বিষয়বস্তু (বাংলা) *</label>
       <textarea id="content" name="content" rows="5" required data-rich placeholder="ঘোষণার বিস্তারিত লিখুন..."><%= announcement ? announcement.content : '' %></textarea>
+    </div>
+    <div class="form-group">
+      <label for="title_en">Title (English)</label>
+      <input type="text" id="title_en" name="title_en" value="<%= announcement ? (announcement.title_en || '') : '' %>" placeholder="Announcement title">
+    </div>
+    <div class="form-group">
+      <label for="content_en">Content (English)</label>
+      <textarea id="content_en" name="content_en" rows="4" data-rich placeholder="Announcement details..."><%= announcement ? (announcement.content_en || '') : '' %></textarea>
+    </div>
+    <div class="form-group">
+      <label for="title_de">Titel (Deutsch)</label>
+      <input type="text" id="title_de" name="title_de" value="<%= announcement ? (announcement.title_de || '') : '' %>" placeholder="Ankündigungstitel">
+    </div>
+    <div class="form-group">
+      <label for="content_de">Inhalt (Deutsch)</label>
+      <textarea id="content_de" name="content_de" rows="4" data-rich placeholder="Ankündigungsdetails..."><%= announcement ? (announcement.content_de || '') : '' %></textarea>
     </div>
     <div class="form-group">
       <label for="sort_order">ক্রম</label>

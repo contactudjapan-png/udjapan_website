@@ -20,6 +20,8 @@ const getRegTaskNames = () => getSetting('reg_task_names');
 const setRegTaskNames = (v) => setSetting('reg_task_names', v);
 const getQRTaskNames = () => getSetting('qr_task_names');
 const setQRTaskNames = (v) => setSetting('qr_task_names', v);
+const getMusicTaskNames = () => getSetting('music_task_names');
+const setMusicTaskNames = (v) => setSetting('music_task_names', v);
 const getStallObsTypes = () => getSetting('stall_obs_types');
 const setStallObsTypes = (v) => setSetting('stall_obs_types', v);
 const getExpenseCategories = () => getSetting('expense_categories');
@@ -29,15 +31,16 @@ const setIncomeCategories = (v) => setSetting('income_categories', v);
 
 // Combined list for dropdown (all roles)
 async function getAllTaskGroups() {
-  const [stall, reg, qr] = await Promise.all([getStallTaskNames(), getRegTaskNames(), getQRTaskNames()]);
+  const [stall, reg, qr, music] = await Promise.all([getStallTaskNames(), getRegTaskNames(), getQRTaskNames(), getMusicTaskNames()]);
   const toList = s => (s || '').split('\n').map(t => t.trim()).filter(Boolean);
-  return { stall: toList(stall), reg: toList(reg), qr: toList(qr) };
+  return { stall: toList(stall), reg: toList(reg), qr: toList(qr), music: toList(music) };
 }
 
 module.exports = {
   getStallTaskNames, setStallTaskNames,
   getRegTaskNames, setRegTaskNames,
   getQRTaskNames, setQRTaskNames,
+  getMusicTaskNames, setMusicTaskNames,
   getStallObsTypes, setStallObsTypes,
   getExpenseCategories, setExpenseCategories,
   getIncomeCategories, setIncomeCategories,

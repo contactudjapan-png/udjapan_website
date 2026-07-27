@@ -16,9 +16,15 @@
 <% } else { %>
 
 <!-- ── Hero Banner ─────────────────────────────────── -->
-<section class="home-hero <%= _event.banner_url ? '' : 'home-hero--no-banner' %>">
-  <% if (_event.banner_url) { %>
-    <img src="<%= _event.banner_url %>" alt="<%= _event.title %>" class="home-hero-img">
+<%
+  var _bannerUrl = _event.banner_url || null;
+  if (tierClass === 'tier-nilkantha' && _event.banner_url_nilkantha) _bannerUrl = _event.banner_url_nilkantha;
+  else if (tierClass === 'tier-kokila' && _event.banner_url_kokila) _bannerUrl = _event.banner_url_kokila;
+  else if (tierClass === 'tier-bd' && _event.banner_url_bd) _bannerUrl = _event.banner_url_bd;
+%>
+<section class="home-hero <%= _bannerUrl ? '' : 'home-hero--no-banner' %>">
+  <% if (_bannerUrl) { %>
+    <img src="<%= _bannerUrl %>" alt="<%= _event.title %>" class="home-hero-img">
   <% } %>
   <div class="home-hero-overlay"></div>
   <div class="home-hero-content">
@@ -47,9 +53,15 @@
     </div>
     <div class="home-panel-body" id="annBody">
       <% _announcements.forEach(ann => { %>
+        <%
+          var _annTitle = ann.title;
+          var _annContent = ann.content || '';
+          if (locale === 'en') { if (ann.title_en) _annTitle = ann.title_en; if (ann.content_en) _annContent = ann.content_en; }
+          else if (locale === 'de') { if (ann.title_de) _annTitle = ann.title_de; if (ann.content_de) _annContent = ann.content_de; }
+        %>
         <div class="announcement-item">
-          <strong><%= ann.title %></strong>
-          <div><%- ann.content.replace(/\n/g, '<br>') %></div>
+          <strong><%= _annTitle %></strong>
+          <div><%- _annContent.replace(/\n/g, '<br>') %></div>
         </div>
       <% }) %>
     </div>
@@ -201,8 +213,14 @@
             <div class="ad-card-placeholder"><%- t('home.ad_placeholder') %></div>
           <% } %>
           <div class="ad-card-body">
-            <strong><%= ad.title %></strong>
-            <% const _adDescPub = ad.description ? ad.description.replace(/<p><br\s*\/?><\/p>/gi,'').trim() : ''; %>
+            <%
+              var _adTitle = ad.title;
+              var _adDesc = ad.description || '';
+              if (locale === 'en') { if (ad.title_en) _adTitle = ad.title_en; if (ad.description_en) _adDesc = ad.description_en; }
+              else if (locale === 'de') { if (ad.title_de) _adTitle = ad.title_de; if (ad.description_de) _adDesc = ad.description_de; }
+              var _adDescPub = _adDesc ? _adDesc.replace(/<p><br\s*\/?><\/p>/gi,'').trim() : '';
+            %>
+            <strong><%= _adTitle %></strong>
             <% if (_adDescPub) { %><div><%- _adDescPub %></div><% } %>
           </div>
         <% if (ad.link_url) { %></a><% } else { %></div><% } %>

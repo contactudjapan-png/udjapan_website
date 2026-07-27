@@ -51,16 +51,19 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function extractToken(url) {
-  // If it's a full URL like https://host/api/validate/TOKEN, extract TOKEN
-  try {
-    const withScheme = url.includes('://') ? url : `https://${url}`;
-    const u = new URL(withScheme);
-    const parts = u.pathname.split('/').filter(Boolean);
-    return parts[parts.length - 1];
-  } catch {
-    return url; // treat as raw token
+function extractToken(input) {
+  const s = (input || '').trim();
+  if (!s.includes('/')) return s; // raw token — no path separators
+  if (s.includes('://')) {
+    try {
+      const u = new URL(s);
+      const parts = u.pathname.split('/').filter(Boolean);
+      return parts[parts.length - 1] || s;
+    } catch { return s; }
   }
+  // Path-only like /api/validate/TOKEN or api/validate/TOKEN
+  const parts = s.split('/').filter(Boolean);
+  return parts[parts.length - 1] || s;
 }
 
 function resetScanner() {
