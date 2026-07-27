@@ -49,7 +49,7 @@
       <% _announcements.forEach(ann => { %>
         <div class="announcement-item">
           <strong><%= ann.title %></strong>
-          <div><%- ann.content %></div>
+          <div><%- ann.content.replace(/\n/g, '<br>') %></div>
         </div>
       <% }) %>
     </div>
@@ -62,7 +62,7 @@
     <% if (_event.description) { %>
     <section class="home-about">
       <h2>ইভেন্ট সম্পর্কে</h2>
-      <div><%- _event.description %></div>
+      <div><%- _event.description.replace(/\n/g, '<br>') %></div>
     </section>
     <% } %>
 

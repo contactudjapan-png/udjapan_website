@@ -24,7 +24,7 @@
 
     <% if (event.payment_description) { %>
       <div style="margin-bottom:1.25rem;padding:1rem;background:var(--bg);border-radius:var(--radius);line-height:1.8">
-        <%- event.payment_description %>
+        <%- event.payment_description.replace(/\n/g, '<br>') %>
       </div>
     <% } %>
 
