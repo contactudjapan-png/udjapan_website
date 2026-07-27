@@ -230,8 +230,15 @@ router.get('/events/:id/registrations/new', async (req, res, next) => {
 router.post('/events/:id/registrations/new', async (req, res, next) => {
   try {
     const { name, email, phone, payment_reference, amount, transaction_id } = req.body;
-    await registrationService.createRegistration(req.params.id, { name, email, phone, payment_reference, amount, transaction_id });
-    req.flash('success', 'Registration added.');
+    const event = await eventService.getEventById(req.params.id);
+    const registration = await registrationService.createRegistration(req.params.id, { name, email, phone, payment_reference, amount, transaction_id });
+    if (registration.email) {
+      const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+      emailService.sendRegistrationConfirmation(registration, event, baseUrl).catch(err => {
+        console.error('[Email] Failed to send confirmation:', err.message);
+      });
+    }
+    req.flash('success', `Registration added.${registration.email ? ' QR email sent.' : ''}`);
     res.redirect(`/admin/events/${req.params.id}/registrations`);
   } catch (err) {
     req.flash('error', err.message);
