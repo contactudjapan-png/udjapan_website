@@ -18,9 +18,17 @@ function getVolunteerRedirect(session) {
   const hasStall = tasks.some(t => t.includes('স্টল') || t.includes('stall'));
   const hasReg = tasks.some(t => t.includes('রেজিস্ট্রেশন') || t.includes('registration'));
   const hasQR = tasks.some(t => t.includes('qr') || t.includes('যাচাই') || t.includes('validation') || t.includes('scanner'));
-  if (hasStall && !hasReg && !hasQR) return '/validate/stalls';
-  if (hasReg && !hasStall && !hasQR) return '/validate/register';
-  return '/validate';
+  if (hasQR) return '/validate';
+  if (hasStall) return '/validate/stalls';
+  if (hasReg) return '/validate/register';
+  return '/validate/login';
+}
+
+function requireQRAccess(req, res, next) {
+  if (req.session.adminUser) return next();
+  const tasks = (req.session.volunteerUser?.tasks || []).map(t => (t || '').toLowerCase());
+  if (tasks.some(t => t.includes('qr') || t.includes('যাচাই') || t.includes('validation') || t.includes('scanner'))) return next();
+  res.redirect(getVolunteerRedirect(req.session));
 }
 
 function requireRegistrationAccess(req, res, next) {
@@ -97,9 +105,7 @@ router.post('/logout', (req, res) => {
 
 router.use(requireValidator);
 
-router.get('/', (req, res) => {
-  const correctPage = getVolunteerRedirect(req.session);
-  if (correctPage !== '/validate') return res.redirect(correctPage);
+router.get('/', requireQRAccess, (req, res) => {
   const user = req.session.volunteerUser || req.session.adminUser;
   res.render('validator/scan', { title: 'QR যাচাইকারী', user });
 });
