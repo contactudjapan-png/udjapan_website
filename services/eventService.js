@@ -7,7 +7,7 @@ async function getAllEvents() {
 }
 
 async function getActiveEvents() {
-  const { data, error } = await db.from('events').select('*').eq('is_active', true).order('created_at', { ascending: false });
+  const { data, error } = await db.from('events').select('*').eq('is_active', true).order('event_date', { ascending: true });
   if (error) throw new Error(error.message);
   return data;
 }
