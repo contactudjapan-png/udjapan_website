@@ -92,7 +92,7 @@
             <td><%= reg.email %></td>
             <td><%= reg.payment_reference || '—' %></td>
             <td><span class="badge <%= reg.is_paid ? 'badge-paid' : 'badge-pending' %>"><%= reg.is_paid ? 'পরিশোধিত' : 'বাকি' %></span></td>
-            <td><%= new Date(reg.created_at).toLocaleDateString('bn-BD') %></td>
+            <td><%= new Date(reg.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
           </tr>
         <% }) %>
         </tbody>
@@ -113,7 +113,7 @@
           <tr>
             <td><%= exp.description %></td>
             <td>€<%= parseFloat(exp.amount).toLocaleString('en-US', {minimumFractionDigits:2}) %></td>
-            <td><%= new Date(exp.created_at).toLocaleDateString('bn-BD') %></td>
+            <td><%= new Date(exp.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
           </tr>
         <% }) %>
           <tr class="total-row">

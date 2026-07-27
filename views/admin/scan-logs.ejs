@@ -20,7 +20,7 @@
       <tbody>
       <% logs.forEach(log => { %>
         <tr>
-          <td style="white-space:nowrap"><%= new Date(log.scanned_at).toLocaleString('bn-BD') %></td>
+          <td style="white-space:nowrap"><%= new Date(log.scanned_at).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
           <td><%= log.name || '—' %></td>
           <td><span class="badge <%= log.result === 'valid' ? 'badge-open' : 'badge-closed' %>"><%= log.result === 'valid' ? 'বৈধ' : 'অবৈধ' %></span></td>
           <td style="font-family:monospace;font-size:0.85rem"><%= log.qr_token ? log.qr_token.slice(0, 8).toUpperCase() : '—' %></td>

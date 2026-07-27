@@ -34,7 +34,7 @@
               <%= reg.is_paid ? 'পরিশোধিত' : 'অপেক্ষমাণ' %>
             </span>
           </td>
-          <td><%= new Date(reg.created_at).toLocaleDateString('bn-BD') %></td>
+          <td><%= new Date(reg.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
           <td class="action-cell">
             <form action="/admin/registrations/<%= reg.id %>/toggle-paid" method="POST" style="display:inline">
               <button type="submit" class="btn btn-sm <%= reg.is_paid ? 'btn-outline' : 'btn-success' %>">

@@ -22,7 +22,7 @@
           <td><strong><%= sub.name %></strong></td>
           <td><%= sub.email %></td>
           <td><%= sub.payment_reference || '—' %></td>
-          <td><%= new Date(sub.created_at).toLocaleDateString('bn-BD') %></td>
+          <td><%= new Date(sub.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
           <td class="action-cell">
             <form action="/admin/submissions/<%= sub.id %>/approve" method="POST" style="display:inline" onsubmit="return confirm('<%= sub.name %>-এর জন্য নিবন্ধন অনুমোদন করবেন?')">
               <button type="submit" class="btn btn-sm btn-success">অনুমোদন</button>

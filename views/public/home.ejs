@@ -21,7 +21,7 @@
     <p class="home-hero-label">আসন্ন ইভেন্ট</p>
     <h1 class="home-hero-title"><%= _event.title %></h1>
     <div class="home-hero-meta">
-      <span>📅 <%= new Date(_event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+      <span>📅 <%= new Date(_event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin' }) %></span>
       <% if (_event.location) { %><span>📍 <%= _event.location %></span><% } %>
     </div>
     <% if (_event.registration_open) { %>
@@ -58,7 +58,7 @@
             <% } %>
             <div class="event-card-body">
               <h2><%= ev.title %></h2>
-              <p class="event-meta">📅 <%= new Date(ev.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+              <p class="event-meta">📅 <%= new Date(ev.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin' }) %></p>
               <% if (ev.location) { %><p class="event-meta">📍 <%= ev.location %></p><% } %>
               <% if (!ev.registration_open) { %>
                 <span class="badge badge-closed">নিবন্ধন বন্ধ</span>
@@ -74,30 +74,30 @@
 
   </main>
 
-  <!-- Sidebar Ads -->
-  <% if (_ads.length > 0) { %>
-  <aside class="home-sidebar">
-    <h3 class="sidebar-ads-title">স্পনসর ও বিজ্ঞাপন</h3>
-    <% _ads.forEach(ad => { %>
-      <% if (ad.link_url) { %>
-        <a href="<%= ad.link_url %>" target="_blank" rel="noopener" class="ad-card">
-      <% } else { %>
-        <div class="ad-card">
-      <% } %>
-        <% if (ad.image_url) { %>
-          <img src="<%= ad.image_url %>" alt="<%= ad.title %>" class="ad-card-img">
-        <% } else { %>
-          <div class="ad-card-placeholder">বিজ্ঞাপন</div>
-        <% } %>
-        <div class="ad-card-body">
-          <strong><%= ad.title %></strong>
-          <% if (ad.description) { %><p><%= ad.description %></p><% } %>
-        </div>
-      <% if (ad.link_url) { %></a><% } else { %></div><% } %>
-    <% }) %>
-  </aside>
-  <% } %>
 </div>
+
+<% if (_ads.length > 0) { %>
+<aside class="home-sidebar">
+  <h3 class="sidebar-ads-title">স্পনসর ও বিজ্ঞাপন</h3>
+  <% _ads.forEach(ad => { %>
+    <% if (ad.link_url) { %>
+      <a href="<%= ad.link_url %>" target="_blank" rel="noopener" class="ad-card">
+    <% } else { %>
+      <div class="ad-card">
+    <% } %>
+      <% if (ad.image_url) { %>
+        <img src="<%= ad.image_url %>" alt="<%= ad.title %>" class="ad-card-img">
+      <% } else { %>
+        <div class="ad-card-placeholder">বিজ্ঞাপন</div>
+      <% } %>
+      <div class="ad-card-body">
+        <strong><%= ad.title %></strong>
+        <% if (ad.description) { %><p><%= ad.description %></p><% } %>
+      </div>
+    <% if (ad.link_url) { %></a><% } else { %></div><% } %>
+  <% }) %>
+</aside>
+<% } %>
 
 <% } %>
 

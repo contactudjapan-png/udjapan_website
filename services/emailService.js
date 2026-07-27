@@ -13,7 +13,7 @@ async function sendRegistrationConfirmation(registration, event, baseUrl) {
   const qrBuffer = await generateQRBuffer(qrUrl);
 
   const eventDate = new Date(event.event_date).toLocaleDateString('en-US', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin',
   });
 
   await transporter.sendMail({

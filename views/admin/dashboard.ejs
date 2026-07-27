@@ -46,7 +46,7 @@
       <% stats.eventStats.forEach(event => { %>
         <tr>
           <td><strong><%= event.title %></strong></td>
-          <td><%= new Date(event.event_date).toLocaleDateString('bn-BD') %></td>
+          <td><%= new Date(event.event_date).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
           <td>
             <% if (event.is_active) { %><span class="badge badge-open">সক্রিয়</span><% } else { %><span class="badge badge-closed">নিষ্ক্রিয়</span><% } %>
           </td>

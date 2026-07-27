@@ -20,7 +20,7 @@
       <% events.forEach(event => { %>
         <tr>
           <td><strong><%= event.title %></strong></td>
-          <td><%= new Date(event.event_date).toLocaleDateString('bn-BD') %></td>
+          <td><%= new Date(event.event_date).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
           <td><%= event.is_active ? '✓' : '✗' %></td>
           <td><%= event.registration_open ? 'খোলা' : 'বন্ধ' %></td>
           <td class="action-cell">

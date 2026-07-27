@@ -23,7 +23,7 @@
         <% events.forEach(ev => { %>
           <a href="/validate/register/<%= ev.id %>" class="btn btn-outline" style="text-align:left;padding:1rem">
             <strong><%= ev.title %></strong><br>
-            <small style="color:var(--text-muted)"><%= new Date(ev.event_date).toLocaleDateString('bn-BD') %></small>
+            <small style="color:var(--text-muted)"><%= new Date(ev.event_date).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></small>
           </a>
         <% }) %>
       </div>
@@ -31,7 +31,7 @@
   <% } else { %>
     <div class="card" style="max-width:520px;margin-bottom:2rem">
       <h2 style="margin:0 0 0.25rem"><%= event.title %></h2>
-      <p style="margin:0;color:var(--text-muted)"><%= new Date(event.event_date).toLocaleString('bn-BD') %><% if (event.location) { %> &mdash; <%= event.location %><% } %></p>
+      <p style="margin:0;color:var(--text-muted)"><%= new Date(event.event_date).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) %><% if (event.location) { %> &mdash; <%= event.location %><% } %></p>
       <%
         const now = new Date();
         let currentPrice = null, currentTier = null;

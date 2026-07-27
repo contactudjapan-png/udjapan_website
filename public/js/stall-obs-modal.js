@@ -9,7 +9,7 @@ function showObs(btn) {
     const stars = (r) => r ? '★'.repeat(r) + '☆'.repeat(10 - r) + ' ' + r + '/১০' : '—';
     body.innerHTML = '<table class="admin-table"><thead><tr><th>সময়</th><th>ধরন</th><th>রেটিং</th><th>নোট</th><th>দ্বারা</th></tr></thead><tbody>' +
       obs.map(o => `<tr>
-        <td style="white-space:nowrap">${new Date(o.created_at).toLocaleString('bn-BD')}</td>
+        <td style="white-space:nowrap">${new Date(o.created_at).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' })}</td>
         <td>${o.observation_type || '—'}</td>
         <td style="color:#f5b301;letter-spacing:1px">${stars(o.rating)}</td>
         <td>${o.notes || '—'}</td>

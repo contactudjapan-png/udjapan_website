@@ -67,7 +67,7 @@
           <tbody>
           <% stall.observations.forEach(obs => { %>
             <tr>
-              <td style="white-space:nowrap"><%= new Date(obs.created_at).toLocaleString('bn-BD') %></td>
+              <td style="white-space:nowrap"><%= new Date(obs.created_at).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
               <td><%= obs.observation_type || '—' %></td>
               <td>
                 <% if (obs.rating) { %>

@@ -20,7 +20,7 @@
     <div class="form-row">
       <div class="form-group">
         <label>তারিখ ও সময়</label>
-        <p><%= new Date(event.event_date).toLocaleString('bn-BD') %></p>
+        <p><%= new Date(event.event_date).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) %></p>
       </div>
       <div class="form-group">
         <label>সর্বোচ্চ ধারণক্ষমতা</label>
@@ -42,7 +42,7 @@
       </div>
       <div class="form-group">
         <label>হলদে বউ সময়সীমা</label>
-        <p><%= event.early_bird_deadline ? new Date(event.early_bird_deadline).toLocaleString('bn-BD') : '—' %></p>
+        <p><%= event.early_bird_deadline ? new Date(event.early_bird_deadline).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) : '—' %></p>
       </div>
     </div>
     <div class="form-row">
@@ -52,7 +52,7 @@
       </div>
       <div class="form-group">
         <label>নীলকণ্ঠ সময়সীমা</label>
-        <p><%= event.mid_deadline ? new Date(event.mid_deadline).toLocaleString('bn-BD') : '—' %></p>
+        <p><%= event.mid_deadline ? new Date(event.mid_deadline).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) : '—' %></p>
       </div>
     </div>
     <div class="form-group">

@@ -22,7 +22,7 @@
         <tr><td>নাম</td><td><%= registration.name %></td></tr>
         <tr><td>ইমেইল</td><td><%= registration.email %></td></tr>
         <tr><td>ইভেন্ট</td><td><%= event.title %></td></tr>
-        <tr><td>তারিখ</td><td><%= new Date(event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></td></tr>
+        <tr><td>তারিখ</td><td><%= new Date(event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin' }) %></td></tr>
         <% if (event.location) { %><tr><td>স্থান</td><td><%= event.location %></td></tr><% } %>
         <tr><td>পেমেন্ট অবস্থা</td><td><span class="badge <%= registration.is_paid ? 'badge-paid' : 'badge-pending' %>"><%= registration.is_paid ? 'পরিশোধিত' : 'যাচাই অপেক্ষমাণ' %></span></td></tr>
         <% if (registration.payment_reference) { %><tr><td>পেমেন্ট রেফারেন্স</td><td><%= registration.payment_reference %></td></tr><% } %>

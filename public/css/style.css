@@ -25,6 +25,8 @@ body {
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 a { color: var(--primary); text-decoration: none; }
@@ -209,10 +211,6 @@ a:hover { text-decoration: underline; }
 
 /* ─── Home – Body Layout ─────────────────────────────────────────────────────── */
 .home-body {
-  display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 2rem;
-  align-items: start;
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
@@ -232,8 +230,18 @@ a:hover { text-decoration: underline; }
 
 /* ─── Home – Sidebar Ads ─────────────────────────────────────────────────────── */
 .home-sidebar {
-  position: sticky;
-  top: calc(var(--nav-h) + 1rem);
+  position: fixed;
+  right: 1.25rem;
+  top: calc(var(--nav-h) + 1.25rem);
+  width: 240px;
+  max-height: calc(100vh - var(--nav-h) - 2.5rem);
+  overflow-y: auto;
+  z-index: 20;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border: 1px solid var(--border);
 }
 
 .sidebar-ads-title {
@@ -738,6 +746,11 @@ small { color: var(--text-muted); font-size: 0.8rem; }
 .import-spec h3 { font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--text-muted); }
 .import-spec code { background: #f0f0f0; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.9em; }
 
+/* ─── Sticky footer ──────────────────────────────────────────────────────────── */
+main { flex: 1; }
+.event-overlay { flex: 1; display: flex; flex-direction: column; }
+.event-overlay main { flex: 1; }
+
 /* ─── Footer ──────────────────────────────────────────────────────────────────── */
 .footer {
   text-align: center;
@@ -750,8 +763,7 @@ small { color: var(--text-muted); font-size: 0.8rem; }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────────── */
 @media (max-width: 860px) {
-  .home-body { grid-template-columns: 1fr; }
-  .home-sidebar { position: static; }
+  .home-sidebar { display: none; }
 }
 
 @media (max-width: 640px) {
