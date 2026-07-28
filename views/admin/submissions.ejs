@@ -15,7 +15,7 @@
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th><%- t('tbl.name') %></th><th><%- t('admin.tbl_contact') %></th><th><%- t('admin.tbl_children') %></th><th><%- t('admin.tbl_adults') %></th><th><%- t('admin.tbl_pay_ref') %></th><th><%- t('tbl.date') %></th><th><%- t('tbl.actions') %></th>
+        <th><%- t('tbl.name') %></th><th><%- t('admin.tbl_contact') %></th><th><%- t('admin.tbl_adults') %></th><th><%- t('admin.tbl_children') %></th><th><%- t('admin.tbl_pay_ref') %></th><th><%- t('tbl.date') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% submissions.forEach(sub => { %>
@@ -27,6 +27,7 @@
           <td><%= sub.email %></td>
           <td><%= sub.adults_count || 0 %></td>
           <td><%= sub.children_count || 0 %></td>
+
           <td><%= sub.payment_reference || '—' %></td>
           <td><%= new Date(sub.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td class="action-cell">
