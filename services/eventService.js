@@ -25,6 +25,8 @@ function parsePricingFields(eventData) {
     price_mid: eventData.price_mid ? parseFloat(eventData.price_mid) : null,
     mid_deadline: eventData.mid_deadline || null,
     price_onspot: eventData.price_onspot ? parseFloat(eventData.price_onspot) : null,
+    group_min_size: eventData.group_min_size ? parseInt(eventData.group_min_size) : null,
+    group_discount: eventData.group_discount ? parseFloat(eventData.group_discount) : null,
   };
 }
 

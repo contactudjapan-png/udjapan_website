@@ -151,6 +151,8 @@
   <script>
   (function() {
     var pricePerAdult = <%= parseFloat(activePrice) %>;
+    var groupMinSize  = <%- event.group_min_size  ? parseInt(event.group_min_size)    : 'null' %>;
+    var groupDiscount = <%- event.group_discount   ? parseFloat(event.group_discount)  : 'null' %>;
     var adultsEl = document.getElementById('adults_count');
     var childrenEl = document.getElementById('children_count');
     var valueEl = document.getElementById('totalPriceValue');
@@ -158,12 +160,17 @@
     function updatePrice() {
       var a = parseInt(adultsEl.value) || 0;
       var c = parseInt(childrenEl.value) || 0;
-      var total = (a * pricePerAdult).toFixed(2);
+      var subtotal = a * pricePerAdult;
+      var discount = (groupMinSize && groupDiscount && a >= groupMinSize) ? groupDiscount : 0;
+      var total = Math.max(0, subtotal - discount).toFixed(2);
       valueEl.textContent = '€' + total;
       var parts = [];
       if (a > 0) parts.push(a + ' × €' + pricePerAdult.toFixed(2));
       if (c > 0) parts.push(c + ' child' + (c !== 1 ? 'ren' : '') + ' (free)');
-      hintEl.textContent = parts.join(' + ') + (a > 0 ? ' = €' + total : '');
+      var hint = parts.join(' + ');
+      if (discount > 0) hint += ' − €' + groupDiscount.toFixed(2) + ' group discount';
+      if (a > 0) hint += ' = €' + total;
+      hintEl.textContent = hint;
     }
     if (adultsEl && valueEl) {
       adultsEl.addEventListener('input', updatePrice);
