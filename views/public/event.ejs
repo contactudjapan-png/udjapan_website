@@ -62,8 +62,10 @@
           </div>
           <% if (activeTier === 'early_bird' && event.early_bird_deadline) { %>
             <p class="ticket-deadline"><%- t('event.early_ends') %> <strong><%= new Date(event.early_bird_deadline).toLocaleDateString('bn-BD', {month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'}) %></strong></p>
+            <p id="tierCountdown" class="tier-countdown"></p>
           <% } else if (activeTier === 'mid' && event.mid_deadline) { %>
             <p class="ticket-deadline"><%- t('event.mid_ends') %> <strong><%= new Date(event.mid_deadline).toLocaleDateString('bn-BD', {month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'}) %></strong></p>
+            <p id="tierCountdown" class="tier-countdown"></p>
           <% } %>
         <% } else if (event.price_early_bird || event.price_mid || event.price_onspot) { %>
           <div class="ticket-tiers">
@@ -128,6 +130,54 @@
 
     </div><!-- /.event-reg-layout -->
   </div>
+
+  <% if (activeTier && (activeTier === 'early_bird' || activeTier === 'mid')) { %>
+  <script>
+  (function() {
+    var BN = '০১২৩৪৫৬৭৮৯';
+    function toBN(n) { return String(n).replace(/[0-9]/g, function(d) { return BN[d]; }); }
+    var _loc = '<%= locale %>';
+    var _L = {
+      bn: { pre: '⏰ শেষ হচ্ছে: ', d: ' দিন', h: ' ঘণ্টা', m: ' মিনিট', s: ' সেকেন্ড', num: toBN },
+      en: { pre: '⏰ Ends in: ',   d: ' day', h: ' hr',    m: ' min',    s: ' sec',      num: String },
+      de: { pre: '⏰ Endet in: ',  d: ' Tag', h: ' Std',   m: ' Min',    s: ' Sek',      num: String },
+    }[_loc] || { pre: '⏰ Ends in: ', d: ' day', h: ' hr', m: ' min', s: ' sec', num: String };
+
+    var deadline = <%- activeTier === 'early_bird' && event.early_bird_deadline
+      ? JSON.stringify(new Date(event.early_bird_deadline).getTime())
+      : activeTier === 'mid' && event.mid_deadline
+        ? JSON.stringify(new Date(event.mid_deadline).getTime())
+        : 'null' %>;
+
+    var el = document.getElementById('tierCountdown');
+    if (!el || !deadline) return;
+
+    function fmt(ms) {
+      var n = _L.num;
+      var d = Math.floor(ms / 86400000);
+      var h = Math.floor((ms % 86400000) / 3600000);
+      var m = Math.floor((ms % 3600000) / 60000);
+      var s = Math.floor((ms % 60000) / 1000);
+      var parts = [];
+      if (d > 0) parts.push(n(d) + _L.d);
+      if (h > 0) parts.push(n(h) + _L.h);
+      if (m > 0 || d > 0) parts.push(n(m) + _L.m);
+      parts.push(n(s) + _L.s);
+      return parts.join(' ');
+    }
+
+    function tick() {
+      var rem = deadline - Date.now();
+      if (rem <= 0) { el.textContent = ''; return; }
+      var urgency = rem < 6 * 3600000 ? 'urgent' : rem < 24 * 3600000 ? 'warning' : '';
+      el.className = 'tier-countdown' + (urgency ? ' tier-countdown--' + urgency : '');
+      el.textContent = _L.pre + fmt(rem);
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+  </script>
+  <% } %>
   <% } else { %>
   <div class="event-detail-card" style="margin-top:1.5rem">
     <div class="registration-closed">

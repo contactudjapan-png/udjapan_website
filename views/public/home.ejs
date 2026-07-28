@@ -87,30 +87,36 @@
     <script>
     (function() {
       var BN = '০১২৩৪৫৬৭৮৯';
-      function toBN(n) {
-        return String(n).replace(/[0-9]/g, function(d) { return BN[d]; });
-      }
+      function toBN(n) { return String(n).replace(/[0-9]/g, function(d) { return BN[d]; }); }
+
+      var _loc = '<%= locale %>';
+      var _L = {
+        bn: { pre: '⏰ শেষ হচ্ছে: ', d: ' দিন', h: ' ঘণ্টা', m: ' মিনিট', s: ' সেকেন্ড', num: toBN },
+        en: { pre: '⏰ Ends in: ',   d: ' day', h: ' hr',    m: ' min',    s: ' sec',      num: String },
+        de: { pre: '⏰ Endet in: ',  d: ' Tag', h: ' Std',   m: ' Min',    s: ' Sek',      num: String },
+      }[_loc] || { pre: '⏰ Ends in: ', d: ' day', h: ' hr', m: ' min', s: ' sec', num: String };
 
       var eb  = <%- _event.early_bird_deadline ? JSON.stringify(new Date(_event.early_bird_deadline).getTime()) : 'null' %>;
       var mid = <%- _event.mid_deadline        ? JSON.stringify(new Date(_event.mid_deadline).getTime())        : 'null' %>;
       var evd = <%- _event.event_date          ? JSON.stringify(new Date(_event.event_date).getTime())          : 'null' %>;
 
       var TIERS = [
-        { name: 'halide',     keywords: ['হলদে বউঃ','হলদে বউ:'], deadline: eb,  start: null },
-        { name: 'nilkantha',  keywords: ['নীলকণ্ঠঃ','নীলকণ্ঠ:'],  deadline: mid, start: eb   },
-        { name: 'kokila',     keywords: ['কোকিলাঃ','কোকিলা:'],   deadline: evd, start: mid  },
+        { name: 'halide',    keywords: ['হলদে বউঃ','হলদে বউ:'], deadline: eb,  start: null },
+        { name: 'nilkantha', keywords: ['নীলকণ্ঠঃ','নীলকণ্ঠ:'], deadline: mid, start: eb   },
+        { name: 'kokila',    keywords: ['কোকিলাঃ','কোকিলা:'],   deadline: evd, start: mid  },
       ];
 
       function fmt(ms) {
+        var n = _L.num;
         var d = Math.floor(ms / 86400000);
         var h = Math.floor((ms % 86400000) / 3600000);
         var m = Math.floor((ms % 3600000) / 60000);
         var s = Math.floor((ms % 60000) / 1000);
         var parts = [];
-        if (d > 0) parts.push(toBN(d) + ' দিন');
-        if (h > 0) parts.push(toBN(h) + ' ঘণ্টা');
-        if (m > 0 || d > 0) parts.push(toBN(m) + ' মিনিট');
-        parts.push(toBN(s) + ' সেকেন্ড');
+        if (d > 0) parts.push(n(d) + _L.d);
+        if (h > 0) parts.push(n(h) + _L.h);
+        if (m > 0 || d > 0) parts.push(n(m) + _L.m);
+        parts.push(n(s) + _L.s);
         return parts.join(' ');
       }
 
@@ -140,14 +146,13 @@
         badges.forEach(function(b) {
           var active = b.deadline && now < b.deadline && (!b.start || now >= b.start);
           if (!active) { b.el.style.display = 'none'; return; }
-
           b.el.style.display = 'inline-block';
           var rem = b.deadline - now;
           var urgency = rem < 6 * 3600000  ? 'urgent'  :
                         rem < 24 * 3600000 ? 'warning' :
                         rem < 3 * 86400000 ? 'soon'    : 'normal';
           b.el.className = 'tier-badge tier-badge--' + b.name + ' tier-badge--' + urgency;
-          b.el.textContent = '⏰ শেষ হচ্ছে: ' + fmt(rem);
+          b.el.textContent = _L.pre + fmt(rem);
         });
       }
 

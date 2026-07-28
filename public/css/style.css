@@ -937,7 +937,10 @@ small { color: var(--text-muted); font-size: 0.8rem; }
 .ticket-price-banner { display: flex; align-items: center; gap: 1rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; border-radius: var(--radius); padding: 1rem 1.5rem; margin-bottom: 0.5rem; }
 .ticket-tier-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.85; }
 .ticket-price { font-size: 2rem; font-weight: 700; margin-left: auto; }
-.ticket-deadline { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
+.ticket-deadline { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.25rem; }
+.tier-countdown { font-size: 0.9rem; font-weight: 600; color: var(--primary); margin-bottom: 1rem; }
+.tier-countdown--warning { color: #e65100; }
+.tier-countdown--urgent  { color: #c62828; animation: live-pulse 1.5s ease-in-out infinite; }
 .ticket-tiers { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 1rem; }
 .tier-row { display: flex; align-items: center; gap: 1rem; padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
 .tier-row:last-child { border-bottom: none; }
