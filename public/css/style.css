@@ -565,6 +565,7 @@ a:hover { text-decoration: underline; }
 
 .paypal-section { margin-bottom: 1.5rem; text-align: center; }
 .paypal-qr-img { max-width: 200px; border: 1px solid var(--border); border-radius: var(--radius); padding: 0.5rem; }
+.paypal-ff-warn { background: #fff3cd; border-left: 4px solid #e6a817; border-radius: 0 var(--radius) var(--radius) 0; padding: 0.65rem 0.9rem; margin-top: 0.75rem; font-size: 0.88rem; line-height: 1.5; color: #7a5300; text-align: left; }
 
 .registration-closed {
   padding: 1rem;
