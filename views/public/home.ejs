@@ -7,7 +7,6 @@
 <% const _ads = locals.ads || []; %>
 <% const _others = locals.otherEvents || []; %>
 <% const _announcements = locals.announcements || []; %>
-<% const _isLive = locals.isLive || false; %>
 
 <% if (!_event) { %>
   <main class="container" style="padding:80px 20px;text-align:center">
@@ -16,42 +15,6 @@
   </main>
 <% } else { %>
 
-<!-- ── Full-Width About ─────────────────────────────── -->
-<%
-  var _desc = _event.description || '';
-  if (locale === 'en' && _event.description_en) _desc = _event.description_en;
-  else if (locale === 'de' && _event.description_de) _desc = _event.description_de;
-%>
-<% if (_desc) { %>
-<section class="home-about-full">
-  <div class="container">
-    <h2><%- t('home.about') %></h2>
-    <div id="eventDesc" class="rich-content"><%- _desc %></div>
-  </div>
-</section>
-<% } %>
-
-<% if (_isLive) { %>
-<!-- ── Live Hero ─────────────────────────────────────── -->
-<div class="container">
-  <div class="home-hero-live">
-    <span class="live-badge">LIVE</span>
-    <h1><%= _event.title %></h1>
-    <p class="hero-meta">
-      📅 <%= new Date(_event.event_date).toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin' }) %>
-      <% if (_event.location) { %>&nbsp;📍 <%= _event.location %><% } %>
-    </p>
-    <div class="hero-actions">
-      <% if (_event.registration_open) { %>
-        <a href="/event/<%= _event.id %>" class="btn-hero"><%- t('home.register') %></a>
-      <% } %>
-      <a href="/event/<%= _event.id %>/volunteer" class="btn-hero">স্বেচ্ছাসেবী</a>
-      <a href="/event/<%= _event.id %>/polls" class="btn-hero">পোল</a>
-    </div>
-  </div>
-</div>
-
-<% } else { %>
 <!-- ── Hero Banner ─────────────────────────────────── -->
 <%
   var _bannerUrl = _event.banner_url || null;
@@ -107,6 +70,19 @@
 
   <main class="home-main">
 
+    <!-- About -->
+    <%
+      var _desc = _event.description || '';
+      if (locale === 'en' && _event.description_en) _desc = _event.description_en;
+      else if (locale === 'de' && _event.description_de) _desc = _event.description_de;
+    %>
+    <% if (_desc) { %>
+    <section class="home-about">
+      <h2><%- t('home.about') %></h2>
+      <div id="eventDesc" class="rich-content"><%- _desc %></div>
+    </section>
+    <% } %>
+
     <% if (_event.early_bird_deadline || _event.mid_deadline || _event.event_date) { %>
     <script>
     (function() {
@@ -124,13 +100,6 @@
         { name: 'nilkantha',  keywords: ['নীলকণ্ঠঃ','নীলকণ্ঠ:'],  deadline: mid, start: eb   },
         { name: 'kokila',     keywords: ['কোকিলাঃ','কোকিলা:'],   deadline: evd, start: mid  },
       ];
-
-      function isActive(tier, now) {
-        if (!tier.deadline) return false;
-        if (now >= tier.deadline) return false;
-        if (tier.start && now < tier.start) return false;
-        return true;
-      }
 
       function fmt(ms) {
         var d = Math.floor(ms / 86400000);
@@ -275,9 +244,7 @@
 })();
 </script>
 
-<% } %> <!-- end not-live -->
-
-<% } %> <!-- end _event -->
+<% } %>
 
 <% if (_event && _event.popup_image_url) { %>
 <div class="popup-overlay" id="popupOverlay">
