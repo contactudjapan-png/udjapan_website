@@ -75,9 +75,10 @@ router.use((req, res, next) => {
 
 // ── Login ────────────────────────────────────────────────────────────────────
 
-router.get('/login', (req, res) => {
+router.get('/login', async (req, res) => {
   if (req.session.adminUser || req.session.volunteerUser) return res.redirect(getVolunteerRedirect(req.session));
-  res.render('validator/login', { title: 'স্বেচ্ছাসেবী কর্নার' });
+  const { data: activeEvent } = await db.from('events').select('id').eq('is_active', true).order('event_date', { ascending: true }).limit(1).single();
+  res.render('validator/login', { title: 'স্বেচ্ছাসেবী কর্নার', activeEvent: activeEvent || null });
 });
 
 router.post('/login', async (req, res) => {
