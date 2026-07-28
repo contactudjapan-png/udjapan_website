@@ -25,7 +25,7 @@
   <% if (activeTier && activePrice) { %>
     <div class="ticket-price-banner" style="margin-bottom:1.5rem">
       <span class="ticket-tier-label"><%- t('admin.current_price') %> <%= activeTierLabel %></span>
-      <span class="ticket-price">€<%= parseFloat(activePrice).toFixed(2) %></span>
+      <span class="ticket-price">€<%= parseFloat(activePrice).toFixed(2) %> / adult</span>
     </div>
   <% } %>
 
@@ -48,8 +48,27 @@
     </div>
     <div class="form-row">
       <div class="form-group">
+        <label for="adults_count"><%- t('event.field_adults') %> (15+)</label>
+        <input type="number" id="adults_count" name="adults_count" min="0" value="1" required>
+      </div>
+      <div class="form-group">
+        <label for="children_count"><%- t('event.field_children') %> (&lt;15)</label>
+        <input type="number" id="children_count" name="children_count" min="0" value="0" required>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" name="is_special_needs" value="true">
+        বিশেষ চাহিদাপন্ন (Special needs)
+      </label>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
         <label for="amount"><%- t('admin.lbl_ticket_price') %></label>
         <input type="number" id="amount" name="amount" step="0.01" min="0" value="<%= activePrice || '' %>" placeholder="0.00">
+        <% if (activePrice) { %>
+          <small id="priceHint" style="color:var(--primary)"></small>
+        <% } %>
       </div>
       <div class="form-group">
         <label for="transaction_id"><%- t('admin.lbl_transaction_id') %></label>
@@ -63,6 +82,24 @@
     <button type="submit" class="btn btn-primary"><%- t('admin.btn_add_reg') %></button>
     <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-outline"><%- t('btn.cancel') %></a>
   </form>
+  <% if (activePrice) { %>
+  <script>
+  (function() {
+    var pricePerAdult = <%= parseFloat(activePrice) %>;
+    var adultsInput = document.getElementById('adults_count');
+    var amountInput = document.getElementById('amount');
+    var hint = document.getElementById('priceHint');
+    function update() {
+      var a = parseInt(adultsInput.value) || 0;
+      var total = (a * pricePerAdult).toFixed(2);
+      amountInput.value = total;
+      hint.textContent = a + ' × €' + pricePerAdult.toFixed(2) + ' = €' + total;
+    }
+    adultsInput.addEventListener('input', update);
+    update();
+  })();
+  </script>
+  <% } %>
 </main>
 
 <%- include('../partials/footer') %>

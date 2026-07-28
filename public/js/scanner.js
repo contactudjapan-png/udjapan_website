@@ -32,6 +32,7 @@ function showResult(data) {
     content.innerHTML = `
       <p class="result-name">${escapeHtml(data.name)}</p>
       <p class="result-event">${escapeHtml(data.event)}</p>
+      <p class="result-persons">${personCountHtml(data)}</p>
       <p class="result-status result-paid">✓ PAID</p>
     `;
   } else {
@@ -40,9 +41,19 @@ function showResult(data) {
     content.innerHTML = `
       <p class="result-name">${escapeHtml(data.name)}</p>
       <p class="result-event">${escapeHtml(data.event)}</p>
+      <p class="result-persons">${personCountHtml(data)}</p>
       <p class="result-status result-unpaid">⚠ PAYMENT PENDING</p>
     `;
   }
+}
+
+function personCountHtml(data) {
+  var parts = [];
+  if (data.adults_count > 0) parts.push(data.adults_count + ' adult' + (data.adults_count !== 1 ? 's' : '') + ' (15+)');
+  if (data.children_count > 0) parts.push(data.children_count + ' child' + (data.children_count !== 1 ? 'ren' : '') + ' (<15)');
+  var html = parts.length ? parts.join(' + ') : '1 person';
+  if (data.is_special_needs) html += ' <span class="badge-special">♿ Special needs</span>';
+  return html;
 }
 
 function escapeHtml(str) {

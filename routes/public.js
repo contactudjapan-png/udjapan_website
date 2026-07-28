@@ -50,7 +50,7 @@ router.post(`/event/:id/register`, async (req, res, next) => {
       return res.redirect(`/event/${req.params.id}`);
     }
 
-    const { name, email, phone, payment_reference, children_count, adults_count } = req.body;
+    const { name, email, phone, payment_reference, children_count, adults_count, is_special_needs } = req.body;
     if (!name || !email || !phone) {
       req.flash('error', 'Name, contact info and phone number are required.');
       return res.redirect(`/event/${req.params.id}`);
@@ -63,6 +63,7 @@ router.post(`/event/:id/register`, async (req, res, next) => {
       payment_reference: payment_reference ? payment_reference.trim() : '',
       children_count: parseInt(children_count) || 0,
       adults_count: parseInt(adults_count) || 0,
+      is_special_needs,
     });
 
     res.redirect(`/submit/success/${submission.id}`);

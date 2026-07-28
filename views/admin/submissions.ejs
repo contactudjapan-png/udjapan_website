@@ -20,10 +20,13 @@
       <tbody>
       <% submissions.forEach(sub => { %>
         <tr>
-          <td><strong><%= sub.name %></strong></td>
+          <td>
+            <strong><%= sub.name %></strong>
+            <% if (sub.is_special_needs) { %><span class="badge-special" title="<%- t('reg.special_needs') %>">♿</span><% } %>
+          </td>
           <td><%= sub.email %></td>
-          <td><%= sub.children_count || 0 %></td>
           <td><%= sub.adults_count || 0 %></td>
+          <td><%= sub.children_count || 0 %></td>
           <td><%= sub.payment_reference || '—' %></td>
           <td><%= new Date(sub.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td class="action-cell">

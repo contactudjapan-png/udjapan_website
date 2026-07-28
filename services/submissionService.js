@@ -12,7 +12,7 @@ async function getSubmissionById(id) {
   return data;
 }
 
-async function createSubmission(eventId, { name, email, phone, payment_reference, children_count, adults_count }) {
+async function createSubmission(eventId, { name, email, phone, payment_reference, children_count, adults_count, is_special_needs }) {
   const { data, error } = await db.from('submissions').insert({
     event_id: eventId,
     name,
@@ -21,6 +21,7 @@ async function createSubmission(eventId, { name, email, phone, payment_reference
     payment_reference: payment_reference || '',
     children_count: children_count || 0,
     adults_count: adults_count || 0,
+    is_special_needs: is_special_needs === true || is_special_needs === 'true' || is_special_needs === '1',
     status: 'pending',
   }).select().single();
   if (error) throw new Error(error.message);

@@ -32,6 +32,9 @@ router.get('/validate/:token', async (req, res) => {
       is_paid: registration.is_paid,
       event: event ? event.title : 'Unknown Event',
       event_date: event ? event.event_date : null,
+      adults_count: registration.adults_count || 0,
+      children_count: registration.children_count || 0,
+      is_special_needs: !!registration.is_special_needs,
     });
   } catch (err) {
     res.status(500).json({ valid: false, message: 'Server error' });

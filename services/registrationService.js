@@ -47,7 +47,7 @@ async function getRegistrationByToken(token) {
   return null;
 }
 
-async function createRegistration(eventId, { name, email, phone, payment_reference, amount, transaction_id }) {
+async function createRegistration(eventId, { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs }) {
   const qr_token = crypto.randomUUID();
   const { data, error } = await db.from('registrations').insert({
     event_id: eventId,
@@ -59,6 +59,9 @@ async function createRegistration(eventId, { name, email, phone, payment_referen
     transaction_id: transaction_id || null,
     is_paid: false,
     qr_token,
+    children_count: parseInt(children_count) || 0,
+    adults_count: parseInt(adults_count) || 0,
+    is_special_needs: is_special_needs === true || is_special_needs === 'true' || is_special_needs === '1',
   }).select().single();
   if (error) throw new Error(error.message);
   return data;
@@ -81,7 +84,7 @@ async function togglePaid(id) {
   return data;
 }
 
-async function updateRegistration(id, { name, email, phone, amount, payment_reference, transaction_id, is_paid }) {
+async function updateRegistration(id, { name, email, phone, amount, payment_reference, transaction_id, is_paid, children_count, adults_count, is_special_needs }) {
   const update = {};
   if (name !== undefined) update.name = name;
   if (email !== undefined) update.email = email;
@@ -90,6 +93,9 @@ async function updateRegistration(id, { name, email, phone, amount, payment_refe
   if (payment_reference !== undefined) update.payment_reference = payment_reference;
   if (transaction_id !== undefined) update.transaction_id = transaction_id || null;
   if (is_paid !== undefined) update.is_paid = is_paid === true || is_paid === 'true' || is_paid === '1';
+  if (children_count !== undefined) update.children_count = parseInt(children_count) || 0;
+  if (adults_count !== undefined) update.adults_count = parseInt(adults_count) || 0;
+  if (is_special_needs !== undefined) update.is_special_needs = is_special_needs === true || is_special_needs === 'true' || is_special_needs === '1';
   const { data, error } = await db.from('registrations').update(update).eq('id', id).select().single();
   if (error) throw new Error(error.message);
   return data;

@@ -230,9 +230,9 @@ router.get('/events/:id/registrations/new', async (req, res, next) => {
 
 router.post('/events/:id/registrations/new', async (req, res, next) => {
   try {
-    const { name, email, phone, payment_reference, amount, transaction_id } = req.body;
+    const { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs } = req.body;
     const event = await eventService.getEventById(req.params.id);
-    const registration = await registrationService.createRegistration(req.params.id, { name, email, phone, payment_reference, amount, transaction_id });
+    const registration = await registrationService.createRegistration(req.params.id, { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs });
     if (registration.email) {
       const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
       emailService.sendRegistrationConfirmation(registration, event, baseUrl).catch(err => {
@@ -602,7 +602,11 @@ router.post('/submissions/:id/approve', async (req, res, next) => {
     const registration = await registrationService.createRegistration(submission.event_id, {
       name: submission.name,
       email: submission.email,
+      phone: submission.phone,
       payment_reference: submission.payment_reference,
+      children_count: submission.children_count,
+      adults_count: submission.adults_count,
+      is_special_needs: submission.is_special_needs,
     });
     await submissionService.deleteSubmission(submission.id);
     // Send confirmation email with QR (non-blocking)

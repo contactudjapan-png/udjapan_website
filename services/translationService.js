@@ -649,6 +649,17 @@ const SEEDS = [
   // ── volunteer stall ───────────────────────────────────────────────────────
   { key: 'vol.assign_stall',       bn: 'স্টল নির্ধারণ',             en: 'Assign Stall',           de: 'Stand zuweisen' },
   { key: 'vol.no_stall',           bn: '— স্টল নেই —',              en: '— No Stall —',           de: '— Kein Stand —' },
+
+  // ── person counts & special needs ────────────────────────────────────────
+  { key: 'admin.lbl_link_url',     bn: 'লিংক URL',                  en: 'Link URL',               de: 'Link-URL' },
+  { key: 'admin.lbl_link_text',    bn: 'লিংক টেক্সট',               en: 'Link text',              de: 'Linktext' },
+  { key: 'admin.lbl_link_text_ph', bn: 'আরও পড়ুন...',              en: 'Read more...',           de: 'Mehr lesen...' },
+
+  { key: 'reg.adults',             bn: 'প্রাপ্তবয়স্ক (১৫+)',         en: 'Adults (15+)',           de: 'Erwachsene (15+)' },
+  { key: 'reg.children',          bn: 'শিশু (<১৫)',                  en: 'Children (<15)',         de: 'Kinder (<15)' },
+  { key: 'reg.special_needs',     bn: 'বিশেষ চাহিদাপন্ন',            en: 'Special needs',          de: 'Sonderbedarf' },
+  { key: 'reg.total_adults',      bn: 'মোট প্রাপ্তবয়স্ক',            en: 'Total adults',           de: 'Erwachsene gesamt' },
+  { key: 'reg.total_children',    bn: 'মোট শিশু',                   en: 'Total children',         de: 'Kinder gesamt' },
 ];
 
 function buildSeedCache() {

@@ -458,6 +458,8 @@ a:hover { text-decoration: underline; }
 .announcement-item:last-child { border-bottom: none; }
 .announcement-item strong { font-size: 0.9rem; display: block; margin-bottom: 0.25rem; }
 .announcement-item div { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+.ann-link { display: inline-block; margin-top: 0.4rem; font-size: 0.82rem; color: var(--primary); text-decoration: none; font-weight: 500; }
+.ann-link:hover { text-decoration: underline; }
 
 .ads-grid {
   display: grid;
@@ -1357,6 +1359,8 @@ body.tier-kokila {
 
 /* ─── Badge Warn ─────────────────────────────────────────────────────────────── */
 .badge-warn { background: #e67e22; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
+.badge-special { background: #6c5ce7; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; }
+.result-persons { font-size: 0.95rem; color: var(--text-muted); margin: 0.25rem 0; }
 
 /* ─── Cancelled Registration ─────────────────────────────────────────────────── */
 .badge-cancelled { background: #888; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; }
