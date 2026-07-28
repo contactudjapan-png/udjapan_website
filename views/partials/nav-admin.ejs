@@ -30,6 +30,12 @@
     <a href="/admin/audit-log" class="nav-link">অডিট লগ</a>
   </div>
 
+  <div class="sidebar-lang">
+    <a href="?lang=bn"<%= locals.locale === 'bn' ? ' class="lang-active"' : '' %>>বাং</a>
+    <a href="?lang=en"<%= locals.locale === 'en' ? ' class="lang-active"' : '' %>>EN</a>
+    <a href="?lang=de"<%= locals.locale === 'de' ? ' class="lang-active"' : '' %>>DE</a>
+  </div>
+
   <div class="sidebar-footer">
     <a href="/" target="_blank" class="nav-link" style="padding:0;color:rgba(255,255,255,0.75);font-size:0.85rem">সাইট দেখুন ↗</a>
   </div>
