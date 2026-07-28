@@ -1,20 +1,20 @@
 <div class="subnav">
-  <a href="/admin/events/<%= event.id %>/edit" class="<%= title.includes('Edit') ? 'active' : '' %>">সেটিংস</a>
-  <a href="/admin/events/<%= event.id %>/submissions" class="<%= title.includes('Submission') ? 'active' : '' %>">সাবমিশন</a>
-  <a href="/admin/events/<%= event.id %>/registrations" class="<%= title.includes('Registration') ? 'active' : '' %>">নিবন্ধন</a>
-  <a href="/admin/events/<%= event.id %>/bulk-payment" class="<%= title.includes('বাল্ক') ? 'active' : '' %>">বাল্ক পেমেন্ট</a>
-  <a href="/admin/events/<%= event.id %>/expenses" class="<%= title.includes('Expense') ? 'active' : '' %>">খরচ</a>
-  <a href="/admin/events/<%= event.id %>/incomes" class="<%= title.includes('Income') || title.includes('আয়') ? 'active' : '' %>">আয়</a>
-  <a href="/admin/events/<%= event.id %>/financial-dashboard" class="<%= title.includes('আর্থিক') ? 'active' : '' %>">আর্থিক</a>
-  <a href="/admin/events/<%= event.id %>/polls" class="<%= title.includes('Poll') ? 'active' : '' %>">ভোট</a>
-  <a href="/admin/events/<%= event.id %>/stalls" class="<%= title.includes('Stall') ? 'active' : '' %>">স্টল</a>
-  <a href="/admin/events/<%= event.id %>/volunteers" class="<%= title.includes('Volunteer') ? 'active' : '' %>">স্বেচ্ছাসেবী</a>
-  <a href="/admin/events/<%= event.id %>/waitlist" class="<%= title.includes('Waitlist') || title.includes('ওয়েটলিস্ট') ? 'active' : '' %>">ওয়েটলিস্ট</a>
-  <a href="/admin/events/<%= event.id %>/refunds" class="<%= title.includes('Refund') || title.includes('রিফান্ড') ? 'active' : '' %>">রিফান্ড</a>
-  <a href="/admin/events/<%= event.id %>/emails" class="<%= title.includes('Email') ? 'active' : '' %>">ইমেইল</a>
-  <a href="/admin/events/<%= event.id %>/reports" class="<%= title.includes('Report') ? 'active' : '' %>">রিপোর্ট</a>
-  <a href="/admin/events/<%= event.id %>/scan-logs" class="<%= title.includes('স্ক্যান') ? 'active' : '' %>">স্ক্যান লগ</a>
-  <a href="/admin/events/<%= event.id %>/feedback" class="<%= title.includes('Feedback') || title.includes('ফিডব্যাক') ? 'active' : '' %>">ফিডব্যাক</a>
-  <a href="/admin/events/<%= event.id %>/competitions" class="<%= title.includes('Competition') ? 'active' : '' %>">প্রতিযোগিতা</a>
-  <a href="/admin/events/<%= event.id %>/import" class="<%= title.includes('Import') ? 'active' : '' %>">ইম্পোর্ট</a>
+  <a href="/admin/events/<%= event.id %>/edit"                class="<%= title.includes('Edit') ? 'active' : '' %>"><%- t('subnav.settings') %></a>
+  <a href="/admin/events/<%= event.id %>/submissions"          class="<%= title.includes('Submission') ? 'active' : '' %>"><%- t('subnav.submissions') %></a>
+  <a href="/admin/events/<%= event.id %>/registrations"        class="<%= title.includes('Registration') ? 'active' : '' %>"><%- t('subnav.registrations') %></a>
+  <a href="/admin/events/<%= event.id %>/bulk-payment"         class="<%= title.includes('বাল্ক') ? 'active' : '' %>"><%- t('subnav.bulk_payment') %></a>
+  <a href="/admin/events/<%= event.id %>/expenses"             class="<%= title.includes('Expense') ? 'active' : '' %>"><%- t('subnav.expenses') %></a>
+  <a href="/admin/events/<%= event.id %>/incomes"              class="<%= title.includes('Income') || title.includes('আয়') ? 'active' : '' %>"><%- t('subnav.income') %></a>
+  <a href="/admin/events/<%= event.id %>/financial-dashboard"  class="<%= title.includes('আর্থিক') ? 'active' : '' %>"><%- t('subnav.financial') %></a>
+  <a href="/admin/events/<%= event.id %>/polls"                class="<%= title.includes('Poll') ? 'active' : '' %>"><%- t('subnav.polls') %></a>
+  <a href="/admin/events/<%= event.id %>/stalls"               class="<%= title.includes('Stall') ? 'active' : '' %>"><%- t('subnav.stalls') %></a>
+  <a href="/admin/events/<%= event.id %>/volunteers"           class="<%= title.includes('Volunteer') ? 'active' : '' %>"><%- t('subnav.volunteers') %></a>
+  <a href="/admin/events/<%= event.id %>/waitlist"             class="<%= title.includes('Waitlist') || title.includes('ওয়েটলিস্ট') ? 'active' : '' %>"><%- t('subnav.waitlist') %></a>
+  <a href="/admin/events/<%= event.id %>/refunds"              class="<%= title.includes('Refund') || title.includes('রিফান্ড') ? 'active' : '' %>"><%- t('subnav.refunds') %></a>
+  <a href="/admin/events/<%= event.id %>/emails"               class="<%= title.includes('Email') ? 'active' : '' %>"><%- t('subnav.emails') %></a>
+  <a href="/admin/events/<%= event.id %>/reports"              class="<%= title.includes('Report') ? 'active' : '' %>"><%- t('subnav.reports') %></a>
+  <a href="/admin/events/<%= event.id %>/scan-logs"            class="<%= title.includes('স্ক্যান') ? 'active' : '' %>"><%- t('subnav.scan_log') %></a>
+  <a href="/admin/events/<%= event.id %>/feedback"             class="<%= title.includes('Feedback') || title.includes('ফিডব্যাক') ? 'active' : '' %>"><%- t('subnav.feedback') %></a>
+  <a href="/admin/events/<%= event.id %>/competitions"         class="<%= title.includes('Competition') ? 'active' : '' %>"><%- t('subnav.competitions') %></a>
+  <a href="/admin/events/<%= event.id %>/import"               class="<%= title.includes('Import') ? 'active' : '' %>"><%- t('subnav.import') %></a>
 </div>

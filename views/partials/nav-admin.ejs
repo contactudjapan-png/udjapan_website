@@ -5,29 +5,29 @@
   </div>
 
   <div class="sidebar-section">
-    <span class="sidebar-group-label">প্রধান</span>
-    <a href="/admin" class="nav-link">ড্যাশবোর্ড</a>
-    <a href="/admin/events" class="nav-link">ইভেন্টসমূহ</a>
+    <span class="sidebar-group-label"><%- t('admin.group_main') %></span>
+    <a href="/admin" class="nav-link"><%- t('admin.dashboard') %></a>
+    <a href="/admin/events" class="nav-link"><%- t('admin.events') %></a>
   </div>
 
   <div class="sidebar-section">
-    <span class="sidebar-group-label">বিষয়বস্তু</span>
-    <a href="/admin/ads" class="nav-link">বিজ্ঞাপন</a>
-    <a href="/admin/announcements" class="nav-link">ঘোষণা</a>
+    <span class="sidebar-group-label"><%- t('admin.group_content') %></span>
+    <a href="/admin/ads" class="nav-link"><%- t('admin.ads') %></a>
+    <a href="/admin/announcements" class="nav-link"><%- t('admin.announcements') %></a>
   </div>
 
   <div class="sidebar-section">
-    <span class="sidebar-group-label">সেটিংস</span>
-    <a href="/admin/settings/volunteer-tasks" class="nav-link">স্বেচ্ছাসেবী কাজ</a>
-    <a href="/admin/settings/stall-obs-types" class="nav-link">স্টল পর্যবেক্ষণ</a>
-    <a href="/admin/settings/expense-categories" class="nav-link">খরচ ক্যাটাগরি</a>
-    <a href="/admin/settings/income-categories" class="nav-link">আয় ক্যাটাগরি</a>
-    <a href="/admin/translations" class="nav-link">অনুবাদ</a>
+    <span class="sidebar-group-label"><%- t('admin.group_settings') %></span>
+    <a href="/admin/settings/volunteer-tasks" class="nav-link"><%- t('admin.volunteer_tasks') %></a>
+    <a href="/admin/settings/stall-obs-types" class="nav-link"><%- t('admin.stall_obs') %></a>
+    <a href="/admin/settings/expense-categories" class="nav-link"><%- t('admin.expense_cats') %></a>
+    <a href="/admin/settings/income-categories" class="nav-link"><%- t('admin.income_cats') %></a>
+    <a href="/admin/translations" class="nav-link"><%- t('admin.translations') %></a>
   </div>
 
   <div class="sidebar-section">
-    <span class="sidebar-group-label">লগ</span>
-    <a href="/admin/audit-log" class="nav-link">অডিট লগ</a>
+    <span class="sidebar-group-label"><%- t('admin.group_log') %></span>
+    <a href="/admin/audit-log" class="nav-link"><%- t('admin.audit_log') %></a>
   </div>
 
   <div class="sidebar-lang">
@@ -37,18 +37,18 @@
   </div>
 
   <div class="sidebar-footer">
-    <a href="/" target="_blank" class="nav-link" style="padding:0;color:rgba(255,255,255,0.75);font-size:0.85rem">সাইট দেখুন ↗</a>
+    <a href="/" target="_blank" class="nav-link" style="padding:0;color:rgba(255,255,255,0.75);font-size:0.85rem"><%- t('admin.view_site') %></a>
   </div>
 </nav>
 
 <!-- Logout (top-right) -->
 <div class="admin-topbar">
   <form action="/admin/logout" method="POST">
-    <button type="submit" class="btn btn-sm btn-outline admin-logout-btn">লগআউট</button>
+    <button type="submit" class="btn btn-sm btn-outline admin-logout-btn"><%- t('admin.logout') %></button>
   </form>
 </div>
 
-<button class="hamburger" id="hamburger" aria-label="মেনু">&#9776;</button>
+<button class="hamburger" id="hamburger" aria-label="Menu">&#9776;</button>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <script>
