@@ -1246,6 +1246,25 @@ body.tier-kokila {
 .table tbody tr:last-child td { border-bottom: none; }
 .table tbody tr:hover td { background: var(--bg); }
 
+/* ─── Event Registration Two-Column Layout ───────────────────────────────────── */
+.event-reg-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-top: 1rem;
+}
+.pay-desc-box {
+  padding: 1rem;
+  background: var(--bg);
+  border-radius: var(--radius);
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+}
+@media (max-width: 700px) {
+  .event-reg-layout { grid-template-columns: 1fr; }
+}
+
 /* ─── Home – About Full-Width ────────────────────────────────────────────────── */
 .home-about-full {
   width: 100%;

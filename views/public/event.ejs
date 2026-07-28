@@ -26,14 +26,7 @@
       var _payDesc = event.payment_description || '';
       if (locale === 'en' && event.payment_description_en) _payDesc = event.payment_description_en;
       else if (locale === 'de' && event.payment_description_de) _payDesc = event.payment_description_de;
-    %>
-    <% if (_payDesc) { %>
-      <div style="margin-bottom:1.25rem;padding:1rem;background:var(--bg);border-radius:var(--radius);line-height:1.8">
-        <%- _payDesc.replace(/\n/g, '<br>') %>
-      </div>
-    <% } %>
 
-    <%
       const now = new Date();
       const eventDate = new Date(event.event_date);
       let activeTier = null;
@@ -53,72 +46,87 @@
         activePrice = event.price_onspot;
       }
     %>
-    <% if (activeTier && activePrice) { %>
-      <div class="ticket-price-banner">
-        <span class="ticket-tier-label"><%= activeTierLabel %></span>
-        <span class="ticket-price">€<%= parseFloat(activePrice).toFixed(2) %></span>
-      </div>
-      <% if (activeTier === 'early_bird' && event.early_bird_deadline) { %>
-        <p class="ticket-deadline"><%- t('event.early_ends') %> <strong><%= new Date(event.early_bird_deadline).toLocaleDateString('bn-BD', {month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'}) %></strong></p>
-      <% } else if (activeTier === 'mid' && event.mid_deadline) { %>
-        <p class="ticket-deadline"><%- t('event.mid_ends') %> <strong><%= new Date(event.mid_deadline).toLocaleDateString('bn-BD', {month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'}) %></strong></p>
-      <% } %>
-    <% } else if (event.price_early_bird || event.price_mid || event.price_onspot) { %>
-      <div class="ticket-tiers">
-        <% if (event.price_early_bird) { %><div class="tier-row"><span><%- t('event.tier_early') %></span><span>€<%= parseFloat(event.price_early_bird).toFixed(2) %></span><% if(event.early_bird_deadline){%><small><%- t('event.until') %> <%= new Date(event.early_bird_deadline).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></small><%}%></div><% } %>
-        <% if (event.price_mid) { %><div class="tier-row"><span><%- t('event.tier_mid') %></span><span>€<%= parseFloat(event.price_mid).toFixed(2) %></span><% if(event.mid_deadline){%><small><%- t('event.until') %> <%= new Date(event.mid_deadline).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></small><%}%></div><% } %>
-        <% if (event.price_onspot) { %><div class="tier-row"><span><%- t('event.tier_onspot') %></span><span>€<%= parseFloat(event.price_onspot).toFixed(2) %></span></div><% } %>
-      </div>
-    <% } %>
 
-    <div class="paypal-section">
-      <h3><%- t('event.step1') %></h3>
-      <% if (event.paypal_qr_url) { %>
-        <p><%- t('event.scan_qr') %></p>
-        <img src="<%= event.paypal_qr_url %>" alt="PayPal QR" class="paypal-qr-img">
-      <% } else { %>
-        <div class="paypal-placeholder">
-          <p><%- t('event.paypal_contact') %></p>
-        </div>
-      <% } %>
-    </div>
+    <div class="event-reg-layout">
 
-    <h3><%- t('event.step2') %></h3>
-    <form action="/event/<%= event.id %>/register" method="POST" class="register-form">
-      <% if (activeTier) { %>
-        <input type="hidden" name="ticket_type" value="<%= activeTier %>">
-        <input type="hidden" name="ticket_price" value="<%= activePrice %>">
-      <% } %>
-      <div class="form-group">
-        <label for="name"><%- t('event.field_name') %></label>
-        <input type="text" id="name" name="name" required placeholder="নাম">
-        <small><%- t('event.field_name_hint') %></small>
+      <!-- Left: payment info -->
+      <div class="event-reg-left">
+        <% if (_payDesc) { %>
+          <div class="pay-desc-box"><%- _payDesc.replace(/\n/g, '<br>') %></div>
+        <% } %>
+
+        <% if (activeTier && activePrice) { %>
+          <div class="ticket-price-banner">
+            <span class="ticket-tier-label"><%= activeTierLabel %></span>
+            <span class="ticket-price">€<%= parseFloat(activePrice).toFixed(2) %></span>
+          </div>
+          <% if (activeTier === 'early_bird' && event.early_bird_deadline) { %>
+            <p class="ticket-deadline"><%- t('event.early_ends') %> <strong><%= new Date(event.early_bird_deadline).toLocaleDateString('bn-BD', {month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'}) %></strong></p>
+          <% } else if (activeTier === 'mid' && event.mid_deadline) { %>
+            <p class="ticket-deadline"><%- t('event.mid_ends') %> <strong><%= new Date(event.mid_deadline).toLocaleDateString('bn-BD', {month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'}) %></strong></p>
+          <% } %>
+        <% } else if (event.price_early_bird || event.price_mid || event.price_onspot) { %>
+          <div class="ticket-tiers">
+            <% if (event.price_early_bird) { %><div class="tier-row"><span><%- t('event.tier_early') %></span><span>€<%= parseFloat(event.price_early_bird).toFixed(2) %></span><% if(event.early_bird_deadline){%><small><%- t('event.until') %> <%= new Date(event.early_bird_deadline).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></small><%}%></div><% } %>
+            <% if (event.price_mid) { %><div class="tier-row"><span><%- t('event.tier_mid') %></span><span>€<%= parseFloat(event.price_mid).toFixed(2) %></span><% if(event.mid_deadline){%><small><%- t('event.until') %> <%= new Date(event.mid_deadline).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></small><%}%></div><% } %>
+            <% if (event.price_onspot) { %><div class="tier-row"><span><%- t('event.tier_onspot') %></span><span>€<%= parseFloat(event.price_onspot).toFixed(2) %></span></div><% } %>
+          </div>
+        <% } %>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="children_count"><%- t('event.field_children') %></label>
-          <input type="number" id="children_count" name="children_count" required min="0" value="0">
+
+      <!-- Right: steps -->
+      <div class="event-reg-right">
+        <div class="paypal-section">
+          <h3><%- t('event.step1') %></h3>
+          <% if (event.paypal_qr_url) { %>
+            <p><%- t('event.scan_qr') %></p>
+            <img src="<%= event.paypal_qr_url %>" alt="PayPal QR" class="paypal-qr-img">
+          <% } else { %>
+            <div class="paypal-placeholder">
+              <p><%- t('event.paypal_contact') %></p>
+            </div>
+          <% } %>
         </div>
-        <div class="form-group">
-          <label for="adults_count"><%- t('event.field_adults') %></label>
-          <input type="number" id="adults_count" name="adults_count" required min="0" value="0">
-        </div>
+
+        <h3><%- t('event.step2') %></h3>
+        <form action="/event/<%= event.id %>/register" method="POST" class="register-form">
+          <% if (activeTier) { %>
+            <input type="hidden" name="ticket_type" value="<%= activeTier %>">
+            <input type="hidden" name="ticket_price" value="<%= activePrice %>">
+          <% } %>
+          <div class="form-group">
+            <label for="name"><%- t('event.field_name') %></label>
+            <input type="text" id="name" name="name" required placeholder="নাম">
+            <small><%- t('event.field_name_hint') %></small>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="children_count"><%- t('event.field_children') %></label>
+              <input type="number" id="children_count" name="children_count" required min="0" value="0">
+            </div>
+            <div class="form-group">
+              <label for="adults_count"><%- t('event.field_adults') %></label>
+              <input type="number" id="adults_count" name="adults_count" required min="0" value="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="payment_reference"><%- t('event.field_pay_ref') %></label>
+            <input type="text" id="payment_reference" name="payment_reference" required placeholder="<%- t('event.field_pay_ref_ph') %>">
+          </div>
+          <div class="form-group">
+            <label for="email"><%- t('event.field_contact') %></label>
+            <input type="text" id="email" name="email" required placeholder="<%- t('event.field_contact_ph') %>">
+          </div>
+          <div class="form-group">
+            <label for="phone"><%- t('event.field_phone') %></label>
+            <input type="tel" id="phone" name="phone" required placeholder="+49 1XX XXXXXXXX">
+          </div>
+          <p class="datenschutz-notice"><%- t('event.privacy_consent') %> <a href="/privacy" target="_blank"><strong><%- t('event.privacy_policy') %></strong></a>.</p>
+          <button type="submit" class="btn btn-primary"><%- t('event.submit') %></button>
+        </form>
       </div>
-      <div class="form-group">
-        <label for="payment_reference"><%- t('event.field_pay_ref') %></label>
-        <input type="text" id="payment_reference" name="payment_reference" required placeholder="<%- t('event.field_pay_ref_ph') %>">
-      </div>
-      <div class="form-group">
-        <label for="email"><%- t('event.field_contact') %></label>
-        <input type="text" id="email" name="email" required placeholder="<%- t('event.field_contact_ph') %>">
-      </div>
-      <div class="form-group">
-        <label for="phone"><%- t('event.field_phone') %></label>
-        <input type="tel" id="phone" name="phone" required placeholder="+49 1XX XXXXXXXX">
-      </div>
-      <p class="datenschutz-notice"><%- t('event.privacy_consent') %> <a href="/privacy" target="_blank"><%- t('event.privacy_policy') %></a>.</p>
-      <button type="submit" class="btn btn-primary"><%- t('event.submit') %></button>
-    </form>
+
+    </div><!-- /.event-reg-layout -->
   </div>
   <% } else { %>
   <div class="event-detail-card" style="margin-top:1.5rem">
