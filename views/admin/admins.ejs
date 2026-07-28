@@ -1,0 +1,38 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <div class="section-header">
+    <h1>Admin Users</h1>
+    <a href="/admin/admins/new" class="btn btn-primary">New Admin</a>
+  </div>
+
+  <% if (admins.length === 0) { %>
+    <div class="empty-state"><p>No admin users yet.</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>Name</th><th>Email</th><th>Events</th><th>Actions</th>
+      </tr></thead>
+      <tbody>
+        <% admins.forEach(admin => { %>
+        <tr>
+          <td><%= admin.name %></td>
+          <td><%= admin.email %></td>
+          <td><%= admin.event_count %></td>
+          <td>
+            <a href="/admin/admins/<%= admin.id %>/assign-events" class="btn btn-sm btn-outline">Assign Events</a>
+            <form action="/admin/admins/<%= admin.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('Delete this admin?')">
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+</body>
+</html>

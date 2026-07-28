@@ -6,4 +6,12 @@ function requireAdmin(req, res, next) {
   res.redirect('/admin/login');
 }
 
-module.exports = { requireAdmin };
+function requireSuperAdmin(req, res, next) {
+  if (req.session && req.session.adminUser && req.session.adminUser.role === 'super') {
+    return next();
+  }
+  req.flash('error', 'Super admin access required.');
+  res.redirect('/admin');
+}
+
+module.exports = { requireAdmin, requireSuperAdmin };

@@ -3,7 +3,7 @@ const router = express.Router();
 const path = require('path');
 const crypto = require('crypto');
 const db = require('../config/db');
-const { requireAdmin } = require('../middleware/auth');
+const { requireAdmin, requireSuperAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 const { compressImage } = require('../middleware/compress');
 
@@ -30,6 +30,7 @@ const feedbackService = require('../services/feedbackService');
 const exportService = require('../services/exportService');
 const auditService = require('../services/auditService');
 const competitionService = require('../services/competitionService');
+const adminUserService = require('../services/adminUserService');
 const ExcelJS = require('exceljs');
 
 // Convert a "YYYY-MM-DDTHH:MM" string entered as Berlin local time to a UTC ISO string
@@ -55,11 +56,22 @@ router.get('/login', (req, res) => {
   res.render('admin/login', { title: 'Admin Login' });
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+  // Super admin via env vars
   if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-    req.session.adminUser = { email };
+    req.session.adminUser = { role: 'super', id: 'super', email, name: 'Super Admin' };
     return res.redirect('/admin');
+  }
+  // Regular admin from DB
+  try {
+    const admin = await adminUserService.getAdminByEmail(email);
+    if (admin && await adminUserService.verifyPassword(password, admin.password_hash)) {
+      req.session.adminUser = { role: 'admin', id: admin.id, email: admin.email, name: admin.name };
+      return res.redirect('/admin');
+    }
+  } catch (e) {
+    // fall through
   }
   req.flash('error', 'Invalid credentials');
   res.redirect('/admin/login');
@@ -73,12 +85,29 @@ router.post('/logout', (req, res) => {
 // All routes below require auth
 router.use(requireAdmin);
 
+router.use((req, res, next) => {
+  res.locals.isSuperAdmin = req.session.adminUser?.role === 'super';
+  next();
+});
+
+async function requireEventAccess(req, res, next) {
+  if (req.session.adminUser.role === 'super') return next();
+  const ok = await adminUserService.canAccessEvent(req.session.adminUser.id, req.params.id);
+  if (!ok) {
+    req.flash('error', 'Access denied.');
+    return res.redirect('/admin');
+  }
+  next();
+}
+
 // ─── Dashboard ───────────────────────────────────────────────────────────────
 
 router.get('/', async (req, res, next) => {
   try {
     const stats = await reportService.getDashboardStats();
-    const events = await eventService.getAllEvents();
+    const events = res.locals.isSuperAdmin
+      ? await eventService.getAllEvents()
+      : await adminUserService.getAdminEvents(req.session.adminUser.id);
     res.render('admin/dashboard', { title: 'Dashboard', stats, events, useMemoryDb: !!process.env.USE_MEMORY_DB });
   } catch (err) { next(err); }
 });
@@ -87,7 +116,9 @@ router.get('/', async (req, res, next) => {
 
 router.get('/events', async (req, res, next) => {
   try {
-    const events = await eventService.getAllEvents();
+    const events = res.locals.isSuperAdmin
+      ? await eventService.getAllEvents()
+      : await adminUserService.getAdminEvents(req.session.adminUser.id);
     res.render('admin/events', { title: 'Events', events });
   } catch (err) { next(err); }
 });
@@ -106,6 +137,9 @@ router.post('/events/new', async (req, res, next) => {
     res.redirect('/admin/events/new');
   }
 });
+
+// Guard: scope all /events/:id/* routes to assigned events for regular admins
+router.use('/events/:id', requireEventAccess);
 
 router.get('/events/:id', async (req, res, next) => {
   try {
@@ -1318,6 +1352,60 @@ router.post('/translations/add-key', async (req, res, next) => {
     }
     req.flash('success', 'নতুন কী যোগ হয়েছে।');
     res.redirect('/admin/translations');
+  } catch (err) { next(err); }
+});
+
+// ─── Admin Users (Super Admin only) ──────────────────────────────────────────
+
+router.get('/admins', requireSuperAdmin, async (req, res, next) => {
+  try {
+    const admins = await adminUserService.getAllAdmins();
+    res.render('admin/admins', { title: 'Admin Users', admins });
+  } catch (err) { next(err); }
+});
+
+router.get('/admins/new', requireSuperAdmin, (req, res) => {
+  res.render('admin/admin-form', { title: 'New Admin' });
+});
+
+router.post('/admins/new', requireSuperAdmin, async (req, res, next) => {
+  try {
+    const { name, email, password } = req.body;
+    await adminUserService.createAdmin({ name, email, password });
+    req.flash('success', 'Admin created.');
+    res.redirect('/admin/admins');
+  } catch (err) {
+    req.flash('error', err.message);
+    res.redirect('/admin/admins/new');
+  }
+});
+
+router.post('/admins/:id/delete', requireSuperAdmin, async (req, res, next) => {
+  try {
+    await adminUserService.deleteAdmin(req.params.id);
+    req.flash('success', 'Admin deleted.');
+    res.redirect('/admin/admins');
+  } catch (err) { next(err); }
+});
+
+router.get('/admins/:id/assign-events', requireSuperAdmin, async (req, res, next) => {
+  try {
+    const admin = await adminUserService.getAdminById(req.params.id);
+    const allEvents = await eventService.getAllEvents();
+    const assignedEvents = await adminUserService.getAdminEvents(req.params.id);
+    const assignedIds = assignedEvents.map(e => e.id);
+    res.render('admin/admin-assign-events', { title: 'Assign Events', admin, allEvents, assignedIds });
+  } catch (err) { next(err); }
+});
+
+router.post('/admins/:id/assign-events', requireSuperAdmin, async (req, res, next) => {
+  try {
+    const eventIds = req.body.event_ids
+      ? (Array.isArray(req.body.event_ids) ? req.body.event_ids : [req.body.event_ids])
+      : [];
+    await adminUserService.setAdminEvents(req.params.id, eventIds);
+    req.flash('success', 'Event assignments updated.');
+    res.redirect('/admin/admins');
   } catch (err) { next(err); }
 });
 

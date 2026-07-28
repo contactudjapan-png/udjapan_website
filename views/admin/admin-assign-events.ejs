@@ -1,0 +1,38 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <div class="section-header">
+    <h1>Assign Events — <%= admin.name %></h1>
+    <a href="/admin/admins" class="btn btn-outline">Back</a>
+  </div>
+
+  <form action="/admin/admins/<%= admin.id %>/assign-events" method="POST" class="admin-form">
+    <% if (allEvents.length === 0) { %>
+      <p class="text-muted">No events available.</p>
+    <% } else { %>
+      <div class="form-group">
+        <label>Select events this admin can access:</label>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem">
+          <% allEvents.forEach(event => { %>
+          <label style="display:flex;align-items:center;gap:0.5rem;font-weight:normal">
+            <input type="checkbox" name="event_ids" value="<%= event.id %>"
+              <%= assignedIds.includes(event.id) ? 'checked' : '' %>>
+            <%= event.title %>
+            <% if (event.event_date) { %>
+              <span class="text-muted" style="font-size:0.85em">(<%= new Date(event.event_date).toLocaleDateString() %>)</span>
+            <% } %>
+          </label>
+          <% }); %>
+        </div>
+      </div>
+    <% } %>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Save Assignments</button>
+    </div>
+  </form>
+</main>
+</body>
+</html>

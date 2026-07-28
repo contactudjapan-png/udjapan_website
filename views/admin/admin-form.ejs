@@ -1,0 +1,31 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <div class="section-header">
+    <h1>New Admin</h1>
+    <a href="/admin/admins" class="btn btn-outline">Back</a>
+  </div>
+
+  <form action="/admin/admins/new" method="POST" class="admin-form">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" class="form-control" required minlength="8">
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Create Admin</button>
+    </div>
+  </form>
+</main>
+</body>
+</html>

@@ -30,6 +30,13 @@
     <a href="/admin/audit-log" class="nav-link"><%- t('admin.audit_log') %></a>
   </div>
 
+  <% if (locals.isSuperAdmin) { %>
+  <div class="sidebar-section">
+    <span class="sidebar-group-label">Super Admin</span>
+    <a href="/admin/admins" class="nav-link">Admin Users</a>
+  </div>
+  <% } %>
+
   <div class="sidebar-lang">
     <a href="?lang=bn"<%= locals.locale === 'bn' ? ' class="lang-active"' : '' %>>বাং</a>
     <a href="?lang=en"<%= locals.locale === 'en' ? ' class="lang-active"' : '' %>>EN</a>
