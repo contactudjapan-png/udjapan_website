@@ -65,14 +65,15 @@
           var _annContent = ann.content || '';
           if (locale === 'en') { if (ann.title_en) _annTitle = ann.title_en; if (ann.content_en) _annContent = ann.content_en; }
           else if (locale === 'de') { if (ann.title_de) _annTitle = ann.title_de; if (ann.content_de) _annContent = ann.content_de; }
+          var _annContentClean = _annContent ? _annContent.replace(/<p><br\s*\/?><\/p>/gi,'').trim() : '';
         %>
-        <div class="announcement-item">
-          <strong><%= _annTitle %></strong>
-          <div><%- _annContent.replace(/\n/g, '<br>') %></div>
-          <% if (ann.link_url) { %>
-            <a href="<%= ann.link_url %>" target="_blank" rel="noopener" class="ann-link"><%= ann.link_text || ann.link_url %> →</a>
-          <% } %>
-        </div>
+        <% if (ann.link_url) { %><a href="<%= ann.link_url %>" target="_blank" rel="noopener" class="ad-card"><% } else { %><div class="ad-card"><% } %>
+          <div class="ad-card-body">
+            <strong><%= _annTitle %></strong>
+            <% if (_annContentClean) { %><div class="rich-content" style="font-size:0.85rem"><%- _annContentClean %></div><% } %>
+            <% if (ann.link_url) { %><span class="ann-link"><%= ann.link_text || ann.link_url %> →</span><% } %>
+          </div>
+        <% if (ann.link_url) { %></a><% } else { %></div><% } %>
       <% }) %>
     </div>
   </aside>
