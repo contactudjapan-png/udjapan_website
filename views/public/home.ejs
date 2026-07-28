@@ -101,9 +101,21 @@
       var evd = <%- _event.event_date          ? JSON.stringify(new Date(_event.event_date).getTime())          : 'null' %>;
 
       var TIERS = [
-        { name: 'halide',    keywords: ['হলদে বউঃ','হলদে বউ:'], deadline: eb,  start: null },
-        { name: 'nilkantha', keywords: ['নীলকণ্ঠঃ','নীলকণ্ঠ:'], deadline: mid, start: eb   },
-        { name: 'kokila',    keywords: ['কোকিলাঃ','কোকিলা:'],   deadline: evd, start: mid  },
+        { name: 'halide', keywords: [
+          'হলদে বউঃ','হলদে বউ:','হলদে বউ',
+          'Haldey Bou','Halde Bou','Halide Bou','Holde Bou',
+          'Early Bird','Baya Weaver','Yellow Bird'
+        ], deadline: eb, start: null },
+        { name: 'nilkantha', keywords: [
+          'নীলকণ্ঠঃ','নীলকণ্ঠ:','নীলকণ্ঠ',
+          'Nilkantha','Nil Kantha','Neelkantha','Neel Kantha',
+          'Blue Throat','Indian Roller'
+        ], deadline: mid, start: eb },
+        { name: 'kokila', keywords: [
+          'কোকিলাঃ','কোকিলা:','কোকিলা',
+          'Kokila','Koyel','Koyal',
+          'Cuckoo','Indian Cuckoo'
+        ], deadline: evd, start: mid },
       ];
 
       function fmt(ms) {
@@ -120,26 +132,39 @@
         return parts.join(' ');
       }
 
-      var descEl = document.getElementById('eventDesc');
-      if (!descEl) return;
+      function injectBadges(rootEl) {
+        var result = [];
+        TIERS.forEach(function(tier) {
+          if (!tier.deadline) return;
+          var candidates = rootEl.querySelectorAll('p, li, h2, h3, h4, h5, h6, strong, b, td');
+          var target = null;
+          for (var i = 0; i < candidates.length; i++) {
+            var low = candidates[i].textContent.toLowerCase();
+            if (tier.keywords.some(function(kw) { return low.indexOf(kw.toLowerCase()) !== -1; })) {
+              target = candidates[i]; break;
+            }
+          }
+          if (!target) {
+            // fallback: keyword anywhere in root text
+            var low = rootEl.textContent.toLowerCase();
+            if (tier.keywords.some(function(kw) { return low.indexOf(kw.toLowerCase()) !== -1; })) {
+              target = rootEl;
+            }
+          }
+          if (!target) return;
+          var br = document.createElement('br');
+          var badge = document.createElement('span');
+          badge.className = 'tier-badge'; badge.style.display = 'none';
+          target.appendChild(br); target.appendChild(badge);
+          result.push({ el: badge, deadline: tier.deadline, start: tier.start, name: tier.name });
+        });
+        return result;
+      }
 
       var badges = [];
-      TIERS.forEach(function(tier) {
-        if (!tier.deadline) return;
-        var strongs = descEl.querySelectorAll('strong, b');
-        for (var i = 0; i < strongs.length; i++) {
-          var txt = strongs[i].textContent;
-          var matched = tier.keywords.some(function(kw) { return txt.indexOf(kw) !== -1; });
-          if (matched) {
-            var badge = document.createElement('span');
-            badge.className = 'tier-badge';
-            badge.style.display = 'none';
-            strongs[i].parentNode.insertBefore(badge, strongs[i].nextSibling);
-            badges.push({ el: badge, deadline: tier.deadline, start: tier.start, name: tier.name });
-            break;
-          }
-        }
-      });
+      var descEl = document.getElementById('eventDesc');
+      if (descEl) badges = badges.concat(injectBadges(descEl));
+      if (!badges.length) return;
 
       function tick() {
         var now = Date.now();

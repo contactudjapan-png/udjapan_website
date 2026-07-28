@@ -52,7 +52,7 @@
       <!-- Left: payment info -->
       <div class="event-reg-left">
         <% if (_payDesc) { %>
-          <div class="pay-desc-box"><%- _payDesc.replace(/\n/g, '<br>') %></div>
+          <div class="pay-desc-box" id="payDescBox"><%- _payDesc.replace(/\n/g, '<br>') %></div>
         <% } %>
 
         <% if (activeTier && activePrice) { %>
@@ -130,6 +130,101 @@
 
     </div><!-- /.event-reg-layout -->
   </div>
+
+  <script>
+  (function() {
+    var BN = '০১২৩৪৫৬৭৮৯';
+    function toBN(n) { return String(n).replace(/[0-9]/g, function(d) { return BN[d]; }); }
+    var _loc = '<%= locale %>';
+    var _L = {
+      bn: { pre: '⏰ শেষ হচ্ছে: ', d: ' দিন', h: ' ঘণ্টা', m: ' মিনিট', s: ' সেকেন্ড', num: toBN },
+      en: { pre: '⏰ Ends in: ',   d: ' day', h: ' hr',    m: ' min',    s: ' sec',      num: String },
+      de: { pre: '⏰ Endet in: ',  d: ' Tag', h: ' Std',   m: ' Min',    s: ' Sek',      num: String },
+    }[_loc] || { pre: '⏰ Ends in: ', d: ' day', h: ' hr', m: ' min', s: ' sec', num: String };
+
+    var eb  = <%- event.early_bird_deadline ? JSON.stringify(new Date(event.early_bird_deadline).getTime()) : 'null' %>;
+    var mid = <%- event.mid_deadline        ? JSON.stringify(new Date(event.mid_deadline).getTime())        : 'null' %>;
+    var evd = <%- event.event_date          ? JSON.stringify(new Date(event.event_date).getTime())          : 'null' %>;
+
+    var TIERS = [
+      { name: 'halide', keywords: [
+        'হলদে বউঃ','হলদে বউ:','হলদে বউ',
+        'Haldey Bou','Halde Bou','Halide Bou','Holde Bou',
+        'Early Bird','Baya Weaver','Yellow Bird'
+      ], deadline: eb, start: null },
+      { name: 'nilkantha', keywords: [
+        'নীলকণ্ঠঃ','নীলকণ্ঠ:','নীলকণ্ঠ',
+        'Nilkantha','Nil Kantha','Neelkantha','Neel Kantha',
+        'Blue Throat','Indian Roller'
+      ], deadline: mid, start: eb },
+      { name: 'kokila', keywords: [
+        'কোকিলাঃ','কোকিলা:','কোকিলা',
+        'Kokila','Koyel','Koyal',
+        'Cuckoo','Indian Cuckoo'
+      ], deadline: evd, start: mid },
+    ];
+
+    function fmt(ms) {
+      var n = _L.num;
+      var d = Math.floor(ms / 86400000);
+      var h = Math.floor((ms % 86400000) / 3600000);
+      var m = Math.floor((ms % 3600000) / 60000);
+      var s = Math.floor((ms % 60000) / 1000);
+      var parts = [];
+      if (d > 0) parts.push(n(d) + _L.d);
+      if (h > 0) parts.push(n(h) + _L.h);
+      if (m > 0 || d > 0) parts.push(n(m) + _L.m);
+      parts.push(n(s) + _L.s);
+      return parts.join(' ');
+    }
+
+    function injectBadges(rootEl) {
+      var result = [];
+      TIERS.forEach(function(tier) {
+        if (!tier.deadline) return;
+        var candidates = rootEl.querySelectorAll('p, li, h2, h3, h4, h5, h6, strong, b, td');
+        var target = null;
+        for (var i = 0; i < candidates.length; i++) {
+          var low = candidates[i].textContent.toLowerCase();
+          if (tier.keywords.some(function(kw) { return low.indexOf(kw.toLowerCase()) !== -1; })) {
+            target = candidates[i]; break;
+          }
+        }
+        if (!target) {
+          var low = rootEl.textContent.toLowerCase();
+          if (tier.keywords.some(function(kw) { return low.indexOf(kw.toLowerCase()) !== -1; })) {
+            target = rootEl;
+          }
+        }
+        if (!target) return;
+        var br = document.createElement('br');
+        var badge = document.createElement('span');
+        badge.className = 'tier-badge'; badge.style.display = 'none';
+        target.appendChild(br); target.appendChild(badge);
+        result.push({ el: badge, deadline: tier.deadline, start: tier.start, name: tier.name });
+      });
+      return result;
+    }
+
+    var payEl = document.getElementById('payDescBox');
+    var badges = payEl ? injectBadges(payEl) : [];
+    if (!badges.length) return;
+
+    function tick() {
+      var now = Date.now();
+      badges.forEach(function(b) {
+        var active = b.deadline && now < b.deadline && (!b.start || now >= b.start);
+        if (!active) { b.el.style.display = 'none'; return; }
+        b.el.style.display = 'inline-block';
+        var rem = b.deadline - now;
+        var urgency = rem < 6 * 3600000 ? 'urgent' : rem < 24 * 3600000 ? 'warning' : rem < 3 * 86400000 ? 'soon' : 'normal';
+        b.el.className = 'tier-badge tier-badge--' + b.name + ' tier-badge--' + urgency;
+        b.el.textContent = _L.pre + fmt(rem);
+      });
+    }
+    tick(); setInterval(tick, 1000);
+  })();
+  </script>
 
   <% if (activeTier && (activeTier === 'early_bird' || activeTier === 'mid')) { %>
   <script>
