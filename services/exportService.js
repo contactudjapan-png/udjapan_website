@@ -20,16 +20,23 @@ async function exportToExcel(title, headers, rows) {
   return workbook.xlsx.writeBuffer();
 }
 
-async function exportRegistrations(registrations) {
-  const headers = ['নাম', 'ইমেইল', 'পরিমাণ', 'লেনদেন আইডি', 'অবস্থা', 'নিবন্ধিত'];
+async function exportRegistrations(registrations, locale = 'bn') {
+  const LABELS = {
+    bn: { name:'নাম', email:'ইমেইল', phone:'ফোন', amount:'পরিমাণ', transaction_id:'লেনদেন আইডি', payment_reference:'পেমেন্ট রেফ.', status:'অবস্থা', registered:'নিবন্ধিত', paid:'পরিশোধিত', pending:'অপেক্ষমাণ', sheet:'নিবন্ধন', dateLoc:'bn-BD' },
+    en: { name:'Name', email:'Email', phone:'Phone', amount:'Amount', transaction_id:'Transaction ID', payment_reference:'Payment Reference', status:'Status', registered:'Registered', paid:'Paid', pending:'Pending', sheet:'Registrations', dateLoc:'en-GB' },
+    de: { name:'Name', email:'E-Mail', phone:'Telefon', amount:'Betrag', transaction_id:'Transaktions-ID', payment_reference:'Zahlungsreferenz', status:'Status', registered:'Angemeldet', paid:'Bezahlt', pending:'Ausstehend', sheet:'Anmeldungen', dateLoc:'de-DE' },
+  };
+  const L = LABELS[locale] || LABELS.bn;
+  const headers = [L.name, L.email, L.phone, L.amount, L.transaction_id, L.payment_reference, L.status, L.registered];
   const rows = registrations.map(r => [
-    r.name, r.email,
+    r.name, r.email, r.phone || '',
     r.amount ? parseFloat(r.amount).toFixed(2) : '',
-    r.transaction_id || r.payment_reference || '',
-    r.is_paid ? 'পরিশোধিত' : 'অপেক্ষমাণ',
-    new Date(r.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }),
+    r.transaction_id || '',
+    r.payment_reference || '',
+    r.is_paid ? L.paid : L.pending,
+    new Date(r.created_at).toLocaleDateString(L.dateLoc, { timeZone: 'Europe/Berlin' }),
   ]);
-  return exportToExcel('নিবন্ধন', headers, rows);
+  return exportToExcel(L.sheet, headers, rows);
 }
 
 async function exportExpenses(expenses) {

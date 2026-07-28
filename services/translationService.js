@@ -626,6 +626,29 @@ const SEEDS = [
   { key: 'admin.lbl_subject',       bn: 'বিষয় *',                  en: 'Subject *',              de: 'Betreff *' },
   { key: 'admin.lbl_body',          bn: 'বার্তা *',                 en: 'Message *',              de: 'Nachricht *' },
   { key: 'admin.btn_send_email',    bn: 'ইমেইল পাঠান',              en: 'Send Email',             de: 'E-Mail senden' },
+  { key: 'admin.email_sent_log',   bn: 'পাঠানো ইমেইলের লগ',        en: 'Sent Email Log',         de: 'Gesendete E-Mail-Protokoll' },
+  { key: 'admin.email_recipients', bn: 'প্রাপক',                   en: 'Recipients',             de: 'Empfänger' },
+  { key: 'email.opens',            bn: 'খোলা হয়েছে',               en: 'Opens',                  de: 'Öffnungen' },
+
+  // ── home live ─────────────────────────────────────────────────────────────
+  { key: 'home.live_now',          bn: 'এখন লাইভ',                 en: 'Live Now',               de: 'Jetzt live' },
+  { key: 'home.live_polls',        bn: 'লাইভ ভোট',                 en: 'Live Polls',             de: 'Live-Abstimmungen' },
+  { key: 'home.live_volunteer',    bn: 'স্বেচ্ছাসেবী',              en: 'Volunteer',              de: 'Freiwillige' },
+
+  // ── registration edit ──────────────────────────────────────────────────────
+  { key: 'admin.pg_edit_reg',      bn: 'নিবন্ধন সম্পাদনা',         en: 'Edit Registration',      de: 'Anmeldung bearbeiten' },
+
+  // ── soft cancel ───────────────────────────────────────────────────────────
+  { key: 'btn.cancel_reg',         bn: 'বাতিল করুন',               en: 'Cancel',                 de: 'Stornieren' },
+  { key: 'btn.reinstate',          bn: 'পুনর্বহাল',                 en: 'Reinstate',              de: 'Wiederherstellen' },
+  { key: 'reg.cancelled',          bn: 'বাতিল',                    en: 'Cancelled',              de: 'Storniert' },
+
+  // ── scan duplicate ────────────────────────────────────────────────────────
+  { key: 'scan.duplicate',         bn: 'ডুপ্লিকেট',                en: 'Duplicates',             de: 'Duplikate' },
+
+  // ── volunteer stall ───────────────────────────────────────────────────────
+  { key: 'vol.assign_stall',       bn: 'স্টল নির্ধারণ',             en: 'Assign Stall',           de: 'Stand zuweisen' },
+  { key: 'vol.no_stall',           bn: '— স্টল নেই —',              en: '— No Stall —',           de: '— Kein Stand —' },
 ];
 
 function buildSeedCache() {

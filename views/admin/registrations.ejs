@@ -11,10 +11,12 @@
     <a href="/admin/events/<%= event.id %>/registrations/new" class="btn btn-primary"><%- t('btn.add_manually') %></a>
   </div>
 
+  <% const _active = registrations.filter(r => !r.is_cancelled); const _cancelled = registrations.filter(r => r.is_cancelled); %>
   <div class="reg-summary">
     <span><strong><%= registrations.length %></strong> <%- t('admin.total') %></span>
-    <span><strong><%= registrations.filter(r=>r.is_paid).length %></strong> <%- t('admin.status_paid') %></span>
-    <span><strong><%= registrations.filter(r=>!r.is_paid).length %></strong> <%- t('admin.status_pending') %></span>
+    <span><strong><%= _active.filter(r=>r.is_paid).length %></strong> <%- t('admin.status_paid') %></span>
+    <span><strong><%= _active.filter(r=>!r.is_paid).length %></strong> <%- t('admin.status_pending') %></span>
+    <% if (_cancelled.length > 0) { %><span><strong><%= _cancelled.length %></strong> <%- t('reg.cancelled') %></span><% } %>
   </div>
 
   <% if (registrations.length === 0) { %>
@@ -26,24 +28,38 @@
       </tr></thead>
       <tbody>
       <% registrations.forEach(reg => { %>
-        <tr>
+        <tr class="<%= reg.is_cancelled ? 'reg-row-cancelled' : '' %>">
           <td><%= reg.name %></td>
           <td><%= reg.email %></td>
           <td><%= reg.phone || '—' %></td>
           <td><% if (reg.amount) { %>€<%= parseFloat(reg.amount).toFixed(2) %><% } else { %>—<% } %></td>
           <td><% if (reg.transaction_id) { %><code style="font-size:0.78rem"><%= reg.transaction_id %></code><% } else { %><%= reg.payment_reference || '—' %><% } %></td>
           <td>
-            <span class="badge <%= reg.is_paid ? 'badge-paid' : 'badge-pending' %>">
-              <%= reg.is_paid ? t('admin.status_paid') : t('admin.status_pending') %>
-            </span>
+            <% if (reg.is_cancelled) { %>
+              <span class="badge badge-cancelled"><%- t('reg.cancelled') %></span>
+            <% } else { %>
+              <span class="badge <%= reg.is_paid ? 'badge-paid' : 'badge-pending' %>">
+                <%= reg.is_paid ? t('admin.status_paid') : t('admin.status_pending') %>
+              </span>
+            <% } %>
           </td>
           <td><%= new Date(reg.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td class="action-cell">
-            <form action="/admin/registrations/<%= reg.id %>/toggle-paid" method="POST" style="display:inline">
-              <button type="submit" class="btn btn-sm <%= reg.is_paid ? 'btn-outline' : 'btn-success' %>">
-                <%= reg.is_paid ? t('btn.toggle_unpaid') : t('btn.toggle_paid') %>
-              </button>
-            </form>
+            <a href="/admin/registrations/<%= reg.id %>/edit" class="btn btn-sm btn-outline"><%- t('btn.edit') %></a>
+            <% if (!reg.is_cancelled) { %>
+              <form action="/admin/registrations/<%= reg.id %>/toggle-paid" method="POST" style="display:inline">
+                <button type="submit" class="btn btn-sm <%= reg.is_paid ? 'btn-outline' : 'btn-success' %>">
+                  <%= reg.is_paid ? t('btn.toggle_unpaid') : t('btn.toggle_paid') %>
+                </button>
+              </form>
+              <form action="/admin/registrations/<%= reg.id %>/cancel" method="POST" style="display:inline" onsubmit="return confirm('নিবন্ধন বাতিল করবেন?')">
+                <button type="submit" class="btn btn-sm btn-outline"><%- t('btn.cancel_reg') %></button>
+              </form>
+            <% } else { %>
+              <form action="/admin/registrations/<%= reg.id %>/reinstate" method="POST" style="display:inline">
+                <button type="submit" class="btn btn-sm btn-success"><%- t('btn.reinstate') %></button>
+              </form>
+            <% } %>
             <form action="/admin/registrations/<%= reg.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই নিবন্ধন মুছে ফেলবেন?')">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>

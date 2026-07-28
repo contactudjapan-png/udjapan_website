@@ -13,7 +13,7 @@
     <div class="empty-state"><p>বর্তমানে কোনো সক্রিয় ভোট নেই।</p></div>
   <% } else { %>
     <% polls.forEach(poll => { %>
-      <div class="poll-card">
+      <div class="poll-card" data-poll-id="<%= poll.id %>">
         <h2><%= poll.question %></h2>
         <form action="/event/<%= event.id %>/polls/<%= poll.id %>/vote" method="POST" class="poll-form">
           <div class="form-group">
@@ -21,11 +21,16 @@
             <input type="email" name="voter_email" required placeholder="your@email.com">
           </div>
           <div class="poll-options">
+            <% const _total = poll.options.reduce((s,o) => s + (o.vote_count||0), 0); %>
             <% poll.options.forEach(opt => { %>
-              <label class="poll-option">
+              <% const _pct = _total > 0 ? Math.round((opt.vote_count||0) / _total * 100) : 0; %>
+              <label class="poll-option" data-option-id="<%= opt.id %>">
                 <input type="radio" name="option_id" value="<%= opt.id %>" required>
                 <span><%= opt.option_text %></span>
-                <span class="vote-count"><%= opt.vote_count || 0 %> ভোট</span>
+                <span class="vote-count" data-vote-count="<%= opt.id %>"><%= opt.vote_count || 0 %> ভোট</span>
+                <div class="vote-bar" style="height:4px;background:#ddd;border-radius:2px;margin-top:4px">
+                  <div class="vote-bar-fill" data-bar-id="<%= opt.id %>" style="height:100%;background:var(--primary);border-radius:2px;width:<%= _pct %>%;transition:width 0.4s"></div>
+                </div>
               </label>
             <% }) %>
           </div>
@@ -35,6 +40,29 @@
     <% }) %>
   <% } %>
 </main>
+
+<script>
+(function() {
+  var eventId = '<%= event.id %>';
+  function refresh() {
+    fetch('/api/events/' + eventId + '/polls')
+      .then(function(r) { return r.json(); })
+      .then(function(polls) {
+        polls.forEach(function(poll) {
+          var total = poll.total_votes;
+          poll.options.forEach(function(opt) {
+            var countEl = document.querySelector('[data-vote-count="' + opt.id + '"]');
+            if (countEl) countEl.textContent = opt.vote_count + ' ভোট';
+            var barEl = document.querySelector('[data-bar-id="' + opt.id + '"]');
+            if (barEl) barEl.style.width = (total > 0 ? Math.round(opt.vote_count / total * 100) : 0) + '%';
+          });
+        });
+      })
+      .catch(function() {});
+  }
+  setInterval(refresh, 10000);
+})();
+</script>
 
 <%- include('../partials/footer') %>
 </body>

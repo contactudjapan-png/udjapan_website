@@ -8,7 +8,11 @@
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
     <h1><%- t('admin.pg_scan_log') %> — <%= event.title %></h1>
-    <span style="color:var(--text-muted)"><%- t('admin.scan_total') %> <%= logs.length %></span>
+    <div style="display:flex;gap:1rem;align-items:center">
+      <span style="color:var(--text-muted)"><%- t('admin.scan_total') %> <%= logs.length %></span>
+      <% const _dupCount = Object.values(tokenCount||{}).filter(c=>c>1).length; %>
+      <% if (_dupCount > 0) { %><span class="badge badge-warn"><%= _dupCount %> <%- t('scan.duplicate') %></span><% } %>
+    </div>
   </div>
 
   <% if (logs.length === 0) { %>
@@ -23,7 +27,10 @@
         <tr>
           <td style="white-space:nowrap"><%= new Date(log.scanned_at).toLocaleString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td><%= log.name || '—' %></td>
-          <td><span class="badge <%= log.result === 'valid' ? 'badge-open' : 'badge-closed' %>"><%= log.result === 'valid' ? t('admin.scan_valid') : t('admin.scan_invalid') %></span></td>
+          <td>
+            <span class="badge <%= log.result === 'valid' ? 'badge-open' : 'badge-closed' %>"><%= log.result === 'valid' ? t('admin.scan_valid') : t('admin.scan_invalid') %></span>
+            <% if (log.qr_token && (tokenCount||{})[log.qr_token] > 1) { %><span class="badge badge-warn"><%- t('scan.duplicate') %></span><% } %>
+          </td>
           <td style="font-family:monospace;font-size:0.85rem"><%= log.qr_token ? log.qr_token.slice(0, 8).toUpperCase() : '—' %></td>
         </tr>
       <% }) %>

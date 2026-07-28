@@ -1124,14 +1124,19 @@ main { flex: 1; }
 .popup-modal {
   position: relative;
   max-width: 480px;
+  max-height: 90vh;
   width: 100%;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
 }
 .popup-img {
   width: 100%;
   display: block;
+  max-height: calc(90vh - 52px);
+  object-fit: contain;
 }
 .popup-close {
   position: absolute;
@@ -1344,6 +1349,20 @@ body.tier-kokila {
   animation: live-pulse 1.5s ease-in-out infinite;
 }
 @keyframes live-pulse { 0%,100%{opacity:1} 50%{opacity:0.45} }
+
+/* ─── Hero Live CTAs ────────────────────────────────────────────────────────── */
+.hero-live-ctas { margin-top: 0.75rem; display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.btn-hero-live { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.6); padding: 0.5rem 1.25rem; border-radius: var(--radius); font-size: 0.95rem; text-decoration: none; }
+.btn-hero-live:hover { background: rgba(255,255,255,0.3); text-decoration: none; color: #fff; }
+
+/* ─── Badge Warn ─────────────────────────────────────────────────────────────── */
+.badge-warn { background: #e67e22; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
+
+/* ─── Cancelled Registration ─────────────────────────────────────────────────── */
+.badge-cancelled { background: #888; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; }
+.reg-row-cancelled { opacity: 0.55; }
+.reg-row-cancelled td { text-decoration: line-through; }
+.reg-row-cancelled td.action-cell { text-decoration: none; }
 
 /* ─── Datenschutz Notice ─────────────────────────────────────────────────────── */
 .datenschutz-notice {

@@ -247,10 +247,45 @@ router.post('/events/:id/registrations/new', async (req, res, next) => {
   }
 });
 
+router.get('/registrations/:id/edit', async (req, res, next) => {
+  try {
+    const reg = await registrationService.getRegistrationById(req.params.id);
+    const event = await eventService.getEventById(reg.event_id);
+    res.render('admin/registration-edit', { title: 'Edit Registration', reg, event });
+  } catch (err) { next(err); }
+});
+
+router.post('/registrations/:id/edit', async (req, res, next) => {
+  try {
+    const reg = await registrationService.updateRegistration(req.params.id, req.body);
+    req.flash('success', 'Registration updated.');
+    res.redirect(`/admin/events/${reg.event_id}/registrations`);
+  } catch (err) {
+    req.flash('error', err.message);
+    res.redirect(`/admin/registrations/${req.params.id}/edit`);
+  }
+});
+
 router.post('/registrations/:id/toggle-paid', async (req, res, next) => {
   try {
     const reg = await registrationService.togglePaid(req.params.id);
     req.flash('success', `Payment status set to ${reg.is_paid ? 'Paid' : 'Unpaid'}.`);
+    res.redirect(`/admin/events/${reg.event_id}/registrations`);
+  } catch (err) { next(err); }
+});
+
+router.post('/registrations/:id/cancel', async (req, res, next) => {
+  try {
+    const reg = await registrationService.cancelRegistration(req.params.id);
+    req.flash('success', 'Registration cancelled.');
+    res.redirect(`/admin/events/${reg.event_id}/registrations`);
+  } catch (err) { next(err); }
+});
+
+router.post('/registrations/:id/reinstate', async (req, res, next) => {
+  try {
+    const reg = await registrationService.reinstateRegistration(req.params.id);
+    req.flash('success', 'Registration reinstated.');
     res.redirect(`/admin/events/${reg.event_id}/registrations`);
   } catch (err) { next(err); }
 });
@@ -416,7 +451,8 @@ router.get('/events/:id/volunteers', async (req, res, next) => {
     const event = await eventService.getEventById(req.params.id);
     const volunteers = await volunteerService.getVolunteersByEvent(req.params.id);
     const taskGroups = await settingsService.getAllTaskGroups();
-    res.render('admin/volunteers', { title: `Volunteers — ${event.title}`, event, volunteers, taskGroups });
+    const stalls = await stallService.getStallsByEvent(req.params.id);
+    res.render('admin/volunteers', { title: `Volunteers — ${event.title}`, event, volunteers, taskGroups, stalls });
   } catch (err) { next(err); }
 });
 
@@ -534,7 +570,7 @@ router.post('/volunteers/:id/pending', async (req, res, next) => {
 
 router.post('/volunteers/:id/assign-task', async (req, res, next) => {
   try {
-    const vol = await volunteerService.assignTask(req.params.id, req.body.task);
+    const vol = await volunteerService.assignTask(req.params.id, req.body.task, req.body.stall_id || null);
     req.flash('success', 'Task assigned.');
     res.redirect(`/admin/events/${vol.event_id}/volunteers`);
   } catch (err) { next(err); }
@@ -593,7 +629,8 @@ router.post('/submissions/:id/delete', async (req, res, next) => {
 router.get('/events/:id/emails', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
-    res.render('admin/emails', { title: `Send Email — ${event.title}`, event });
+    const { data: emailLogs } = await db.from('email_log').select('*').eq('event_id', req.params.id).order('sent_at', { ascending: false });
+    res.render('admin/emails', { title: `Send Email — ${event.title}`, event, emailLogs: emailLogs || [] });
   } catch (err) { next(err); }
 });
 
@@ -602,19 +639,29 @@ router.post('/events/:id/emails/send', async (req, res, next) => {
     const event = await eventService.getEventById(req.params.id);
     const { subject, body } = req.body;
     const registrations = await registrationService.getRegistrationsByEvent(req.params.id);
-    const recipients = registrations.map(r => r.email);
+    const recipients = registrations.filter(r => r.email && r.email.includes('@')).map(r => r.email);
 
     if (recipients.length === 0) {
       req.flash('error', 'No registered attendees to email.');
       return res.redirect(`/admin/events/${req.params.id}/emails`);
     }
 
-    await emailService.sendPromotionEmail(recipients, subject, body, event.title);
+    // Pre-insert log to get logId for tracking pixel
+    const { data: logRow } = await db.from('email_log').insert({
+      event_id: req.params.id, subject, recipient_count: 0, open_count: 0, sent_at: new Date().toISOString(),
+    }).select().single();
 
-    // Log
-    await db.from('email_log').insert({ event_id: req.params.id, subject, recipient_count: recipients.length, sent_at: new Date().toISOString() });
+    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const trackingUrl = logRow ? `${baseUrl}/api/email-open/${logRow.id}` : null;
 
-    req.flash('success', `Email sent to ${recipients.length} attendees.`);
+    const sent = await emailService.sendPromotionEmail(recipients, subject, body, event.title, trackingUrl);
+
+    // Update recipient count
+    if (logRow) {
+      await db.from('email_log').update({ recipient_count: sent }).eq('id', logRow.id);
+    }
+
+    req.flash('success', `Email sent to ${sent} attendees.`);
     res.redirect(`/admin/events/${req.params.id}/emails`);
   } catch (err) {
     req.flash('error', err.message);
@@ -669,7 +716,10 @@ router.get('/events/:id/scan-logs', async (req, res, next) => {
     const db = require('../config/db');
     const event = await eventService.getEventById(req.params.id);
     const { data: logs } = await db.from('scan_logs').select('*').eq('event_id', req.params.id).order('scanned_at', { ascending: false });
-    res.render('admin/scan-logs', { title: `স্ক্যান লগ — ${event.title}`, event, logs: logs || [] });
+    const allLogs = logs || [];
+    const tokenCount = {};
+    allLogs.forEach(l => { if (l.qr_token) tokenCount[l.qr_token] = (tokenCount[l.qr_token] || 0) + 1; });
+    res.render('admin/scan-logs', { title: `স্ক্যান লগ — ${event.title}`, event, logs: allLogs, tokenCount });
   } catch (err) { next(err); }
 });
 
@@ -908,9 +958,14 @@ router.get('/events/:id/waitlist', async (req, res, next) => {
 
 router.post('/waitlist/:id/promote', async (req, res, next) => {
   try {
-    const entry = await waitlistService.promoteToRegistration(req.params.id);
-    req.flash('success', `${entry.name} নিবন্ধনে যোগ করা হয়েছে।`);
-    res.redirect(`/admin/events/${entry.event_id}/waitlist`);
+    const newReg = await waitlistService.promoteToRegistration(req.params.id);
+    const event = await eventService.getEventById(newReg.event_id);
+    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    emailService.sendRegistrationConfirmation(newReg, event, baseUrl).catch(err => {
+      console.error('[Email] Waitlist promote email failed:', err.message);
+    });
+    req.flash('success', `${newReg.name} নিবন্ধনে যোগ করা হয়েছে।`);
+    res.redirect(`/admin/events/${newReg.event_id}/waitlist`);
   } catch (err) {
     req.flash('error', err.message);
     res.redirect('back');
@@ -981,7 +1036,8 @@ router.get('/events/:id/export/registrations', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
     const registrations = await registrationService.getRegistrationsByEvent(req.params.id);
-    const buffer = await exportService.exportRegistrations(registrations);
+    const lang = req.query.lang || (res.locals && res.locals.locale) || 'bn';
+    const buffer = await exportService.exportRegistrations(registrations, lang);
     res.setHeader('Content-Disposition', `attachment; filename="registrations-${event.title}.xlsx"`);
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.send(Buffer.from(buffer));

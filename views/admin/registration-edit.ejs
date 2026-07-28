@@ -1,0 +1,50 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <%- include('../partials/event-subnav') %>
+  <h1><%- t('admin.pg_edit_reg') %> — <%= reg.name %></h1>
+
+  <form action="/admin/registrations/<%= reg.id %>/edit" method="POST" class="admin-form">
+    <div class="form-group">
+      <label for="name"><%- t('admin.lbl_full_name') %></label>
+      <input type="text" id="name" name="name" required value="<%= reg.name %>">
+    </div>
+    <div class="form-group">
+      <label for="email"><%- t('admin.lbl_email') %></label>
+      <input type="email" id="email" name="email" value="<%= reg.email || '' %>" placeholder="email@example.com">
+    </div>
+    <div class="form-group">
+      <label for="phone"><%- t('admin.lbl_phone') %></label>
+      <input type="tel" id="phone" name="phone" value="<%= reg.phone || '' %>" placeholder="+49 1XX XXXXXXXX">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="amount"><%- t('admin.lbl_ticket_price') %></label>
+        <input type="number" id="amount" name="amount" step="0.01" min="0" value="<%= reg.amount ? parseFloat(reg.amount).toFixed(2) : '' %>" placeholder="0.00">
+      </div>
+      <div class="form-group">
+        <label for="transaction_id"><%- t('admin.lbl_transaction_id') %></label>
+        <input type="text" id="transaction_id" name="transaction_id" value="<%= reg.transaction_id || '' %>">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="payment_reference"><%- t('admin.lbl_pay_ref') %></label>
+      <input type="text" id="payment_reference" name="payment_reference" value="<%= reg.payment_reference || '' %>">
+    </div>
+    <div class="form-group">
+      <label>
+        <input type="checkbox" name="is_paid" value="true" <%= reg.is_paid ? 'checked' : '' %>>
+        <%- t('admin.status_paid') %>
+      </label>
+    </div>
+    <button type="submit" class="btn btn-primary"><%- t('btn.save_changes') %></button>
+    <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-outline"><%- t('btn.cancel') %></a>
+  </form>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

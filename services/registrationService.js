@@ -81,6 +81,32 @@ async function togglePaid(id) {
   return data;
 }
 
+async function updateRegistration(id, { name, email, phone, amount, payment_reference, transaction_id, is_paid }) {
+  const update = {};
+  if (name !== undefined) update.name = name;
+  if (email !== undefined) update.email = email;
+  if (phone !== undefined) update.phone = phone;
+  if (amount !== undefined) update.amount = amount ? parseFloat(amount) : null;
+  if (payment_reference !== undefined) update.payment_reference = payment_reference;
+  if (transaction_id !== undefined) update.transaction_id = transaction_id || null;
+  if (is_paid !== undefined) update.is_paid = is_paid === true || is_paid === 'true' || is_paid === '1';
+  const { data, error } = await db.from('registrations').update(update).eq('id', id).select().single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+async function cancelRegistration(id) {
+  const { data, error } = await db.from('registrations').update({ is_cancelled: true }).eq('id', id).select().single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+async function reinstateRegistration(id) {
+  const { data, error } = await db.from('registrations').update({ is_cancelled: false }).eq('id', id).select().single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 async function deleteRegistration(id) {
   const { error } = await db.from('registrations').delete().eq('id', id);
   if (error) throw new Error(error.message);
@@ -103,8 +129,11 @@ module.exports = {
   getRegistrationById,
   getRegistrationByToken,
   createRegistration,
+  updateRegistration,
   updateRegistrationPayment,
   togglePaid,
+  cancelRegistration,
+  reinstateRegistration,
   deleteRegistration,
   countByEvent,
   countPaidByEvent,

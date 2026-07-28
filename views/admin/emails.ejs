@@ -2,6 +2,7 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
@@ -26,6 +27,30 @@
     <button type="submit" class="btn btn-primary"><%- t('admin.btn_send_email') %></button>
     <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-outline"><%- t('btn.cancel') %></a>
   </form>
+
+  <% if (emailLogs && emailLogs.length > 0) { %>
+  <div style="margin-top:2rem">
+    <h2 style="margin-bottom:1rem"><%- t('admin.email_sent_log') %></h2>
+    <table class="admin-table">
+      <thead><tr>
+        <th><%- t('tbl.date') %></th>
+        <th><%- t('admin.lbl_subject') %></th>
+        <th><%- t('admin.email_recipients') %></th>
+        <th><%- t('email.opens') %></th>
+      </tr></thead>
+      <tbody>
+      <% emailLogs.forEach(log => { %>
+        <tr>
+          <td style="white-space:nowrap"><%= new Date(log.sent_at).toLocaleString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
+          <td><%= log.subject %></td>
+          <td><%= log.recipient_count %></td>
+          <td><%= log.open_count || 0 %></td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
 </main>
 
 <%- include('../partials/rich-editor') %>

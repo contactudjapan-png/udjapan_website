@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const registrationService = require('../services/registrationService');
 const eventService = require('../services/eventService');
+const pollService = require('../services/pollService');
 
 // Validate QR token — returns JSON
 router.get('/validate/:token', async (req, res) => {
@@ -35,6 +36,40 @@ router.get('/validate/:token', async (req, res) => {
   } catch (err) {
     res.status(500).json({ valid: false, message: 'Server error' });
   }
+});
+
+// Active polls JSON for live refresh
+router.get('/events/:id/polls', async (req, res) => {
+  try {
+    const polls = await pollService.getActivePollsByEvent(req.params.id);
+    const result = polls.map(p => ({
+      id: p.id,
+      question: p.question,
+      options: (p.options || []).map(o => ({
+        id: o.id,
+        option_text: o.option_text,
+        vote_count: o.vote_count || 0,
+      })),
+      total_votes: (p.options || []).reduce((s, o) => s + (o.vote_count || 0), 0),
+    }));
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Email open tracking pixel
+router.get('/email-open/:logId', async (req, res) => {
+  try {
+    const db = require('../config/db');
+    const { data: log } = await db.from('email_log').select('*').eq('id', req.params.logId).single();
+    if (log) {
+      await db.from('email_log').update({ open_count: (log.open_count || 0) + 1 }).eq('id', req.params.logId);
+    }
+  } catch (_) { /* best-effort */ }
+  res.setHeader('Content-Type', 'image/gif');
+  res.setHeader('Cache-Control', 'no-store');
+  res.send(Buffer.from('R0lGODlhAQABAAAAACH5BAEAAAAALAAAAAABAAEAAAI=', 'base64'));
 });
 
 // Keepalive — weekly cron hits this to prevent Supabase from pausing

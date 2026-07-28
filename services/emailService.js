@@ -48,12 +48,13 @@ async function sendRegistrationConfirmation(registration, event, baseUrl) {
   });
 }
 
-async function sendPromotionEmail(recipients, subject, body, eventTitle) {
+async function sendPromotionEmail(recipients, subject, body, eventTitle, trackingUrl = null) {
   if (!SMTP_CONFIGURED) {
     console.log(`[Email] SMTP not configured — skipping promotion email to ${recipients.length} recipients`);
     return 0;
   }
 
+  const pixel = trackingUrl ? `<img src="${trackingUrl}" width="1" height="1" style="display:none" alt="">` : '';
   let sent = 0;
   const batchSize = 50;
   for (let i = 0; i < recipients.length; i += batchSize) {
@@ -67,6 +68,7 @@ async function sendPromotionEmail(recipients, subject, body, eventTitle) {
         ${body}
         <hr>
         <small>You received this because you registered for ${eventTitle}.</small>
+        ${pixel}
       `,
     });
     sent += batch.length;

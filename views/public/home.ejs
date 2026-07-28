@@ -30,7 +30,7 @@
   <div class="home-hero-overlay"></div>
   <div class="home-hero-content">
     <p class="home-hero-label"><%- t('home.upcoming_label') %></p>
-    <h1 class="home-hero-title"><%= _event.title %></h1>
+    <h1 class="home-hero-title"><%= _event.title %><% if (locals.isLive) { %><span class="live-badge">🔴 <%- t('home.live_now') %></span><% } %></h1>
     <div class="home-hero-meta">
       <span>📅 <%= new Date(_event.event_date).toLocaleDateString(_dateLocale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin' }) %></span>
       <% if (_event.location) { %><span>📍 <%= _event.location %></span><% } %>
@@ -39,6 +39,12 @@
       <a href="/event/<%= _event.id %>" class="btn btn-primary btn-hero"><%- t('home.register') %></a>
     <% } else { %>
       <span class="badge badge-closed btn-hero-badge"><%- t('home.reg_closed') %></span>
+    <% } %>
+    <% if (locals.isLive) { %>
+    <div class="hero-live-ctas">
+      <a href="/event/<%= _event.id %>/polls" class="btn btn-outline btn-hero-live">📊 <%- t('home.live_polls') %></a>
+      <a href="/event/<%= _event.id %>/volunteer" class="btn btn-outline btn-hero-live">🤝 <%- t('home.live_volunteer') %></a>
+    </div>
     <% } %>
   </div>
 </section>
