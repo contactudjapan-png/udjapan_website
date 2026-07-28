@@ -2,26 +2,27 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
-    <h1>নিবন্ধনসমূহ — <%= event.title %></h1>
-    <a href="/admin/events/<%= event.id %>/registrations/new" class="btn btn-primary">+ ম্যানুয়ালি যোগ করুন</a>
+    <h1><%- t('admin.pg_registrations') %> — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/registrations/new" class="btn btn-primary"><%- t('btn.add_manually') %></a>
   </div>
 
   <div class="reg-summary">
-    <span><strong><%= registrations.length %></strong> মোট</span>
-    <span><strong><%= registrations.filter(r=>r.is_paid).length %></strong> পরিশোধিত</span>
-    <span><strong><%= registrations.filter(r=>!r.is_paid).length %></strong> অপেক্ষমাণ</span>
+    <span><strong><%= registrations.length %></strong> <%- t('admin.total') %></span>
+    <span><strong><%= registrations.filter(r=>r.is_paid).length %></strong> <%- t('admin.status_paid') %></span>
+    <span><strong><%= registrations.filter(r=>!r.is_paid).length %></strong> <%- t('admin.status_pending') %></span>
   </div>
 
   <% if (registrations.length === 0) { %>
-    <div class="empty-state"><p>এখনো কোনো নিবন্ধন নেই।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_regs') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>পরিমাণ</th><th>লেনদেন আইডি</th><th>অবস্থা</th><th>নিবন্ধিত</th><th>কার্যক্রম</th>
+        <th><%- t('tbl.name') %></th><th><%- t('tbl.email') %></th><th><%- t('tbl.phone') %></th><th><%- t('tbl.amount') %></th><th><%- t('tbl.transaction_id') %></th><th><%- t('tbl.status') %></th><th><%- t('tbl.registered') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% registrations.forEach(reg => { %>
@@ -33,18 +34,18 @@
           <td><% if (reg.transaction_id) { %><code style="font-size:0.78rem"><%= reg.transaction_id %></code><% } else { %><%= reg.payment_reference || '—' %><% } %></td>
           <td>
             <span class="badge <%= reg.is_paid ? 'badge-paid' : 'badge-pending' %>">
-              <%= reg.is_paid ? 'পরিশোধিত' : 'অপেক্ষমাণ' %>
+              <%= reg.is_paid ? t('admin.status_paid') : t('admin.status_pending') %>
             </span>
           </td>
-          <td><%= new Date(reg.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td><%= new Date(reg.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td class="action-cell">
             <form action="/admin/registrations/<%= reg.id %>/toggle-paid" method="POST" style="display:inline">
               <button type="submit" class="btn btn-sm <%= reg.is_paid ? 'btn-outline' : 'btn-success' %>">
-                <%= reg.is_paid ? 'অপরিশোধিত' : 'পরিশোধিত' %>
+                <%= reg.is_paid ? t('btn.toggle_unpaid') : t('btn.toggle_paid') %>
               </button>
             </form>
             <form action="/admin/registrations/<%= reg.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই নিবন্ধন মুছে ফেলবেন?')">
-              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+              <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>
         </tr>

@@ -5,26 +5,26 @@
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
-  <h1>Send Email — <%= event.title %></h1>
+  <h1><%- t('admin.pg_send_email') %> — <%= event.title %></h1>
 
   <div class="info-box">
-    <p>This will send an email to all registered attendees of this event.</p>
+    <p><%- t('admin.email_info') %></p>
     <% if (!process.env.SMTP_HOST) { %>
-      <p class="warning">⚠️ SMTP is not configured — emails will be logged but not actually sent.</p>
+      <p class="warning"><%- t('admin.smtp_warning') %></p>
     <% } %>
   </div>
 
   <form action="/admin/events/<%= event.id %>/emails/send" method="POST" class="admin-form" onsubmit="return confirm('Send this email to all attendees?')">
     <div class="form-group">
-      <label for="subject">Subject *</label>
+      <label for="subject"><%- t('admin.lbl_subject') %></label>
       <input type="text" id="subject" name="subject" required placeholder="Event Update: ...">
     </div>
     <div class="form-group">
-      <label for="body">Message *</label>
+      <label for="body"><%- t('admin.lbl_body') %></label>
       <textarea id="body" name="body" rows="10" required data-rich placeholder="Write your message here..."></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">Send Email</button>
-    <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-outline">Cancel</a>
+    <button type="submit" class="btn btn-primary"><%- t('admin.btn_send_email') %></button>
+    <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-outline"><%- t('btn.cancel') %></a>
   </form>
 </main>
 

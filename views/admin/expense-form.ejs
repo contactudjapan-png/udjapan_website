@@ -5,14 +5,14 @@
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
-  <h1>খরচ যোগ করুন — <%= event.title %></h1>
+  <h1><%- t('admin.pg_add_expense') %> — <%= event.title %></h1>
 
   <form action="/admin/events/<%= event.id %>/expenses/new" method="POST" enctype="multipart/form-data" class="admin-form">
     <% if (categories && categories.length > 0) { %>
     <div class="form-group">
-      <label for="category">ক্যাটাগরি</label>
+      <label for="category"><%- t('admin.lbl_category') %></label>
       <select id="category" name="category">
-        <option value="">— ক্যাটাগরি বাছুন —</option>
+        <option value=""><%- t('admin.select_category') %></option>
         <% categories.forEach(cat => { %>
           <option value="<%= cat %>"><%= cat %></option>
         <% }) %>
@@ -20,19 +20,19 @@
     </div>
     <% } %>
     <div class="form-group">
-      <label for="description">বিবরণ *</label>
-      <input type="text" id="description" name="description" required placeholder="যেমন: ভেন্যু ভাড়া">
+      <label for="description"><%- t('admin.lbl_description') %></label>
+      <input type="text" id="description" name="description" required placeholder="<%- t('admin.lbl_description') %>">
     </div>
     <div class="form-group">
-      <label for="amount">পরিমাণ (€) *</label>
+      <label for="amount"><%- t('admin.lbl_amount') %></label>
       <input type="number" id="amount" name="amount" required min="0" step="0.01" placeholder="0.00">
     </div>
     <div class="form-group">
-      <label for="receipt">রসিদের ছবি (ঐচ্ছিক)</label>
+      <label for="receipt"><%- t('admin.lbl_receipt') %></label>
       <input type="file" id="receipt" name="receipt" accept="image/*">
     </div>
-    <button type="submit" class="btn btn-primary">খরচ যোগ করুন</button>
-    <a href="/admin/events/<%= event.id %>/expenses" class="btn btn-outline">বাতিল</a>
+    <button type="submit" class="btn btn-primary"><%- t('admin.btn_add_expense') %></button>
+    <a href="/admin/events/<%= event.id %>/expenses" class="btn btn-outline"><%- t('btn.cancel') %></a>
   </form>
 </main>
 

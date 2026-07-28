@@ -4,15 +4,15 @@
 <%- include('../partials/flash') %>
 
 <main class="admin-container">
-  <h1>আয়ের ক্যাটাগরি</h1>
-  <p style="color:var(--text-muted)">এই তালিকা আয় যোগ করার ফর্মে ড্রপডাউনে দেখাবে।</p>
+  <h1><%- t('admin.pg_income_cats') %></h1>
+  <p style="color:var(--text-muted)"><%- t('admin.income_cats_hint') %></p>
 
   <form action="/admin/settings/income-categories" method="POST" class="admin-form" style="max-width:480px">
     <div class="form-group">
-      <label for="income_categories">ক্যাটাগরিসমূহ (প্রতি লাইনে একটি)</label>
+      <label for="income_categories"><%- t('admin.lbl_income_cats') %></label>
       <textarea id="income_categories" name="income_categories" rows="10" placeholder="যেমন:&#10;নিবন্ধন ফি&#10;স্টল ফি&#10;অনুদান&#10;স্পনসরশিপ&#10;অন্যান্য"><%= incomeCategories %></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">সংরক্ষণ করুন</button>
+    <button type="submit" class="btn btn-primary"><%- t('btn.save') %></button>
   </form>
 </main>
 

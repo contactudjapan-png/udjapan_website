@@ -3,43 +3,42 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
-  <h1>রিপোর্ট — <%= event.title %></h1>
+  <h1><%- t('admin.pg_reports') %> — <%= event.title %></h1>
 
-  <%# সারসংক্ষেপ পরিসংখ্যান %>
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-number"><%= report.totalRegistrations %></div>
-      <div class="stat-label">নিবন্ধন</div>
+      <div class="stat-label"><%- t('admin.stat_registrations') %></div>
     </div>
     <div class="stat-card">
       <div class="stat-number"><%= report.paidCount %></div>
-      <div class="stat-label">পরিশোধিত</div>
+      <div class="stat-label"><%- t('admin.stat_paid') %></div>
     </div>
     <div class="stat-card">
       <div class="stat-number"><%= report.unpaidCount %></div>
-      <div class="stat-label">বাকি পেমেন্ট</div>
+      <div class="stat-label"><%- t('admin.stat_unpaid') %></div>
     </div>
     <div class="stat-card">
       <div class="stat-number">€<%= report.totalExpenses.toLocaleString('en-US', {minimumFractionDigits:2}) %></div>
-      <div class="stat-label">মোট ব্যয়</div>
+      <div class="stat-label"><%- t('admin.stat_total_exp') %></div>
     </div>
     <div class="stat-card">
       <div class="stat-number"><%= report.pendingSubmissions %></div>
-      <div class="stat-label">অপেক্ষমাণ জমা</div>
+      <div class="stat-label"><%- t('admin.stat_pending_subs') %></div>
     </div>
     <div class="stat-card">
       <div class="stat-number"><%= report.volunteerStats.approved %> / <%= report.volunteerStats.total %></div>
-      <div class="stat-label">অনুমোদিত স্বেচ্ছাসেবী</div>
+      <div class="stat-label"><%- t('admin.stat_approved_vols') %></div>
     </div>
   </div>
 
-  <%# পরামর্শ %>
   <% if (report.suggestions.length > 0) { %>
   <div class="report-section">
-    <h2>পরামর্শ ও পর্যবেক্ষণ</h2>
+    <h2><%- t('admin.suggestions') %></h2>
     <ul class="suggestion-list">
       <% report.suggestions.forEach(s => { %>
         <li><%= s %></li>
@@ -48,41 +47,38 @@
   </div>
   <% } %>
 
-  <%# নিবন্ধন প্রবণতা চার্ট %>
   <div class="report-section">
-    <h2>নিবন্ধন প্রবণতা</h2>
+    <h2><%- t('admin.reg_trend') %></h2>
     <% if (report.registrationByDate.length === 0) { %>
-      <div class="empty-state"><p>এখনো কোনো নিবন্ধন নেই।</p></div>
+      <div class="empty-state"><p><%- t('admin.empty_reg_trend') %></p></div>
     <% } else { %>
       <div class="chart-container">
         <canvas id="regChart"></canvas>
       </div>
-      <p class="chart-hint">বার = দৈনিক নিবন্ধন · লাইন = ৩-পর্যায়ের মুভিং অ্যাভারেজ · ড্যাশ = পূর্বাভাস</p>
+      <p class="chart-hint"><%- t('admin.chart_reg_hint') %></p>
     <% } %>
   </div>
 
-  <%# ব্যয় প্রবণতা চার্ট %>
   <div class="report-section">
-    <h2>ব্যয় প্রবণতা</h2>
+    <h2><%- t('admin.expense_trend') %></h2>
     <% if (report.expenseByDate.length === 0) { %>
-      <div class="empty-state"><p>কোনো ব্যয় নথিভুক্ত নেই।</p></div>
+      <div class="empty-state"><p><%- t('admin.empty_exp_trend') %></p></div>
     <% } else { %>
       <div class="chart-container">
         <canvas id="expChart"></canvas>
       </div>
-      <p class="chart-hint">বার = দৈনিক ব্যয় · লাইন = ৩-পর্যায়ের মুভিং অ্যাভারেজ · ড্যাশ = পূর্বাভাস</p>
+      <p class="chart-hint"><%- t('admin.chart_exp_hint') %></p>
     <% } %>
   </div>
 
-  <%# অংশগ্রহণকারী তালিকা %>
   <div class="report-section">
-    <h2>নিবন্ধিত অংশগ্রহণকারী</h2>
+    <h2><%- t('admin.registered_participants') %></h2>
     <% if (report.registrations.length === 0) { %>
-      <div class="empty-state"><p>এখনো কোনো নিবন্ধন নেই।</p></div>
+      <div class="empty-state"><p><%- t('admin.empty_participants') %></p></div>
     <% } else { %>
       <table class="admin-table">
         <thead><tr>
-          <th>#</th><th>নাম</th><th>ইমেইল</th><th>পেমেন্ট রেফ.</th><th>অবস্থা</th><th>নিবন্ধনের তারিখ</th>
+          <th>#</th><th><%- t('tbl.name') %></th><th><%- t('tbl.email') %></th><th><%- t('tbl.pay_ref') %></th><th><%- t('tbl.status') %></th><th><%- t('admin.tbl_reg_date') %></th>
         </tr></thead>
         <tbody>
         <% report.registrations.forEach((reg, i) => { %>
@@ -91,8 +87,8 @@
             <td><strong><%= reg.name %></strong></td>
             <td><%= reg.email %></td>
             <td><%= reg.payment_reference || '—' %></td>
-            <td><span class="badge <%= reg.is_paid ? 'badge-paid' : 'badge-pending' %>"><%= reg.is_paid ? 'পরিশোধিত' : 'বাকি' %></span></td>
-            <td><%= new Date(reg.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+            <td><span class="badge <%= reg.is_paid ? 'badge-paid' : 'badge-pending' %>"><%= reg.is_paid ? t('admin.status_paid') : t('admin.status_pending') %></span></td>
+            <td><%= new Date(reg.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           </tr>
         <% }) %>
         </tbody>
@@ -100,24 +96,23 @@
     <% } %>
   </div>
 
-  <%# ব্যয় তালিকা %>
   <div class="report-section">
-    <h2>ব্যয়সমূহ</h2>
+    <h2><%- t('admin.section_expenses') %></h2>
     <% if (report.expenses.length === 0) { %>
-      <div class="empty-state"><p>কোনো ব্যয় নথিভুক্ত নেই।</p></div>
+      <div class="empty-state"><p><%- t('admin.empty_expenses2') %></p></div>
     <% } else { %>
       <table class="admin-table">
-        <thead><tr><th>বিবরণ</th><th>পরিমাণ</th><th>তারিখ</th></tr></thead>
+        <thead><tr><th><%- t('tbl.description') %></th><th><%- t('tbl.amount') %></th><th><%- t('tbl.date') %></th></tr></thead>
         <tbody>
         <% report.expenses.forEach(exp => { %>
           <tr>
             <td><%= exp.description %></td>
             <td>€<%= parseFloat(exp.amount).toLocaleString('en-US', {minimumFractionDigits:2}) %></td>
-            <td><%= new Date(exp.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+            <td><%= new Date(exp.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           </tr>
         <% }) %>
           <tr class="total-row">
-            <td><strong>মোট</strong></td>
+            <td><strong><%- t('admin.total_label') %></strong></td>
             <td><strong>€<%= report.totalExpenses.toLocaleString('en-US', {minimumFractionDigits:2}) %></strong></td>
             <td></td>
           </tr>
@@ -126,42 +121,39 @@
     <% } %>
   </div>
 
-  <%# স্বেচ্ছাসেবী বিভাজন %>
   <div class="report-section">
-    <h2>স্বেচ্ছাসেবী</h2>
+    <h2><%- t('admin.section_volunteers') %></h2>
     <div class="stats-grid stats-grid-sm">
-      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.total %></div><div class="stat-label">মোট</div></div>
-      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.approved %></div><div class="stat-label">অনুমোদিত</div></div>
-      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.pending %></div><div class="stat-label">অপেক্ষমাণ</div></div>
-      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.rejected %></div><div class="stat-label">প্রত্যাখ্যাত</div></div>
+      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.total %></div><div class="stat-label"><%- t('admin.vol_total') %></div></div>
+      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.approved %></div><div class="stat-label"><%- t('admin.vol_approved') %></div></div>
+      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.pending %></div><div class="stat-label"><%- t('admin.vol_pending') %></div></div>
+      <div class="stat-card"><div class="stat-number"><%= report.volunteerStats.rejected %></div><div class="stat-label"><%- t('admin.vol_rejected') %></div></div>
     </div>
   </div>
 
-  <%# উপস্থিতি বিশ্লেষণ %>
   <div class="report-section">
-    <h2>উপস্থিতি বিশ্লেষণ</h2>
+    <h2><%- t('admin.attendance') %></h2>
     <div class="stats-grid stats-grid-sm">
-      <div class="stat-card"><div class="stat-number"><%= attendance.checkedIn %></div><div class="stat-label">চেক-ইন</div></div>
-      <div class="stat-card"><div class="stat-number"><%= attendance.noShow %></div><div class="stat-label">অনুপস্থিত</div></div>
-      <div class="stat-card"><div class="stat-number"><%= attendance.rate %>%</div><div class="stat-label">উপস্থিতির হার</div></div>
-      <div class="stat-card"><div class="stat-number"><%= attendance.totalScans %></div><div class="stat-label">মোট স্ক্যান</div></div>
+      <div class="stat-card"><div class="stat-number"><%= attendance.checkedIn %></div><div class="stat-label"><%- t('admin.att_checked_in') %></div></div>
+      <div class="stat-card"><div class="stat-number"><%= attendance.noShow %></div><div class="stat-label"><%- t('admin.att_no_show') %></div></div>
+      <div class="stat-card"><div class="stat-number"><%= attendance.rate %>%</div><div class="stat-label"><%- t('admin.att_rate') %></div></div>
+      <div class="stat-card"><div class="stat-number"><%= attendance.totalScans %></div><div class="stat-label"><%- t('admin.att_total_scans') %></div></div>
     </div>
     <% if (attendance.totalScans > 0) { %>
       <div class="chart-container" style="margin-top:1rem">
         <canvas id="attendanceChart"></canvas>
       </div>
-      <p class="chart-hint">ঘণ্টা অনুযায়ী চেক-ইন বিতরণ</p>
+      <p class="chart-hint"><%- t('admin.att_chart_hint') %></p>
     <% } %>
   </div>
 
-  <%# ভোটের ফলাফল %>
   <% if (report.pollResults.length > 0) { %>
   <div class="report-section">
-    <h2>ভোটের ফলাফল</h2>
+    <h2><%- t('admin.poll_results') %></h2>
     <% report.pollResults.forEach(poll => { %>
       <div class="poll-result-block">
-        <h3><%= poll.question %> <small class="badge <%= poll.is_active ? 'badge-open' : 'badge-closed' %>"><%= poll.is_active ? 'সক্রিয়' : 'বন্ধ' %></small></h3>
-        <p class="poll-total-votes">মোট ভোট: <%= poll.totalVotes %></p>
+        <h3><%= poll.question %> <small class="badge <%= poll.is_active ? 'badge-open' : 'badge-closed' %>"><%= poll.is_active ? t('admin.poll_status_active') : t('admin.poll_status_closed') %></small></h3>
+        <p class="poll-total-votes"><%- t('admin.total_votes') %> <%= poll.totalVotes %></p>
         <% poll.options.forEach(opt => { %>
           <div class="poll-option-bar">
             <span class="poll-opt-label"><%= opt.option_text %></span>
@@ -198,9 +190,9 @@
     data: {
       labels: allRegLabels,
       datasets: [
-        { type: 'bar',  label: 'নিবন্ধন', data: regBarData, backgroundColor: 'rgba(79,134,247,0.6)', borderColor: '#4f86f7', borderWidth: 1 },
-        { type: 'line', label: '৩-পর্যায়ের MA', data: regMAData, borderColor: '#f7a04f', borderWidth: 2, pointRadius: 3, fill: false, tension: 0.3 },
-        { type: 'line', label: 'পূর্বাভাস', data: regFcData, borderColor: '#e74c3c', borderWidth: 2, borderDash: [6,4], pointRadius: 3, fill: false, tension: 0.3 },
+        { type: 'bar',  label: '<%= t("admin.stat_registrations") %>', data: regBarData, backgroundColor: 'rgba(79,134,247,0.6)', borderColor: '#4f86f7', borderWidth: 1 },
+        { type: 'line', label: '3-MA', data: regMAData, borderColor: '#f7a04f', borderWidth: 2, pointRadius: 3, fill: false, tension: 0.3 },
+        { type: 'line', label: 'Forecast', data: regFcData, borderColor: '#e74c3c', borderWidth: 2, borderDash: [6,4], pointRadius: 3, fill: false, tension: 0.3 },
       ],
     },
     options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
@@ -212,7 +204,7 @@
     type: 'bar',
     data: {
       labels: <%- JSON.stringify(attendance.byHour.map(h => h.hour + ':00')) %>,
-      datasets: [{ label: 'চেক-ইন', data: <%- JSON.stringify(attendance.byHour.map(h => h.count)) %>, backgroundColor: 'rgba(79,134,247,0.6)', borderColor: '#4f86f7', borderWidth: 1 }],
+      datasets: [{ label: '<%= t("admin.att_checked_in") %>', data: <%- JSON.stringify(attendance.byHour.map(h => h.count)) %>, backgroundColor: 'rgba(79,134,247,0.6)', borderColor: '#4f86f7', borderWidth: 1 }],
     },
     options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
   });
@@ -234,9 +226,9 @@
     data: {
       labels: allExpLabels,
       datasets: [
-        { type: 'bar',  label: 'ব্যয় (€)', data: expBarData, backgroundColor: 'rgba(231,76,60,0.5)', borderColor: '#e74c3c', borderWidth: 1 },
-        { type: 'line', label: '৩-পর্যায়ের MA', data: expMAData, borderColor: '#9b59b6', borderWidth: 2, pointRadius: 3, fill: false, tension: 0.3 },
-        { type: 'line', label: 'পূর্বাভাস', data: expFcData, borderColor: '#e67e22', borderWidth: 2, borderDash: [6,4], pointRadius: 3, fill: false, tension: 0.3 },
+        { type: 'bar',  label: '<%= t("admin.section_expenses") %> (€)', data: expBarData, backgroundColor: 'rgba(231,76,60,0.5)', borderColor: '#e74c3c', borderWidth: 1 },
+        { type: 'line', label: '3-MA', data: expMAData, borderColor: '#9b59b6', borderWidth: 2, pointRadius: 3, fill: false, tension: 0.3 },
+        { type: 'line', label: 'Forecast', data: expFcData, borderColor: '#e67e22', borderWidth: 2, borderDash: [6,4], pointRadius: 3, fill: false, tension: 0.3 },
       ],
     },
     options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } },

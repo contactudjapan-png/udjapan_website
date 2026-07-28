@@ -4,15 +4,15 @@
 <%- include('../partials/flash') %>
 
 <main class="admin-container">
-  <h1><%= ad ? 'বিজ্ঞাপন সম্পাদনা' : 'নতুন বিজ্ঞাপন' %></h1>
+  <h1><%= ad ? t('admin.pg_edit_ad') : t('admin.pg_new_ad') %></h1>
 
   <form action="<%= ad ? `/admin/ads/${ad.id}/edit` : '/admin/ads/new' %>" method="POST" enctype="multipart/form-data" class="admin-form">
     <div class="form-group">
-      <label for="title">শিরোনাম *</label>
-      <input type="text" id="title" name="title" required value="<%= ad ? ad.title : '' %>" placeholder="যেমন: স্পনসর ব্যানার">
+      <label for="title"><%- t('admin.lbl_ad_title') %></label>
+      <input type="text" id="title" name="title" required value="<%= ad ? ad.title : '' %>" placeholder="<%- t('admin.lbl_ad_title_ph') %>">
     </div>
     <div class="form-group">
-      <label for="description">বিবরণ (বাংলা)</label>
+      <label for="description"><%- t('admin.lbl_desc_bn2') %></label>
       <textarea id="description" name="description" rows="2" data-rich><%= ad ? (ad.description || '') : '' %></textarea>
     </div>
     <div class="form-group">
@@ -32,27 +32,27 @@
       <textarea id="description_de" name="description_de" rows="2" data-rich><%= ad ? (ad.description_de || '') : '' %></textarea>
     </div>
     <div class="form-group">
-      <label for="link_url">লিংক (ক্লিক করলে যাবে)</label>
+      <label for="link_url"><%- t('admin.lbl_link_url') %></label>
       <input type="url" id="link_url" name="link_url" value="<%= ad ? (ad.link_url || '') : '' %>" placeholder="https://example.com">
     </div>
     <div class="form-group">
-      <label for="image">ছবি <% if (ad && ad.image_url) { %>(বর্তমান ছবি আছে — নতুন আপলোড করলে বদলাবে)<% } %></label>
+      <label for="image"><%- t('admin.lbl_image') %> <% if (ad && ad.image_url) { %><%= t('admin.image_replace') %><% } %></label>
       <% if (ad && ad.image_url) { %>
         <div style="margin-bottom:8px"><img src="<%= ad.image_url %>" style="max-width:300px;border-radius:6px;"></div>
       <% } %>
       <input type="file" id="image" name="image" accept="image/*">
     </div>
     <div class="form-group">
-      <label for="sort_order">প্রদর্শন ক্রম (ছোট = আগে)</label>
+      <label for="sort_order"><%- t('admin.lbl_sort_order2') %></label>
       <input type="number" id="sort_order" name="sort_order" value="<%= ad ? ad.sort_order : 0 %>" min="0">
     </div>
     <% if (ad) { %>
     <div class="form-group">
-      <label><input type="checkbox" name="is_active" value="on" <%= ad.is_active ? 'checked' : '' %>> সক্রিয় রাখুন</label>
+      <label><input type="checkbox" name="is_active" value="on" <%= ad.is_active ? 'checked' : '' %>> <%- t('admin.lbl_ad_active') %></label>
     </div>
     <% } %>
-    <button type="submit" class="btn btn-primary"><%= ad ? 'পরিবর্তন সংরক্ষণ' : 'বিজ্ঞাপন তৈরি করুন' %></button>
-    <a href="/admin/ads" class="btn btn-outline">বাতিল</a>
+    <button type="submit" class="btn btn-primary"><%= ad ? t('admin.btn_save_ad') : t('admin.btn_create_ad') %></button>
+    <a href="/admin/ads" class="btn btn-outline"><%- t('btn.cancel') %></a>
   </form>
 </main>
 

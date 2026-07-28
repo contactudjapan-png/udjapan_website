@@ -5,16 +5,16 @@
 
 <main class="admin-container">
   <div class="section-header">
-    <h1>ঘোষণা</h1>
-    <a href="/admin/announcements/new" class="btn btn-primary">+ নতুন ঘোষণা</a>
+    <h1><%- t('admin.pg_announcements') %></h1>
+    <a href="/admin/announcements/new" class="btn btn-primary"><%- t('btn.new_announcement') %></a>
   </div>
 
   <% if (announcements.length === 0) { %>
-    <div class="empty-state"><p>কোনো ঘোষণা যোগ করা হয়নি।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_announcements') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>শিরোনাম</th><th>বিষয়বস্তু</th><th>ক্রম</th><th>অবস্থা</th><th>কার্যক্রম</th>
+        <th><%- t('tbl.title') %></th><th><%- t('tbl.content') %></th><th><%- t('tbl.order') %></th><th><%- t('tbl.status') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% announcements.forEach(ann => { %>
@@ -22,11 +22,11 @@
           <td><strong><%= ann.title %></strong></td>
           <td style="max-width:300px;font-size:0.9rem"><% const _annPreview = ann.content ? ann.content.replace(/<[^>]+>/g,'').trim().slice(0,150) : ''; %><%- _annPreview %></td>
           <td><%= ann.sort_order %></td>
-          <td><span class="badge <%= ann.is_active ? 'badge-open' : 'badge-closed' %>"><%= ann.is_active ? 'সক্রিয়' : 'নিষ্ক্রিয়' %></span></td>
+          <td><span class="badge <%= ann.is_active ? 'badge-open' : 'badge-closed' %>"><%= ann.is_active ? t('admin.ann_active') : t('admin.ann_inactive') %></span></td>
           <td class="action-cell">
-            <a href="/admin/announcements/<%= ann.id %>/edit" class="btn btn-sm">সম্পাদনা</a>
+            <a href="/admin/announcements/<%= ann.id %>/edit" class="btn btn-sm"><%- t('btn.edit') %></a>
             <form action="/admin/announcements/<%= ann.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('ঘোষণাটি মুছে ফেলবেন?')">
-              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+              <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>
         </tr>

@@ -2,19 +2,20 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
-    <h1>Submissions — <%= event.title %></h1>
+    <h1><%- t('admin.pg_submissions') %> — <%= event.title %></h1>
   </div>
 
   <% if (submissions.length === 0) { %>
-    <div class="empty-state"><p>No pending submissions.</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_submissions') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>নাম</th><th>যোগাযোগ</th><th>শিশু (অনূর্ধ্ব-১৫)</th><th>প্রাপ্তবয়স্ক (১৫+)</th><th>পেমেন্ট রেফারেন্স</th><th>তারিখ</th><th>Actions</th>
+        <th><%- t('tbl.name') %></th><th><%- t('admin.tbl_contact') %></th><th><%- t('admin.tbl_children') %></th><th><%- t('admin.tbl_adults') %></th><th><%- t('admin.tbl_pay_ref') %></th><th><%- t('tbl.date') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% submissions.forEach(sub => { %>
@@ -24,13 +25,13 @@
           <td><%= sub.children_count || 0 %></td>
           <td><%= sub.adults_count || 0 %></td>
           <td><%= sub.payment_reference || '—' %></td>
-          <td><%= new Date(sub.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td><%= new Date(sub.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td class="action-cell">
             <form action="/admin/submissions/<%= sub.id %>/approve" method="POST" style="display:inline" onsubmit="return confirm('<%= sub.name %>-এর জন্য নিবন্ধন অনুমোদন করবেন?')">
-              <button type="submit" class="btn btn-sm btn-success">অনুমোদন</button>
+              <button type="submit" class="btn btn-sm btn-success"><%- t('btn.approve') %></button>
             </form>
             <form action="/admin/submissions/<%= sub.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই সাবমিশন মুছে ফেলবেন?')">
-              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+              <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>
         </tr>

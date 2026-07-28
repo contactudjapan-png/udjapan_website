@@ -5,49 +5,49 @@
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
-  <h1><%= stall ? 'স্টল সম্পাদনা' : 'নতুন স্টল' %> — <%= event.title %></h1>
+  <h1><%= stall ? t('admin.pg_edit_stall') : t('admin.pg_new_stall') %> — <%= event.title %></h1>
 
   <form action="<%= stall ? `/admin/stalls/${stall.id}/edit` : `/admin/events/${event.id}/stalls/new` %>" method="POST" class="admin-form">
     <div class="form-group">
-      <label for="stall_name">স্টলের নাম *</label>
+      <label for="stall_name"><%- t('admin.lbl_stall_name') %></label>
       <input type="text" id="stall_name" name="stall_name" required value="<%= stall ? stall.stall_name : '' %>">
     </div>
     <div class="form-group">
-      <label for="description">বিবরণ</label>
+      <label for="description"><%- t('admin.field_description') %></label>
       <textarea id="description" name="description" rows="3" data-rich><%= stall ? (stall.description || '') : '' %></textarea>
     </div>
     <div class="form-group">
-      <label for="location_info">অবস্থান / স্পট</label>
-      <input type="text" id="location_info" name="location_info" value="<%= stall ? (stall.location_info || '') : '' %>" placeholder="যেমন: এলাকা ক, বুথ ৩">
+      <label for="location_info"><%- t('admin.lbl_location_spot') %></label>
+      <input type="text" id="location_info" name="location_info" value="<%= stall ? (stall.location_info || '') : '' %>" placeholder="<%- t('admin.lbl_location_ph2') %>">
     </div>
 
-    <h2>বরাদ্দ</h2>
+    <h2><%- t('admin.section_assignment') %></h2>
     <div class="form-group">
-      <label for="assigned_to_name">বিক্রেতা / ব্যক্তির নাম</label>
+      <label for="assigned_to_name"><%- t('admin.lbl_vendor_name') %></label>
       <input type="text" id="assigned_to_name" name="assigned_to_name" value="<%= stall ? (stall.assigned_to_name || '') : '' %>">
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label for="assigned_to_email">ইমেইল</label>
+        <label for="assigned_to_email"><%- t('tbl.email') %></label>
         <input type="email" id="assigned_to_email" name="assigned_to_email" value="<%= stall ? (stall.assigned_to_email || '') : '' %>">
       </div>
       <div class="form-group">
-        <label for="assigned_to_phone">ফোন</label>
+        <label for="assigned_to_phone"><%- t('tbl.phone') %></label>
         <input type="tel" id="assigned_to_phone" name="assigned_to_phone" value="<%= stall ? (stall.assigned_to_phone || '') : '' %>">
       </div>
     </div>
     <div class="form-group">
-      <label for="fee">স্টল ফি (€)</label>
+      <label for="fee"><%- t('admin.lbl_stall_fee') %></label>
       <input type="number" id="fee" name="fee" step="0.01" min="0" value="<%= stall ? (stall.fee || '') : '' %>" placeholder="0.00">
     </div>
     <hr>
     <div class="form-group">
-      <label for="notes">পর্যবেক্ষণ নোট</label>
-      <textarea id="notes" name="notes" rows="4" data-rich placeholder="স্টল পরিদর্শনের নোট, সমস্যা বা মন্তব্য..."><%= stall ? (stall.notes || '') : '' %></textarea>
+      <label for="notes"><%- t('admin.lbl_obs_notes') %></label>
+      <textarea id="notes" name="notes" rows="4" data-rich placeholder="<%- t('admin.obs_notes_ph') %>"><%= stall ? (stall.notes || '') : '' %></textarea>
     </div>
 
-    <button type="submit" class="btn btn-primary"><%= stall ? 'পরিবর্তন সংরক্ষণ' : 'স্টল তৈরি করুন' %></button>
-    <a href="/admin/events/<%= event.id %>/stalls" class="btn btn-outline">বাতিল</a>
+    <button type="submit" class="btn btn-primary"><%= stall ? t('admin.btn_save_stall') : t('admin.btn_create_stall') %></button>
+    <a href="/admin/events/<%= event.id %>/stalls" class="btn btn-outline"><%- t('btn.cancel') %></a>
   </form>
 </main>
 

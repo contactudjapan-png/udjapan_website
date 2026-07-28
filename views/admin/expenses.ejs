@@ -2,22 +2,23 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
-    <h1>খরচসমূহ — <%= event.title %></h1>
-    <a href="/admin/events/<%= event.id %>/expenses/new" class="btn btn-primary">+ খরচ যোগ করুন</a>
+    <h1><%- t('admin.pg_expenses') %> — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/expenses/new" class="btn btn-primary"><%- t('btn.add_expense') %></a>
   </div>
 
-  <div class="total-banner">মোট খরচ: <strong>€<%= total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) %></strong></div>
+  <div class="total-banner"><%- t('admin.total_expense') %> <strong>€<%= total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) %></strong></div>
 
   <% if (expenses.length === 0) { %>
-    <div class="empty-state"><p>কোনো খরচ নথিভুক্ত হয়নি।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_expenses') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>ক্যাটাগরি</th><th>বিবরণ</th><th>পরিমাণ</th><th>রসিদ</th><th>তারিখ</th><th>কার্যক্রম</th>
+        <th><%- t('tbl.category') %></th><th><%- t('tbl.description') %></th><th><%- t('tbl.amount') %></th><th><%- t('tbl.receipt') %></th><th><%- t('tbl.date') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% expenses.forEach(exp => { %>
@@ -27,13 +28,13 @@
           <td>€<%= parseFloat(exp.amount).toLocaleString('en-US', {minimumFractionDigits:2}) %></td>
           <td>
             <% if (exp.receipt_url) { %>
-              <a href="<%= exp.receipt_url %>" target="_blank" class="btn btn-sm">দেখুন</a>
+              <a href="<%= exp.receipt_url %>" target="_blank" class="btn btn-sm"><%- t('btn.view') %></a>
             <% } else { %>—<% } %>
           </td>
-          <td><%= new Date(exp.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td><%= new Date(exp.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td>
             <form action="/admin/expenses/<%= exp.id %>/delete" method="POST" onsubmit="return confirm('এই খরচ মুছে ফেলবেন?')">
-              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+              <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>
         </tr>

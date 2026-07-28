@@ -6,16 +6,16 @@
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
-    <h1>স্বেচ্ছাসেবী — <%= event.title %></h1>
-    <a href="/admin/events/<%= event.id %>/volunteers/new" class="btn btn-primary">+ নতুন স্বেচ্ছাসেবী</a>
+    <h1><%- t('admin.pg_volunteers') %> — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/volunteers/new" class="btn btn-primary"><%- t('btn.new_volunteer') %></a>
   </div>
 
   <% if (volunteers.length === 0) { %>
-    <div class="empty-state"><p>এখনো কোনো স্বেচ্ছাসেবী নিবন্ধন নেই।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_volunteers') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>নাম</th><th>ইমেইল</th><th>ফোন</th><th>পছন্দ</th><th>পারিশ্রমিক</th><th>অবস্থা</th><th>সেশন</th><th>কাজ</th><th>কার্যক্রম</th>
+        <th><%- t('tbl.name') %></th><th><%- t('tbl.email') %></th><th><%- t('tbl.phone') %></th><th><%- t('tbl.preference') %></th><th><%- t('tbl.remuneration') %></th><th><%- t('tbl.status') %></th><th><%- t('tbl.session') %></th><th><%- t('tbl.task') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% volunteers.forEach(vol => { %>
@@ -24,14 +24,14 @@
           <td><%= vol.email %></td>
           <td><%= vol.phone || '—' %></td>
           <td style="font-size:0.8rem">
-            <% if (vol.preferred_task) { %><div><strong>কাজ:</strong> <%= vol.preferred_task %></div><% } %>
-            <% if (vol.preferred_duration) { %><div><strong>সময়কাল:</strong> <%= vol.preferred_duration %></div><% } %>
+            <% if (vol.preferred_task) { %><div><strong><%- t('tbl.task') %>:</strong> <%= vol.preferred_task %></div><% } %>
+            <% if (vol.preferred_duration) { %><div><strong><%- t('tbl.session') %>:</strong> <%= vol.preferred_duration %></div><% } %>
             <% if (!vol.preferred_task && !vol.preferred_duration) { %>—<% } %>
           </td>
           <td><% if (vol.amount) { %>€<%= parseFloat(vol.amount).toFixed(2) %><% } else { %>—<% } %></td>
           <td>
             <span class="badge badge-<%= vol.status %>">
-              <% if (vol.status === 'pending') { %>অপেক্ষমাণ<% } else if (vol.status === 'approved') { %>অনুমোদিত<% } else { %>প্রত্যাখ্যাত<% } %>
+              <% if (vol.status === 'pending') { %><%- t('admin.vol_status_pending') %><% } else if (vol.status === 'approved') { %><%- t('admin.vol_status_approved') %><% } else { %><%- t('admin.vol_status_rejected') %><% } %>
             </span>
           </td>
           <td>
@@ -43,27 +43,27 @@
                 const expired = now > expiry;
               %>
               <% if (expired) { %>
-                <span class="badge badge-rejected">মেয়াদ শেষ</span>
+                <span class="badge badge-rejected"><%- t('admin.session_expired') %></span>
               <% } else { %>
-                <span class="badge badge-approved"><%= mins %> মিনিট</span>
+                <span class="badge badge-approved"><%= mins %> <%- t('admin.session_min') %></span>
               <% } %>
             <% } else { %>
-              <span style="color:var(--text-muted);font-size:0.8rem">নেই</span>
+              <span style="color:var(--text-muted);font-size:0.8rem"><%- t('admin.session_none') %></span>
             <% } %>
             <div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap">
               <form action="/admin/volunteers/<%= vol.id %>/start-session" method="POST" style="display:inline">
                 <select name="time_limit_minutes" class="inline-input" style="width:70px">
-                  <option value="30">৩০ মি</option>
-                  <option value="60">১ ঘ</option>
-                  <option value="120" selected>২ ঘ</option>
-                  <option value="240">৪ ঘ</option>
-                  <option value="480">৮ ঘ</option>
+                  <option value="30">30</option>
+                  <option value="60">60</option>
+                  <option value="120" selected>120</option>
+                  <option value="240">240</option>
+                  <option value="480">480</option>
                 </select>
-                <button type="submit" class="btn btn-sm btn-success">শুরু</button>
+                <button type="submit" class="btn btn-sm btn-success"><%- t('btn.start') %></button>
               </form>
               <% if (vol.session_token) { %>
                 <form action="/admin/volunteers/<%= vol.id %>/stop-session" method="POST">
-                  <button type="submit" class="btn btn-sm btn-danger">বন্ধ</button>
+                  <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.stop') %></button>
                 </form>
               <% } %>
             </div>
@@ -73,70 +73,70 @@
             <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px">
               <% if (vol.status === 'pending') { %>
                 <form action="/admin/volunteers/<%= vol.id %>/approve" method="POST">
-                  <button type="submit" class="btn btn-sm btn-success">অনুমোদন</button>
+                  <button type="submit" class="btn btn-sm btn-success"><%- t('btn.approve') %></button>
                 </form>
                 <form action="/admin/volunteers/<%= vol.id %>/reject" method="POST">
-                  <button type="submit" class="btn btn-sm btn-outline">প্রত্যাখ্যান</button>
+                  <button type="submit" class="btn btn-sm btn-outline"><%- t('btn.reject') %></button>
                 </form>
               <% } else { %>
                 <form action="/admin/volunteers/<%= vol.id %>/pending" method="POST">
-                  <button type="submit" class="btn btn-sm btn-outline">অপেক্ষমাণ করুন</button>
+                  <button type="submit" class="btn btn-sm btn-outline"><%- t('btn.pending') %></button>
                 </form>
               <% } %>
               <form action="/admin/volunteers/<%= vol.id %>/delete" method="POST" onsubmit="return confirm('স্বেচ্ছাসেবী সরাবেন?')">
-                <button type="submit" class="btn btn-sm btn-danger">সরান</button>
+                <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.remove') %></button>
               </form>
             </div>
             <form action="/admin/volunteers/<%= vol.id %>/assign-task" method="POST" class="task-assign-form">
               <% const hasAnyTasks = taskGroups && (taskGroups.stall.length || taskGroups.reg.length || taskGroups.qr.length || (taskGroups.music && taskGroups.music.length) || (taskGroups.competition && taskGroups.competition.length) || (taskGroups.anchor && taskGroups.anchor.length) || (taskGroups.performer && taskGroups.performer.length) || (taskGroups.controlRoom && taskGroups.controlRoom.length)); %>
               <% if (hasAnyTasks) { %>
                 <select name="task" class="inline-input">
-                  <option value="">— কাজ বেছে নিন —</option>
+                  <option value=""><%- t('admin.select_task') %></option>
                   <% if (taskGroups.stall.length) { %>
-                  <optgroup label="স্টল পর্যবেক্ষণ">
+                  <optgroup label="<%- t('admin.vt_stall') %>">
                     <% taskGroups.stall.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
                   </optgroup>
                   <% } %>
                   <% if (taskGroups.reg.length) { %>
-                  <optgroup label="রেজিস্ট্রেশন">
+                  <optgroup label="<%- t('admin.vt_reg') %>">
                     <% taskGroups.reg.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
                   </optgroup>
                   <% } %>
                   <% if (taskGroups.qr.length) { %>
-                  <optgroup label="QR যাচাইকারী">
+                  <optgroup label="<%- t('admin.vt_qr') %>">
                     <% taskGroups.qr.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
                   </optgroup>
                   <% } %>
                   <% if (taskGroups.music && taskGroups.music.length) { %>
-                  <optgroup label="সংগীত ও মঞ্চ">
+                  <optgroup label="<%- t('admin.vt_music') %>">
                     <% taskGroups.music.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
                   </optgroup>
                   <% } %>
                   <% if (taskGroups.competition && taskGroups.competition.length) { %>
-                  <optgroup label="প্রতিযোগিতা">
+                  <optgroup label="<%- t('admin.vt_competition') %>">
                     <% taskGroups.competition.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
                   </optgroup>
                   <% } %>
                   <% if (taskGroups.anchor && taskGroups.anchor.length) { %>
-                  <optgroup label="উপস্থাপনা">
+                  <optgroup label="<%- t('admin.vt_anchor') %>">
                     <% taskGroups.anchor.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
                   </optgroup>
                   <% } %>
                   <% if (taskGroups.performer && taskGroups.performer.length) { %>
-                  <optgroup label="সংগীতশিল্পী ও পরিবেশক">
+                  <optgroup label="<%- t('admin.vt_performer') %>">
                     <% taskGroups.performer.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
                   </optgroup>
                   <% } %>
                   <% if (taskGroups.controlRoom && taskGroups.controlRoom.length) { %>
-                  <optgroup label="কন্ট্রোল রুম">
+                  <optgroup label="<%- t('admin.vt_control_room') %>">
                     <% taskGroups.controlRoom.forEach(opt => { %><option value="<%= opt %>" <%= vol.assigned_task === opt ? 'selected' : '' %>><%= opt %></option><% }) %>
                   </optgroup>
                   <% } %>
                 </select>
               <% } else { %>
-                <input type="text" name="task" value="<%= vol.assigned_task || '' %>" placeholder="কাজ নির্ধারণ..." class="inline-input">
+                <input type="text" name="task" value="<%= vol.assigned_task || '' %>" placeholder="<%- t('admin.task_input_ph') %>" class="inline-input">
               <% } %>
-              <button type="submit" class="btn btn-sm">নির্ধারণ</button>
+              <button type="submit" class="btn btn-sm"><%- t('btn.assign') %></button>
             </form>
           </td>
         </tr>

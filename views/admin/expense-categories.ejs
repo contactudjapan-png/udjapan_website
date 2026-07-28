@@ -4,15 +4,15 @@
 <%- include('../partials/flash') %>
 
 <main class="admin-container">
-  <h1>খরচের ক্যাটাগরি</h1>
-  <p style="color:var(--text-muted)">এই তালিকা খরচ যোগ করার ফর্মে ড্রপডাউনে দেখাবে।</p>
+  <h1><%- t('admin.pg_expense_cats') %></h1>
+  <p style="color:var(--text-muted)"><%- t('admin.expense_cats_hint') %></p>
 
   <form action="/admin/settings/expense-categories" method="POST" class="admin-form" style="max-width:480px">
     <div class="form-group">
-      <label for="expense_categories">ক্যাটাগরিসমূহ (প্রতি লাইনে একটি)</label>
+      <label for="expense_categories"><%- t('admin.lbl_cats_per_line') %></label>
       <textarea id="expense_categories" name="expense_categories" rows="12" placeholder="যেমন:&#10;ভেন্যু ভাড়া&#10;খাবার ও পানীয়&#10;পোশাক&#10;সাজসজ্জা&#10;প্রিন্ট ও ডিজাইন&#10;যানবাহন&#10;অন্যান্য"><%= expenseCategories %></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">সংরক্ষণ করুন</button>
+    <button type="submit" class="btn btn-primary"><%- t('btn.save') %></button>
   </form>
 </main>
 

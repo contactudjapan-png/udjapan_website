@@ -2,63 +2,64 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
-  <h1>ড্যাশবোর্ড</h1>
+  <h1><%- t('admin.pg_dashboard') %></h1>
 
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-number"><%= stats.totalEvents %></div>
-      <div class="stat-label">মোট ইভেন্ট</div>
+      <div class="stat-label"><%- t('admin.stat_total_events') %></div>
     </div>
     <div class="stat-card">
       <div class="stat-number"><%= stats.activeEvents %></div>
-      <div class="stat-label">সক্রিয় ইভেন্ট</div>
+      <div class="stat-label"><%- t('admin.stat_active_events') %></div>
     </div>
     <div class="stat-card">
       <div class="stat-number"><%= stats.totalRegistrations %></div>
-      <div class="stat-label">মোট নিবন্ধন</div>
+      <div class="stat-label"><%- t('admin.stat_total_regs') %></div>
     </div>
     <div class="stat-card">
       <div class="stat-number"><%= stats.paidRegistrations %></div>
-      <div class="stat-label">পরিশোধিত</div>
+      <div class="stat-label"><%- t('admin.stat_paid_regs') %></div>
     </div>
   </div>
 
   <div class="section-header">
-    <h2>ইভেন্টসমূহ</h2>
+    <h2><%- t('admin.events') %></h2>
     <div style="display:flex;gap:8px;align-items:center">
-      <a href="/admin/events/new" class="btn btn-primary">+ নতুন ইভেন্ট</a>
+      <a href="/admin/events/new" class="btn btn-primary"><%- t('btn.new_event') %></a>
       <% if (useMemoryDb) { %>
       <form action="/admin/seed" method="POST" onsubmit="return confirm('পরীক্ষামূলক ডেটা যোগ করবেন? (৩টি ইভেন্ট, ২০০ নিবন্ধন, ৫০ খরচ, ২০ স্টল, ১৫ স্বেচ্ছাসেবী প্রতিটিতে)')">
-        <button type="submit" class="btn btn-outline">টেস্ট ডেটা লোড করুন</button>
+        <button type="submit" class="btn btn-outline"><%- t('btn.load_test_data') %></button>
       </form>
       <% } %>
     </div>
   </div>
 
   <% if (stats.eventStats.length === 0) { %>
-    <div class="empty-state"><p>এখনো কোনো ইভেন্ট নেই। <a href="/admin/events/new">প্রথম ইভেন্ট তৈরি করুন।</a></p></div>
+    <div class="empty-state"><p><%- t('admin.empty_events') %> <a href="/admin/events/new"><%- t('admin.create_first_event') %></a></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>ইভেন্ট</th><th>তারিখ</th><th>অবস্থা</th><th>নিবন্ধন</th><th>কার্যক্রম</th>
+        <th><%- t('tbl.event') %></th><th><%- t('tbl.date') %></th><th><%- t('tbl.status') %></th><th><%- t('tbl.registrations') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% stats.eventStats.forEach(event => { %>
         <tr>
           <td><strong><%= event.title %></strong></td>
-          <td><%= new Date(event.event_date).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td><%= new Date(event.event_date).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td>
-            <% if (event.is_active) { %><span class="badge badge-open">সক্রিয়</span><% } else { %><span class="badge badge-closed">নিষ্ক্রিয়</span><% } %>
+            <% if (event.is_active) { %><span class="badge badge-open"><%- t('admin.badge_active') %></span><% } else { %><span class="badge badge-closed"><%- t('admin.badge_inactive') %></span><% } %>
           </td>
-          <td><%= event.paidCount %> পরিশোধিত / <%= event.regCount %> মোট</td>
+          <td><%= event.paidCount %> <%- t('admin.status_paid') %> / <%= event.regCount %> <%- t('admin.total') %></td>
           <td class="action-cell">
-            <a href="/admin/events/<%= event.id %>" class="btn btn-sm btn-primary">বিস্তারিত</a>
-            <a href="/admin/events/<%= event.id %>/submissions" class="btn btn-sm">সাবমিশন</a>
-            <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-sm">নিবন্ধন</a>
-            <a href="/admin/events/<%= event.id %>/expenses" class="btn btn-sm">খরচ</a>
-            <a href="/admin/events/<%= event.id %>/reports" class="btn btn-sm">রিপোর্ট</a>
+            <a href="/admin/events/<%= event.id %>" class="btn btn-sm btn-primary"><%- t('btn.details') %></a>
+            <a href="/admin/events/<%= event.id %>/submissions" class="btn btn-sm"><%- t('subnav.submissions') %></a>
+            <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-sm"><%- t('subnav.registrations') %></a>
+            <a href="/admin/events/<%= event.id %>/expenses" class="btn btn-sm"><%- t('subnav.expenses') %></a>
+            <a href="/admin/events/<%= event.id %>/reports" class="btn btn-sm"><%- t('subnav.reports') %></a>
           </td>
         </tr>
       <% }) %>

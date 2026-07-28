@@ -6,21 +6,21 @@
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
-    <h1>স্টলসমূহ — <%= event.title %></h1>
-    <a href="/admin/events/<%= event.id %>/stalls/new" class="btn btn-primary">+ নতুন স্টল</a>
+    <h1><%- t('admin.pg_stalls') %> — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/stalls/new" class="btn btn-primary"><%- t('btn.new_stall') %></a>
   </div>
 
   <% if (stalls.length === 0) { %>
-    <div class="empty-state"><p>কোনো স্টল কনফিগার করা হয়নি।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_stalls') %></p></div>
   <% } else { %>
     <div class="stalls-summary">
-      <span><strong><%= stalls.length %></strong> মোট</span>
-      <span><strong><%= stalls.filter(s=>s.is_occupied).length %></strong> দখলকৃত</span>
-      <span><strong><%= stalls.filter(s=>!s.is_occupied).length %></strong> খালি</span>
+      <span><strong><%= stalls.length %></strong> <%- t('admin.total') %></span>
+      <span><strong><%= stalls.filter(s=>s.is_occupied).length %></strong> <%- t('admin.stalls_occupied') %></span>
+      <span><strong><%= stalls.filter(s=>!s.is_occupied).length %></strong> <%- t('admin.stalls_free') %></span>
     </div>
     <table class="admin-table">
       <thead><tr>
-        <th>স্টলের নাম</th><th>অবস্থান</th><th>বরাদ্দ</th><th>ফি</th><th>অবস্থা</th><th>কার্যক্রম</th>
+        <th><%- t('tbl.stall_name') %></th><th><%- t('tbl.location') %></th><th><%- t('tbl.assigned') %></th><th><%- t('tbl.fee') %></th><th><%- t('tbl.status') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% stalls.forEach(stall => { %>
@@ -35,17 +35,17 @@
             <% } else { %>—<% } %>
           </td>
           <td><% if (stall.fee) { %>€<%= parseFloat(stall.fee).toFixed(2) %><% } else { %>—<% } %></td>
-          <td><span class="badge <%= stall.is_occupied ? 'badge-closed' : 'badge-open' %>"><%= stall.is_occupied ? 'দখলকৃত' : 'খালি' %></span></td>
+          <td><span class="badge <%= stall.is_occupied ? 'badge-closed' : 'badge-open' %>"><%= stall.is_occupied ? t('admin.stall_occupied') : t('admin.stall_free') %></span></td>
           <td class="action-cell">
             <button class="btn btn-sm obs-btn"
               data-name="<%= stall.stall_name %>"
               data-id="<%= stall.id %>">
-              পর্যবেক্ষণ (<%= stall.observations ? stall.observations.length : 0 %>)
+              <%- t('admin.observation') %> (<%= stall.observations ? stall.observations.length : 0 %>)
             </button>
             <script type="application/json" id="obs-<%= stall.id %>"><%- JSON.stringify(stall.observations || []) %></script>
-            <a href="/admin/stalls/<%= stall.id %>/edit" class="btn btn-sm">সম্পাদনা/বরাদ্দ</a>
+            <a href="/admin/stalls/<%= stall.id %>/edit" class="btn btn-sm"><%- t('admin.edit_assign') %></a>
             <form action="/admin/stalls/<%= stall.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই স্টল মুছে ফেলবেন?')">
-              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+              <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>
         </tr>

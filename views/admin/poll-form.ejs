@@ -5,25 +5,25 @@
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
-  <h1>নতুন ভোট — <%= event.title %></h1>
+  <h1><%- t('admin.pg_new_poll') %> — <%= event.title %></h1>
 
   <form action="/admin/events/<%= event.id %>/polls/new" method="POST" class="admin-form">
     <div class="form-group">
-      <label for="question">ভোটের প্রশ্ন *</label>
-      <input type="text" id="question" name="question" required placeholder="যেমন: কোন পরিবেশনাটি আপনার সবচেয়ে ভালো লেগেছে?">
+      <label for="question"><%- t('admin.lbl_poll_question') %></label>
+      <input type="text" id="question" name="question" required placeholder="<%- t('admin.poll_question_ph') %>">
     </div>
     <div class="form-group">
-      <label>বিকল্পসমূহ (সর্বোচ্চ ৬টি)</label>
+      <label><%- t('admin.lbl_options') %></label>
       <div id="options-container">
-        <input type="text" name="options" placeholder="বিকল্প ১" class="option-input" required>
-        <input type="text" name="options" placeholder="বিকল্প ২" class="option-input" required>
-        <input type="text" name="options" placeholder="বিকল্প ৩ (ঐচ্ছিক)" class="option-input">
-        <input type="text" name="options" placeholder="বিকল্প ৪ (ঐচ্ছিক)" class="option-input">
+        <input type="text" name="options" placeholder="<%- t('tbl.option') %> 1" class="option-input" required>
+        <input type="text" name="options" placeholder="<%- t('tbl.option') %> 2" class="option-input" required>
+        <input type="text" name="options" placeholder="<%- t('tbl.option') %> 3" class="option-input">
+        <input type="text" name="options" placeholder="<%- t('tbl.option') %> 4" class="option-input">
       </div>
-      <button type="button" id="add-option" class="btn btn-sm btn-outline" style="margin-top:8px">+ বিকল্প যোগ করুন</button>
+      <button type="button" id="add-option" class="btn btn-sm btn-outline" style="margin-top:8px"><%- t('btn.add_option') %></button>
     </div>
-    <button type="submit" class="btn btn-primary">ভোট তৈরি করুন</button>
-    <a href="/admin/events/<%= event.id %>/polls" class="btn btn-outline">বাতিল</a>
+    <button type="submit" class="btn btn-primary"><%- t('admin.btn_create_poll') %></button>
+    <a href="/admin/events/<%= event.id %>/polls" class="btn btn-outline"><%- t('btn.cancel') %></a>
   </form>
 </main>
 
@@ -35,7 +35,7 @@ document.getElementById('add-option').addEventListener('click', function() {
   const input = document.createElement('input');
   input.type = 'text';
   input.name = 'options';
-  input.placeholder = `বিকল্প ${count} (ঐচ্ছিক)`;
+  input.placeholder = '<%= t("tbl.option") %> ' + count;
   input.className = 'option-input';
   container.appendChild(input);
 });

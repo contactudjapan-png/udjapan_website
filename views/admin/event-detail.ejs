@@ -2,73 +2,74 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
 
   <div class="section-header">
     <h1><%= event.title %></h1>
-    <a href="/admin/events/<%= event.id %>/edit" class="btn btn-primary">সম্পাদনা</a>
+    <a href="/admin/events/<%= event.id %>/edit" class="btn btn-primary"><%- t('btn.edit') %></a>
   </div>
 
   <div class="admin-form" style="max-width:640px">
     <div class="form-group">
-      <label>বিবরণ</label>
+      <label><%- t('admin.field_description') %></label>
       <% if (event.description) { %><div class="rich-preview"><%- event.description %></div><% } else { %><p>—</p><% } %>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label>তারিখ ও সময়</label>
-        <p><%= new Date(event.event_date).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) %></p>
+        <label><%- t('admin.field_datetime') %></label>
+        <p><%= new Date(event.event_date).toLocaleString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></p>
       </div>
       <div class="form-group">
-        <label>সর্বোচ্চ ধারণক্ষমতা</label>
+        <label><%- t('admin.field_capacity') %></label>
         <p><%= event.max_capacity || '—' %></p>
       </div>
     </div>
 
     <div class="form-group">
-      <label>স্থান</label>
+      <label><%- t('admin.field_location') %></label>
       <p><%= event.location || '—' %></p>
     </div>
 
     <hr>
-    <h2>টিকিট মূল্য</h2>
+    <h2><%- t('admin.ticket_prices') %></h2>
     <div class="form-row">
       <div class="form-group">
-        <label>হলদে বউ মূল্য</label>
+        <label><%- t('admin.price_early') %></label>
         <p><%= event.price_early_bird ? `€${Number(event.price_early_bird).toFixed(2)}` : '—' %></p>
       </div>
       <div class="form-group">
-        <label>হলদে বউ সময়সীমা</label>
-        <p><%= event.early_bird_deadline ? new Date(event.early_bird_deadline).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) : '—' %></p>
+        <label><%- t('admin.deadline_early') %></label>
+        <p><%= event.early_bird_deadline ? new Date(event.early_bird_deadline).toLocaleString(_dateLocale, { timeZone: 'Europe/Berlin' }) : '—' %></p>
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label>নীলকণ্ঠ মূল্য</label>
+        <label><%- t('admin.price_mid') %></label>
         <p><%= event.price_mid ? `€${Number(event.price_mid).toFixed(2)}` : '—' %></p>
       </div>
       <div class="form-group">
-        <label>নীলকণ্ঠ সময়সীমা</label>
-        <p><%= event.mid_deadline ? new Date(event.mid_deadline).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) : '—' %></p>
+        <label><%- t('admin.deadline_mid') %></label>
+        <p><%= event.mid_deadline ? new Date(event.mid_deadline).toLocaleString(_dateLocale, { timeZone: 'Europe/Berlin' }) : '—' %></p>
       </div>
     </div>
     <div class="form-group">
-      <label>কোকিলা (অনস্পট) মূল্য</label>
+      <label><%- t('admin.price_onspot') %></label>
       <p><%= event.price_onspot ? `€${Number(event.price_onspot).toFixed(2)}` : '—' %></p>
     </div>
 
     <hr>
     <div class="form-row">
       <div class="form-group">
-        <label>অবস্থা</label>
-        <p><span class="badge <%= event.is_active ? 'badge-open' : 'badge-closed' %>"><%= event.is_active ? 'সক্রিয়' : 'নিষ্ক্রিয়' %></span></p>
+        <label><%- t('tbl.status') %></label>
+        <p><span class="badge <%= event.is_active ? 'badge-open' : 'badge-closed' %>"><%= event.is_active ? t('admin.badge_active') : t('admin.badge_inactive') %></span></p>
       </div>
       <div class="form-group">
-        <label>সাবমিশন</label>
-        <p><span class="badge <%= event.registration_open ? 'badge-open' : 'badge-closed' %>"><%= event.registration_open ? 'উন্মুক্ত' : 'বন্ধ' %></span></p>
+        <label><%- t('admin.field_submissions') %></label>
+        <p><span class="badge <%= event.registration_open ? 'badge-open' : 'badge-closed' %>"><%= event.registration_open ? t('admin.open_label') : t('admin.closed_label') %></span></p>
       </div>
     </div>
 
@@ -77,8 +78,8 @@
     <div class="form-row">
       <% if (event.banner_url) { %>
       <div class="form-group">
-        <label>ব্যানার</label>
-        <img src="<%= event.banner_url %>" alt="ব্যানার" class="preview-img">
+        <label><%- t('admin.field_banner') %></label>
+        <img src="<%= event.banner_url %>" alt="<%- t('admin.field_banner') %>" class="preview-img">
       </div>
       <% } %>
       <% if (event.paypal_qr_url) { %>

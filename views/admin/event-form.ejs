@@ -14,18 +14,18 @@ function toBerlinInput(dateStr) {
     <%- include('../partials/event-subnav') %>
   <% } %>
 
-  <h1><%= event ? 'ইভেন্ট সম্পাদনা' : 'নতুন ইভেন্ট' %></h1>
+  <h1><%= event ? t('admin.pg_edit_event') : t('admin.pg_new_event') %></h1>
 
   <!-- ── Form 1: Event Info ──────────────────────────── -->
   <div class="admin-form-section">
-    <h2>ইভেন্ট তথ্য</h2>
+    <h2><%- t('admin.section_event_info') %></h2>
     <form action="<%= event ? `/admin/events/${event.id}/edit` : '/admin/events/new' %>" method="POST" enctype="multipart/form-data" class="admin-form">
       <div class="form-group">
-        <label for="title">ইভেন্টের শিরোনাম *</label>
+        <label for="title"><%- t('admin.lbl_event_title') %></label>
         <input type="text" id="title" name="title" required value="<%= event ? event.title : '' %>">
       </div>
       <div class="form-group">
-        <label for="description">বিবরণ (বাংলা)</label>
+        <label for="description"><%- t('admin.lbl_desc_bn') %></label>
         <textarea id="description" name="description" rows="6" data-rich><%= event ? event.description : '' %></textarea>
       </div>
       <div class="form-group">
@@ -38,85 +38,85 @@ function toBerlinInput(dateStr) {
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label for="event_date">তারিখ ও সময় *</label>
+          <label for="event_date"><%- t('admin.field_datetime') %> *</label>
           <input type="datetime-local" id="event_date" name="event_date" required
             value="<%= event ? toBerlinInput(event.event_date) : '' %>">
         </div>
         <div class="form-group">
-          <label for="max_capacity">সর্বোচ্চ ধারণক্ষমতা</label>
+          <label for="max_capacity"><%- t('admin.field_capacity') %></label>
           <input type="number" id="max_capacity" name="max_capacity" min="1"
             value="<%= event ? (event.max_capacity || '') : '' %>">
         </div>
       </div>
       <div class="form-group">
-        <label for="location">স্থান</label>
-        <input type="text" id="location" name="location" value="<%= event ? (event.location || '') : '' %>" placeholder="ভেন্যুর নাম, ঠিকানা">
+        <label for="location"><%- t('admin.field_location') %></label>
+        <input type="text" id="location" name="location" value="<%= event ? (event.location || '') : '' %>" placeholder="<%- t('admin.lbl_location_ph') %>">
       </div>
       <div class="form-group">
         <label class="checkbox-label">
           <input type="checkbox" name="is_active" <%= event && event.is_active ? 'checked' : '' %>>
-          ইভেন্ট সক্রিয় (সাইটে দৃশ্যমান)
+          <%- t('admin.lbl_event_active') %>
         </label>
       </div>
       <% if (event) { %>
-      <h3 style="margin-top:1.5rem;margin-bottom:0.75rem">ব্যানার ছবি (সময়ভিত্তিক)</h3>
-      <p class="section-hint" style="margin-bottom:1rem">প্রতিটি মূল্য-স্তরে আলাদা ব্যানার দেখানো হবে। খালি রাখলে হলদে বউ ব্যানারটি ব্যবহার হবে।</p>
+      <h3 style="margin-top:1.5rem;margin-bottom:0.75rem"><%- t('admin.banner_timed') %></h3>
+      <p class="section-hint" style="margin-bottom:1rem"><%- t('admin.banner_hint') %></p>
       <div class="form-row">
         <div class="form-group">
-          <label>🟡 হলদে বউ ব্যানার (ডিফল্ট)</label>
+          <label><%- t('admin.lbl_banner_early') %></label>
           <% if (event.banner_url) { %>
-            <img src="<%= event.banner_url %>" alt="হলদে বউ ব্যানার" class="preview-img">
+            <img src="<%= event.banner_url %>" alt="<%- t('admin.lbl_banner_early') %>" class="preview-img">
           <% } %>
           <input type="file" name="banner" accept="image/*">
         </div>
         <div class="form-group">
-          <label>🔵 নীলকণ্ঠ ব্যানার</label>
+          <label><%- t('admin.lbl_banner_mid') %></label>
           <% if (event.banner_url_nilkantha) { %>
-            <img src="<%= event.banner_url_nilkantha %>" alt="নীলকণ্ঠ ব্যানার" class="preview-img">
+            <img src="<%= event.banner_url_nilkantha %>" alt="<%- t('admin.lbl_banner_mid') %>" class="preview-img">
           <% } %>
           <input type="file" name="banner_nilkantha" accept="image/*">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>🟤 কোকিলা ব্যানার</label>
+          <label><%- t('admin.lbl_banner_onspot') %></label>
           <% if (event.banner_url_kokila) { %>
-            <img src="<%= event.banner_url_kokila %>" alt="কোকিলা ব্যানার" class="preview-img">
+            <img src="<%= event.banner_url_kokila %>" alt="<%- t('admin.lbl_banner_onspot') %>" class="preview-img">
           <% } %>
           <input type="file" name="banner_kokila" accept="image/*">
         </div>
         <div class="form-group">
-          <label>🔴 ইভেন্ট-পরবর্তী ব্যানার</label>
+          <label><%- t('admin.lbl_banner_post') %></label>
           <% if (event.banner_url_bd) { %>
-            <img src="<%= event.banner_url_bd %>" alt="ইভেন্ট-পরবর্তী ব্যানার" class="preview-img">
+            <img src="<%= event.banner_url_bd %>" alt="<%- t('admin.lbl_banner_post') %>" class="preview-img">
           <% } %>
           <input type="file" name="banner_bd" accept="image/*">
         </div>
       </div>
       <div class="form-row" style="margin-top:0.5rem">
         <div class="form-group">
-          <label>পপআপ ছবি</label>
+          <label><%- t('admin.lbl_popup') %></label>
           <% if (event.popup_image_url) { %>
-            <img src="<%= event.popup_image_url %>" alt="পপআপ" class="preview-img">
+            <img src="<%= event.popup_image_url %>" alt="<%- t('admin.lbl_popup') %>" class="preview-img">
           <% } %>
           <input type="file" name="popup_image" accept="image/*">
-          <small>হোম পেজে লোডে পপআপ হিসেবে দেখাবে। খালি রাখলে পপআপ নেই।</small>
+          <small><%- t('admin.popup_hint') %></small>
         </div>
       </div>
       <% } %>
-      <button type="submit" class="btn btn-primary"><%= event ? 'তথ্য সংরক্ষণ' : 'ইভেন্ট তৈরি করুন' %></button>
-      <a href="/admin/events" class="btn btn-outline">বাতিল</a>
+      <button type="submit" class="btn btn-primary"><%= event ? t('admin.btn_save_event_info') : t('admin.btn_create_event') %></button>
+      <a href="/admin/events" class="btn btn-outline"><%- t('btn.cancel') %></a>
     </form>
   </div>
 
   <!-- ── Form 2: Payment Info (edit only) ───────────── -->
   <% if (event) { %>
   <div class="admin-form-section" style="margin-top:2rem">
-    <h2>পেমেন্ট তথ্য</h2>
+    <h2><%- t('admin.section_payment') %></h2>
     <form action="/admin/events/<%= event.id %>/edit/payment" method="POST" enctype="multipart/form-data" class="admin-form">
       <div class="form-group">
-        <label for="payment_description">পেমেন্ট নির্দেশনা (বাংলা)</label>
-        <textarea id="payment_description" name="payment_description" rows="4" data-rich placeholder="পেমেন্ট সম্পর্কিত নির্দেশনা বা বার্তা (পাবলিক পেজে ফর্মের উপরে দেখাবে)"><%= event.payment_description || '' %></textarea>
+        <label for="payment_description"><%- t('admin.lbl_pay_desc_bn') %></label>
+        <textarea id="payment_description" name="payment_description" rows="4" data-rich placeholder="<%- t('admin.lbl_pay_desc_bn') %>"><%= event.payment_description || '' %></textarea>
       </div>
       <div class="form-group">
         <label for="payment_description_en">Payment Instructions (English)</label>
@@ -126,45 +126,45 @@ function toBerlinInput(dateStr) {
         <label for="payment_description_de">Zahlungsanweisungen (Deutsch)</label>
         <textarea id="payment_description_de" name="payment_description_de" rows="4" data-rich placeholder="Zahlungshinweise auf der öffentlichen Seite"><%= event.payment_description_de || '' %></textarea>
       </div>
-      <p class="section-hint">খালি রাখলে মূল্য প্রদর্শিত হবে না। প্রতিটি স্তর তার নির্ধারিত সময়সীমা পর্যন্ত সক্রিয় থাকে।</p>
+      <p class="section-hint"><%- t('admin.price_hint') %></p>
       <div class="form-row">
         <div class="form-group">
-          <label for="price_early_bird">হলদে বউ মূল্য (€)</label>
+          <label for="price_early_bird"><%- t('admin.lbl_price_early') %></label>
           <input type="number" id="price_early_bird" name="price_early_bird" min="0" step="0.01"
             value="<%= event.price_early_bird || '' %>" placeholder="0.00">
         </div>
         <div class="form-group">
-          <label for="early_bird_deadline">হলদে বউ সময়সীমা</label>
+          <label for="early_bird_deadline"><%- t('admin.lbl_deadline_early') %></label>
           <input type="datetime-local" id="early_bird_deadline" name="early_bird_deadline"
             value="<%= toBerlinInput(event.early_bird_deadline) %>">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label for="price_mid">নীলকণ্ঠ মূল্য (€)</label>
+          <label for="price_mid"><%- t('admin.lbl_price_mid') %></label>
           <input type="number" id="price_mid" name="price_mid" min="0" step="0.01"
             value="<%= event.price_mid || '' %>" placeholder="0.00">
         </div>
         <div class="form-group">
-          <label for="mid_deadline">নীলকণ্ঠ সময়সীমা</label>
+          <label for="mid_deadline"><%- t('admin.lbl_deadline_mid') %></label>
           <input type="datetime-local" id="mid_deadline" name="mid_deadline"
             value="<%= toBerlinInput(event.mid_deadline) %>">
-          <small>হলদে বউ সময়সীমার পর থেকে এই তারিখ পর্যন্ত নীলকণ্ঠ মূল্য প্রযোজ্য।</small>
+          <small><%- t('admin.mid_hint') %></small>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label for="price_onspot">কোকিলা মূল্য (€)</label>
+          <label for="price_onspot"><%- t('admin.lbl_price_onspot') %></label>
           <input type="number" id="price_onspot" name="price_onspot" min="0" step="0.01"
             value="<%= event.price_onspot || '' %>" placeholder="0.00">
         </div>
         <div class="form-group">
           <label>&nbsp;</label>
-          <p style="padding-top:0.5rem;font-size:0.85rem;color:var(--text-muted)">নীলকণ্ঠ সময়সীমার পর থেকে ইভেন্ট শেষ পর্যন্ত কোকিলা মূল্য প্রযোজ্য।</p>
+          <p style="padding-top:0.5rem;font-size:0.85rem;color:var(--text-muted)"><%- t('admin.onspot_hint') %></p>
         </div>
       </div>
       <div class="form-group">
-        <label>PayPal QR কোড</label>
+        <label><%- t('admin.lbl_paypal_qr') %></label>
         <% if (event.paypal_qr_url) { %>
           <img src="<%= event.paypal_qr_url %>" alt="PayPal QR" class="preview-img preview-img--qr">
         <% } %>
@@ -173,18 +173,18 @@ function toBerlinInput(dateStr) {
       <div class="form-group">
         <label class="checkbox-label">
           <input type="checkbox" name="registration_open" <%= event.registration_open ? 'checked' : '' %>>
-          সাবমিশন উন্মুক্ত
+          <%- t('admin.lbl_sub_open') %>
         </label>
       </div>
-      <button type="submit" class="btn btn-primary">পেমেন্ট তথ্য সংরক্ষণ</button>
+      <button type="submit" class="btn btn-primary"><%- t('admin.btn_save_payment') %></button>
     </form>
   </div>
 
   <hr style="margin-top:3rem">
   <div class="danger-zone" style="margin-top:2rem">
-    <h2>বিপদ অঞ্চল</h2>
+    <h2><%- t('admin.danger_zone') %></h2>
     <form action="/admin/events/<%= event.id %>/delete" method="POST" onsubmit="return confirm('এই ইভেন্ট এবং এর সমস্ত ডেটা স্থায়ীভাবে মুছে ফেলবেন?')">
-      <button type="submit" class="btn btn-danger">ইভেন্ট মুছুন</button>
+      <button type="submit" class="btn btn-danger"><%- t('admin.btn_delete_event') %></button>
     </form>
   </div>
   <% } %>

@@ -2,27 +2,28 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
-    <h1>স্ক্যান লগ — <%= event.title %></h1>
-    <span style="color:var(--text-muted)">মোট: <%= logs.length %></span>
+    <h1><%- t('admin.pg_scan_log') %> — <%= event.title %></h1>
+    <span style="color:var(--text-muted)"><%- t('admin.scan_total') %> <%= logs.length %></span>
   </div>
 
   <% if (logs.length === 0) { %>
-    <div class="empty-state"><p>এখনো কোনো স্ক্যান হয়নি।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_scan_log') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>সময়</th><th>নাম</th><th>ফলাফল</th><th>কোড</th>
+        <th><%- t('tbl.time') %></th><th><%- t('tbl.name') %></th><th><%- t('tbl.result') %></th><th><%- t('tbl.code') %></th>
       </tr></thead>
       <tbody>
       <% logs.forEach(log => { %>
         <tr>
-          <td style="white-space:nowrap"><%= new Date(log.scanned_at).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td style="white-space:nowrap"><%= new Date(log.scanned_at).toLocaleString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td><%= log.name || '—' %></td>
-          <td><span class="badge <%= log.result === 'valid' ? 'badge-open' : 'badge-closed' %>"><%= log.result === 'valid' ? 'বৈধ' : 'অবৈধ' %></span></td>
+          <td><span class="badge <%= log.result === 'valid' ? 'badge-open' : 'badge-closed' %>"><%= log.result === 'valid' ? t('admin.scan_valid') : t('admin.scan_invalid') %></span></td>
           <td style="font-family:monospace;font-size:0.85rem"><%= log.qr_token ? log.qr_token.slice(0, 8).toUpperCase() : '—' %></td>
         </tr>
       <% }) %>

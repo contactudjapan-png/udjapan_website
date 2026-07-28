@@ -2,21 +2,22 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
-  <h1>অডিট লগ</h1>
+  <h1><%- t('admin.pg_audit_log') %></h1>
 
   <% if (logs.length === 0) { %>
-    <div class="empty-state"><p>কোনো লগ নেই।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_audit_log') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>সময়</th><th>ব্যবহারকারী</th><th>কার্যক্রম</th><th>সত্তা ধরন</th><th>সত্তা আইডি</th>
+        <th><%- t('tbl.time') %></th><th><%- t('tbl.user') %></th><th><%- t('tbl.action') %></th><th><%- t('tbl.entity_type') %></th><th><%- t('tbl.entity_id') %></th>
       </tr></thead>
       <tbody>
       <% logs.forEach(log => { %>
         <tr>
-          <td style="white-space:nowrap;font-size:0.8rem"><%= new Date(log.created_at).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td style="white-space:nowrap;font-size:0.8rem"><%= new Date(log.created_at).toLocaleString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td><%= log.user_email || '—' %></td>
           <td><span class="badge badge-<%= log.action === 'delete' ? 'rejected' : log.action === 'create' ? 'approved' : 'pending' %>"><%= log.action %></span></td>
           <td><%= log.entity_type %></td>

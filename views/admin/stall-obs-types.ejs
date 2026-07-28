@@ -4,15 +4,15 @@
 <%- include('../partials/flash') %>
 
 <main class="admin-container">
-  <h1>স্টল পর্যবেক্ষণ ধরন</h1>
-  <p style="color:var(--text-muted)">এই তালিকা সকল ইভেন্টের স্টল পর্যবেক্ষণ ফর্মে ড্রপডাউনে দেখাবে।</p>
+  <h1><%- t('admin.pg_stall_obs_types') %></h1>
+  <p style="color:var(--text-muted)"><%- t('admin.stall_obs_hint') %></p>
 
   <form action="/admin/settings/stall-obs-types" method="POST" class="admin-form" style="max-width:480px">
     <div class="form-group">
-      <label for="stall_obs_types">পর্যবেক্ষণের ধরনসমূহ (প্রতি লাইনে একটি)</label>
+      <label for="stall_obs_types"><%- t('admin.lbl_obs_types') %></label>
       <textarea id="stall_obs_types" name="stall_obs_types" rows="10"><%= stallObsTypes %></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">সংরক্ষণ করুন</button>
+    <button type="submit" class="btn btn-primary"><%- t('btn.save') %></button>
   </form>
 </main>
 

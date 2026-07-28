@@ -2,35 +2,36 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
     <div>
-      <h1>পর্যবেক্ষণ — <%= stall.stall_name %></h1>
+      <h1><%- t('admin.pg_observations') %> — <%= stall.stall_name %></h1>
       <p style="margin:0;color:var(--text-muted)"><%= event.title %><% if (stall.location_info) { %> &mdash; <%= stall.location_info %><% } %></p>
     </div>
-    <a href="/admin/events/<%= event.id %>/stalls" class="btn btn-outline">← স্টলসমূহ</a>
+    <a href="/admin/events/<%= event.id %>/stalls" class="btn btn-outline"><%- t('admin.back_stalls') %></a>
   </div>
 
   <% if (observations.length === 0) { %>
-    <div class="empty-state"><p>এই স্টলে এখনো কোনো পর্যবেক্ষণ নেই।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_observations') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>সময়</th><th>ধরন</th><th>রেটিং</th><th>নোট</th><th>দ্বারা</th>
+        <th><%- t('tbl.time') %></th><th><%- t('tbl.type') %></th><th><%- t('tbl.rating') %></th><th><%- t('tbl.notes') %></th><th><%- t('tbl.by') %></th>
       </tr></thead>
       <tbody>
       <% observations.forEach(obs => { %>
         <tr>
-          <td style="white-space:nowrap"><%= new Date(obs.created_at).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td style="white-space:nowrap"><%= new Date(obs.created_at).toLocaleString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td><%= obs.observation_type || '—' %></td>
           <td>
             <% if (obs.rating) { %>
               <span class="star-display">
                 <% for (let i = 1; i <= 10; i++) { %><span class="<%= i <= obs.rating ? '' : 'empty' %>">★</span><% } %>
               </span>
-              <span style="font-size:0.8rem;color:var(--text-muted)"> <%= obs.rating %>/১০</span>
+              <span style="font-size:0.8rem;color:var(--text-muted)"> <%= obs.rating %>/10</span>
             <% } else { %>—<% } %>
           </td>
           <td><%= obs.notes || '—' %></td>

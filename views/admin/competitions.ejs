@@ -6,34 +6,34 @@
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
-    <h1>প্রতিযোগিতা — <%= event.title %></h1>
+    <h1><%- t('admin.pg_competitions') %> — <%= event.title %></h1>
   </div>
 
   <form action="/admin/events/<%= event.id %>/competitions/new" method="POST" class="admin-form" style="max-width:600px;margin-bottom:2rem">
-    <h2 style="font-size:1rem;margin-bottom:1rem">নতুন প্রতিযোগিতা যোগ করুন</h2>
+    <h2 style="font-size:1rem;margin-bottom:1rem"><%- t('admin.add_competition') %></h2>
     <div class="form-row">
       <div class="form-group">
-        <label for="name">প্রতিযোগিতার নাম *</label>
-        <input type="text" id="name" name="name" required placeholder="যেমন: রবীন্দ্র সংগীত">
+        <label for="name"><%- t('admin.lbl_comp_name') %></label>
+        <input type="text" id="name" name="name" required placeholder="<%- t('admin.notes_ph') %>">
       </div>
       <div class="form-group">
-        <label for="winner_name">বিজয়ীর নাম</label>
-        <input type="text" id="winner_name" name="winner_name" placeholder="ঘোষণার আগে খালি রাখুন">
+        <label for="winner_name"><%- t('admin.lbl_winner_name') %></label>
+        <input type="text" id="winner_name" name="winner_name" placeholder="<%- t('admin.winner_ph') %>">
       </div>
     </div>
     <div class="form-group">
-      <label for="notes">মন্তব্য</label>
-      <input type="text" id="notes" name="notes" placeholder="অতিরিক্ত তথ্য (ঐচ্ছিক)">
+      <label for="notes"><%- t('admin.lbl_notes') %></label>
+      <input type="text" id="notes" name="notes" placeholder="<%- t('admin.notes_ph') %>">
     </div>
-    <button type="submit" class="btn btn-primary">যোগ করুন</button>
+    <button type="submit" class="btn btn-primary"><%- t('btn.add_competition') %></button>
   </form>
 
   <% if (competitions.length === 0) { %>
-    <div class="empty-state"><p>এখনো কোনো প্রতিযোগিতা নেই।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_competitions') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>প্রতিযোগিতার নাম</th><th>বিজয়ী</th><th>মন্তব্য</th><th>কার্যক্রম</th>
+        <th><%- t('tbl.comp_name') %></th><th><%- t('tbl.winner') %></th><th><%- t('tbl.comment') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% competitions.forEach(comp => { %>
@@ -53,10 +53,10 @@
               data-name="<%= comp.name %>"
               data-winner="<%= comp.winner_name || '' %>"
               data-notes="<%= comp.notes || '' %>">
-              সম্পাদনা
+              <%- t('btn.edit') %>
             </button>
             <form action="/admin/competitions/<%= comp.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('মুছে ফেলবেন?')">
-              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+              <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>
         </tr>
@@ -69,23 +69,23 @@
 <!-- Edit modal -->
 <div id="edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;align-items:center;justify-content:center">
   <div class="card" style="width:100%;max-width:480px;padding:1.5rem">
-    <h2 style="margin:0 0 1rem;font-size:1rem">প্রতিযোগিতা সম্পাদনা</h2>
+    <h2 style="margin:0 0 1rem;font-size:1rem"><%- t('admin.edit_competition') %></h2>
     <form id="edit-form" method="POST" class="admin-form">
       <div class="form-group">
-        <label>প্রতিযোগিতার নাম *</label>
+        <label><%- t('admin.lbl_comp_name') %></label>
         <input type="text" id="edit-name" name="name" required>
       </div>
       <div class="form-group">
-        <label>বিজয়ীর নাম</label>
-        <input type="text" id="edit-winner" name="winner_name" placeholder="ঘোষণার আগে খালি রাখুন">
+        <label><%- t('admin.lbl_winner_name') %></label>
+        <input type="text" id="edit-winner" name="winner_name" placeholder="<%- t('admin.winner_ph') %>">
       </div>
       <div class="form-group">
-        <label>মন্তব্য</label>
+        <label><%- t('admin.lbl_notes') %></label>
         <input type="text" id="edit-notes" name="notes">
       </div>
       <div style="display:flex;gap:0.5rem">
-        <button type="submit" class="btn btn-primary">সংরক্ষণ</button>
-        <button type="button" id="close-modal" class="btn btn-outline">বাতিল</button>
+        <button type="submit" class="btn btn-primary"><%- t('admin.btn_save') %></button>
+        <button type="button" id="close-modal" class="btn btn-outline"><%- t('btn.cancel') %></button>
       </div>
     </form>
   </div>

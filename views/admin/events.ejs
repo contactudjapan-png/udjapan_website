@@ -2,33 +2,34 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
   <div class="section-header">
-    <h1>ইভেন্টসমূহ</h1>
-    <a href="/admin/events/new" class="btn btn-primary">+ নতুন ইভেন্ট</a>
+    <h1><%- t('admin.pg_events') %></h1>
+    <a href="/admin/events/new" class="btn btn-primary"><%- t('btn.new_event') %></a>
   </div>
 
   <% if (events.length === 0) { %>
-    <div class="empty-state"><p>এখনো কোনো ইভেন্ট নেই।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_events_list') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>শিরোনাম</th><th>তারিখ</th><th>সক্রিয়</th><th>সাবমিশন</th><th>কার্যক্রম</th>
+        <th><%- t('tbl.title') %></th><th><%- t('tbl.date') %></th><th><%- t('tbl.active') %></th><th><%- t('tbl.submissions') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% events.forEach(event => { %>
         <tr>
           <td><strong><%= event.title %></strong></td>
-          <td><%= new Date(event.event_date).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td><%= new Date(event.event_date).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td><%= event.is_active ? '✓' : '✗' %></td>
-          <td><%= event.registration_open ? 'খোলা' : 'বন্ধ' %></td>
+          <td><%= event.registration_open ? t('admin.open') : t('admin.closed') %></td>
           <td class="action-cell">
-            <a href="/admin/events/<%= event.id %>" class="btn btn-sm btn-primary">বিস্তারিত</a>
-            <a href="/admin/events/<%= event.id %>/submissions" class="btn btn-sm">সাবমিশন</a>
-            <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-sm">নিবন্ধন</a>
-            <a href="/admin/events/<%= event.id %>/expenses" class="btn btn-sm">খরচ</a>
-            <a href="/admin/events/<%= event.id %>/reports" class="btn btn-sm">রিপোর্ট</a>
+            <a href="/admin/events/<%= event.id %>" class="btn btn-sm btn-primary"><%- t('btn.details') %></a>
+            <a href="/admin/events/<%= event.id %>/submissions" class="btn btn-sm"><%- t('subnav.submissions') %></a>
+            <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-sm"><%- t('subnav.registrations') %></a>
+            <a href="/admin/events/<%= event.id %>/expenses" class="btn btn-sm"><%- t('subnav.expenses') %></a>
+            <a href="/admin/events/<%= event.id %>/reports" class="btn btn-sm"><%- t('subnav.reports') %></a>
           </td>
         </tr>
       <% }) %>

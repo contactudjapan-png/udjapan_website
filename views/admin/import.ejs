@@ -5,15 +5,15 @@
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
-  <h1>Import Historical Data — <%= event.title %></h1>
+  <h1><%- t('admin.pg_import') %> — <%= event.title %></h1>
 
   <div class="admin-form-card">
-    <p>Upload an Excel (.xlsx) file to import historical registrations and expenses. The file should contain one or both of these sheets:</p>
+    <p><%- t('admin.import_hint') %></p>
 
     <div class="import-spec">
-      <h3>Sheet: <code>Registrations</code></h3>
+      <h3><%- t('admin.import_sheet_regs') %></h3>
       <table class="admin-table">
-        <thead><tr><th>Column</th><th>Type</th><th>Required</th><th>Notes</th></tr></thead>
+        <thead><tr><th><%- t('tbl.column') %></th><th><%- t('admin.import_col_type') %></th><th><%- t('admin.import_col_req') %></th><th><%- t('admin.import_col_notes') %></th></tr></thead>
         <tbody>
           <tr><td><code>name</code></td><td>text</td><td>Yes</td><td>Full name</td></tr>
           <tr><td><code>email</code></td><td>text</td><td>Yes</td><td>Email address</td></tr>
@@ -22,9 +22,9 @@
         </tbody>
       </table>
 
-      <h3 style="margin-top:1.5rem">Sheet: <code>Expenses</code></h3>
+      <h3 style="margin-top:1.5rem"><%- t('admin.import_sheet_exp') %></h3>
       <table class="admin-table">
-        <thead><tr><th>Column</th><th>Type</th><th>Required</th><th>Notes</th></tr></thead>
+        <thead><tr><th><%- t('tbl.column') %></th><th><%- t('admin.import_col_type') %></th><th><%- t('admin.import_col_req') %></th><th><%- t('admin.import_col_notes') %></th></tr></thead>
         <tbody>
           <tr><td><code>description</code></td><td>text</td><td>Yes</td><td>Expense description</td></tr>
           <tr><td><code>amount</code></td><td>number</td><td>Yes</td><td>Amount in EUR</td></tr>
@@ -34,11 +34,11 @@
 
     <form action="/admin/events/<%= event.id %>/import" method="POST" enctype="multipart/form-data" style="margin-top:1.5rem">
       <div class="form-group">
-        <label for="excel_file">Excel File (.xlsx) *</label>
+        <label for="excel_file"><%- t('admin.lbl_excel_file') %></label>
         <input type="file" id="excel_file" name="excel_file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
       </div>
-      <button type="submit" class="btn btn-primary">Import Data</button>
-      <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-outline">Cancel</a>
+      <button type="submit" class="btn btn-primary"><%- t('admin.btn_import') %></button>
+      <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-outline"><%- t('btn.cancel') %></a>
     </form>
   </div>
 </main>

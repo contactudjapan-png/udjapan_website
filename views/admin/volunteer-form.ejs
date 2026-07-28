@@ -5,27 +5,27 @@
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
-  <h1>নতুন স্বেচ্ছাসেবী — <%= event.title %></h1>
+  <h1><%- t('admin.pg_new_volunteer') %> — <%= event.title %></h1>
 
   <form action="/admin/events/<%= event.id %>/volunteers/new" method="POST" class="admin-form">
     <div class="form-group">
-      <label for="name">নাম *</label>
-      <input type="text" id="name" name="name" required placeholder="পূর্ণ নাম">
+      <label for="name"><%- t('admin.lbl_full_name') %></label>
+      <input type="text" id="name" name="name" required placeholder="<%- t('admin.lbl_full_name') %>">
     </div>
     <div class="form-group">
-      <label for="email">ইমেইল *</label>
+      <label for="email"><%- t('admin.lbl_email') %></label>
       <input type="email" id="email" name="email" required placeholder="email@example.com">
     </div>
     <div class="form-group">
-      <label for="phone">ফোন</label>
+      <label for="phone"><%- t('admin.lbl_phone') %></label>
       <input type="tel" id="phone" name="phone" placeholder="+81 90 1234 5678">
     </div>
     <div class="form-group">
-      <label for="amount">পারিশ্রমিক (€)</label>
+      <label for="amount"><%- t('admin.lbl_remuneration') %></label>
       <input type="number" id="amount" name="amount" step="0.01" min="0" placeholder="0.00">
     </div>
-    <button type="submit" class="btn btn-primary">স্বেচ্ছাসেবী যোগ করুন</button>
-    <a href="/admin/events/<%= event.id %>/volunteers" class="btn btn-outline">বাতিল</a>
+    <button type="submit" class="btn btn-primary"><%- t('admin.btn_add_volunteer') %></button>
+    <a href="/admin/events/<%= event.id %>/volunteers" class="btn btn-outline"><%- t('btn.cancel') %></a>
   </form>
 </main>
 

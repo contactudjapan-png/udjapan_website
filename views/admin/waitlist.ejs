@@ -2,19 +2,20 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
-    <h1>ওয়েটলিস্ট — <%= event.title %></h1>
+    <h1><%- t('admin.pg_waitlist') %> — <%= event.title %></h1>
   </div>
 
   <% if (waitlist.length === 0) { %>
-    <div class="empty-state"><p>ওয়েটলিস্টে কেউ নেই।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_waitlist') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>#</th><th>নাম</th><th>ইমেইল</th><th>যোগ দিয়েছেন</th><th>কার্যক্রম</th>
+        <th>#</th><th><%- t('tbl.name') %></th><th><%- t('tbl.email') %></th><th><%- t('tbl.joined') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% waitlist.forEach((entry, i) => { %>
@@ -22,13 +23,13 @@
           <td><%= i + 1 %></td>
           <td><%= entry.name %></td>
           <td><%= entry.email %></td>
-          <td><%= new Date(entry.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
+          <td><%= new Date(entry.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td class="action-cell">
             <form action="/admin/waitlist/<%= entry.id %>/promote" method="POST" style="display:inline" onsubmit="return confirm('এই ব্যক্তিকে নিবন্ধনে নিয়ে যাবেন?')">
-              <button type="submit" class="btn btn-sm btn-success">নিবন্ধনে নিন</button>
+              <button type="submit" class="btn btn-sm btn-success"><%- t('btn.promote') %></button>
             </form>
             <form action="/admin/waitlist/<%= entry.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('ওয়েটলিস্ট থেকে সরাবেন?')">
-              <button type="submit" class="btn btn-sm btn-danger">সরান</button>
+              <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.remove') %></button>
             </form>
           </td>
         </tr>

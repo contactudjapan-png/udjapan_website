@@ -2,22 +2,23 @@
 <body class="admin-page">
 <%- include('../partials/nav-admin') %>
 <%- include('../partials/flash') %>
+<% var _dateLocale = locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD'; %>
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
-    <h1>আয়সমূহ — <%= event.title %></h1>
-    <a href="/admin/events/<%= event.id %>/incomes/new" class="btn btn-primary">+ আয় যোগ করুন</a>
+    <h1><%- t('admin.pg_incomes') %> — <%= event.title %></h1>
+    <a href="/admin/events/<%= event.id %>/incomes/new" class="btn btn-primary"><%- t('btn.add_income') %></a>
   </div>
 
-  <div class="total-banner">মোট আয়: <strong>€<%= total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) %></strong></div>
+  <div class="total-banner"><%- t('admin.total_income') %> <strong>€<%= total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) %></strong></div>
 
   <% if (incomes.length === 0) { %>
-    <div class="empty-state"><p>কোনো আয় নথিভুক্ত হয়নি।</p></div>
+    <div class="empty-state"><p><%- t('admin.empty_incomes') %></p></div>
   <% } else { %>
     <table class="admin-table">
       <thead><tr>
-        <th>ক্যাটাগরি</th><th>বিবরণ</th><th>পরিমাণ</th><th>লেনদেন আইডি</th><th>প্রদানকারী</th><th>পেমেন্টের তারিখ/সময়</th><th>কার্যক্রম</th>
+        <th><%- t('tbl.category') %></th><th><%- t('tbl.description') %></th><th><%- t('tbl.amount') %></th><th><%- t('tbl.transaction_id') %></th><th><%- t('tbl.payer') %></th><th><%- t('tbl.payment_date') %></th><th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% incomes.forEach(inc => { %>
@@ -33,15 +34,15 @@
           </td>
           <td style="white-space:nowrap;font-size:0.85rem">
             <% if (inc.payment_date) { %>
-              <%= new Date(inc.payment_date).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %><br>
-              <span style="color:var(--text-muted)"><%= new Date(inc.payment_date).toLocaleTimeString('bn-BD', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit' }) %></span>
+              <%= new Date(inc.payment_date).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %><br>
+              <span style="color:var(--text-muted)"><%= new Date(inc.payment_date).toLocaleTimeString(_dateLocale, { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit' }) %></span>
             <% } else { %>
-              <%= new Date(inc.created_at).toLocaleDateString('bn-BD', { timeZone: 'Europe/Berlin' }) %>
+              <%= new Date(inc.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %>
             <% } %>
           </td>
           <td>
             <form action="/admin/incomes/<%= inc.id %>/delete" method="POST" onsubmit="return confirm('এই আয় মুছে ফেলবেন?')">
-              <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
+              <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>
         </tr>

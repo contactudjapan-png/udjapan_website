@@ -5,20 +5,22 @@
 
 <main class="admin-container">
   <%- include('../partials/event-subnav') %>
-  <h1>বাল্ক পেমেন্ট আমদানি — <%= event.title %></h1>
+  <h1><%- t('admin.pg_bulk_payment') %> — <%= event.title %></h1>
 
   <div class="info-box">
-    <strong>CSV/Excel ফরম্যাট:</strong> কলামগুলো হবে: <code>name</code>, <code>email</code>, <code>transaction_id</code>, <code>amount</code><br>
-    প্রথম সারি হেডার হিসেবে ব্যবহার হবে। <code>amount</code> ঐচ্ছিক।
+    <strong><%- t('bulk.csv_format') %></strong> <%- t('bulk.csv_hint') %>
+    <% if (locals.results && results.matched.length > 0 && results.matched[0].created_at) { %>
+      <div style="margin-top:0.5rem"><strong><%- t('bulk.transaction_date') %>:</strong> <%= new Date(results.matched[0].created_at).toLocaleDateString(locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD', { timeZone: 'Europe/Berlin', year: 'numeric', month: 'long', day: 'numeric' }) %></div>
+    <% } %>
   </div>
 
   <div class="admin-form-card" style="margin-bottom:2rem">
     <form action="/admin/events/<%= event.id %>/bulk-payment" method="POST" enctype="multipart/form-data">
       <div class="form-group">
-        <label for="payment_file">পেমেন্ট ফাইল (CSV বা Excel .xlsx)</label>
+        <label for="payment_file"><%- t('bulk.lbl_payment_file') %></label>
         <input type="file" id="payment_file" name="payment_file" accept=".csv,.xlsx,.xls" required>
       </div>
-      <button type="submit" class="btn btn-primary">প্রক্রিয়া করুন</button>
+      <button type="submit" class="btn btn-primary"><%- t('btn.process') %></button>
     </form>
   </div>
 
@@ -27,22 +29,22 @@
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-number" style="color:var(--success)"><%= results.matched.length %></div>
-          <div class="stat-label">পরিশোধিত হয়েছে</div>
+          <div class="stat-label"><%- t('bulk.stat_paid') %></div>
         </div>
         <div class="stat-card">
           <div class="stat-number" style="color:var(--warning)"><%= results.alreadyPaid.length %></div>
-          <div class="stat-label">ইতিমধ্যে পরিশোধিত / এড়ানো হয়েছে</div>
+          <div class="stat-label"><%- t('bulk.stat_already_paid') %></div>
         </div>
         <div class="stat-card">
           <div class="stat-number" style="color:var(--danger)"><%= results.notFound.length %></div>
-          <div class="stat-label">পাওয়া যায়নি</div>
+          <div class="stat-label"><%- t('bulk.stat_not_found') %></div>
         </div>
       </div>
 
       <% if (results.matched.length > 0) { %>
-        <h2 style="margin-top:1.5rem">পরিশোধিত (<%= results.matched.length %>)</h2>
+        <h2 style="margin-top:1.5rem"><%- t('bulk.section_paid') %> (<%= results.matched.length %>)</h2>
         <table class="admin-table">
-          <thead><tr><th>নাম</th><th>ইমেইল</th><th>লেনদেন আইডি</th><th>পরিমাণ</th></tr></thead>
+          <thead><tr><th><%- t('tbl.name') %></th><th><%- t('tbl.email') %></th><th><%- t('tbl.transaction_id') %></th><th><%- t('tbl.amount') %></th></tr></thead>
           <tbody>
           <% results.matched.forEach(r => { %>
             <tr>
@@ -56,9 +58,9 @@
       <% } %>
 
       <% if (results.notFound.length > 0) { %>
-        <h2 style="margin-top:1.5rem;color:var(--danger)">পাওয়া যায়নি (<%= results.notFound.length %>)</h2>
+        <h2 style="margin-top:1.5rem;color:var(--danger)"><%- t('bulk.section_not_found') %> (<%= results.notFound.length %>)</h2>
         <table class="admin-table">
-          <thead><tr><th>নাম</th><th>ইমেইল</th><th>লেনদেন আইডি</th></tr></thead>
+          <thead><tr><th><%- t('tbl.name') %></th><th><%- t('tbl.email') %></th><th><%- t('tbl.transaction_id') %></th></tr></thead>
           <tbody>
           <% results.notFound.forEach(r => { %>
             <tr><td><%= r.name || '—' %></td><td><%= r.email || '—' %></td><td><%= r.transaction_id || '—' %></td></tr>
@@ -68,9 +70,9 @@
       <% } %>
 
       <% if (results.alreadyPaid.length > 0) { %>
-        <h2 style="margin-top:1.5rem;color:var(--warning)">এড়ানো হয়েছে (<%= results.alreadyPaid.length %>)</h2>
+        <h2 style="margin-top:1.5rem;color:var(--warning)"><%- t('bulk.section_skipped') %> (<%= results.alreadyPaid.length %>)</h2>
         <table class="admin-table">
-          <thead><tr><th>নাম</th><th>ইমেইল</th><th>কারণ</th></tr></thead>
+          <thead><tr><th><%- t('tbl.name') %></th><th><%- t('tbl.email') %></th><th><%- t('tbl.reason') %></th></tr></thead>
           <tbody>
           <% results.alreadyPaid.forEach(r => { %>
             <tr><td><%= r.name || '—' %></td><td><%= r.email || '—' %></td><td><%= r.reason %></td></tr>

@@ -5,18 +5,18 @@
 
 <main class="admin-container">
   <div class="section-header">
-    <h1><%= announcement ? 'ঘোষণা সম্পাদনা' : 'নতুন ঘোষণা' %></h1>
-    <a href="/admin/announcements" class="btn btn-outline">← ফিরুন</a>
+    <h1><%= announcement ? t('admin.pg_edit_announcement') : t('admin.pg_new_announcement') %></h1>
+    <a href="/admin/announcements" class="btn btn-outline"><%- t('btn.back') %></a>
   </div>
 
   <form action="<%= announcement ? `/admin/announcements/${announcement.id}/edit` : '/admin/announcements/new' %>" method="POST" class="admin-form" style="max-width:600px">
     <div class="form-group">
-      <label for="title">শিরোনাম *</label>
-      <input type="text" id="title" name="title" required value="<%= announcement ? announcement.title : '' %>" placeholder="ঘোষণার শিরোনাম">
+      <label for="title"><%- t('admin.lbl_title') %></label>
+      <input type="text" id="title" name="title" required value="<%= announcement ? announcement.title : '' %>" placeholder="<%- t('admin.ann_content_ph') %>">
     </div>
     <div class="form-group">
-      <label for="content">বিষয়বস্তু (বাংলা) *</label>
-      <textarea id="content" name="content" rows="5" required data-rich placeholder="ঘোষণার বিস্তারিত লিখুন..."><%= announcement ? announcement.content : '' %></textarea>
+      <label for="content"><%- t('admin.lbl_content_bn') %></label>
+      <textarea id="content" name="content" rows="5" required data-rich placeholder="<%- t('admin.ann_content_ph') %>"><%= announcement ? announcement.content : '' %></textarea>
     </div>
     <div class="form-group">
       <label for="title_en">Title (English)</label>
@@ -35,19 +35,19 @@
       <textarea id="content_de" name="content_de" rows="4" data-rich placeholder="Ankündigungsdetails..."><%= announcement ? (announcement.content_de || '') : '' %></textarea>
     </div>
     <div class="form-group">
-      <label for="sort_order">ক্রম</label>
+      <label for="sort_order"><%- t('admin.lbl_sort_order') %></label>
       <input type="number" id="sort_order" name="sort_order" value="<%= announcement ? announcement.sort_order : 0 %>" min="0">
-      <small>ছোট সংখ্যা আগে দেখাবে।</small>
+      <small><%- t('admin.sort_order_hint') %></small>
     </div>
     <% if (announcement) { %>
     <div class="form-group">
       <label>
         <input type="checkbox" name="is_active" <%= announcement.is_active ? 'checked' : '' %>>
-        সক্রিয়
+        <%- t('admin.lbl_is_active') %>
       </label>
     </div>
     <% } %>
-    <button type="submit" class="btn btn-primary"><%= announcement ? 'আপডেট করুন' : 'তৈরি করুন' %></button>
+    <button type="submit" class="btn btn-primary"><%= announcement ? t('btn.update') : t('btn.create') %></button>
   </form>
 </main>
 

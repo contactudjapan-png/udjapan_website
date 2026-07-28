@@ -4,39 +4,39 @@
 <%- include('../partials/flash') %>
 
 <main class="admin-container">
-  <h1>স্বেচ্ছাসেবী কাজের তালিকা</h1>
-  <p style="color:var(--text-muted);margin-bottom:1.5rem">প্রতিটি কাজের নাম ও ভূমিকা নির্ধারণ করুন। ভূমিকা অনুযায়ী স্বেচ্ছাসেবী লগইনের পর সঠিক পেজে পাঠানো হবে।</p>
+  <h1><%- t('admin.pg_volunteer_tasks') %></h1>
+  <p style="color:var(--text-muted);margin-bottom:1.5rem"><%- t('admin.vol_tasks_hint') %></p>
 
   <form action="/admin/settings/volunteer-tasks" method="POST" class="admin-form" style="max-width:680px">
     <div id="task-list" style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem">
       <% if (tasks.length === 0) { %>
         <div class="task-row" style="display:flex;gap:0.5rem;align-items:center">
-          <input type="text" name="task_name" placeholder="কাজের নাম" class="inline-input" style="flex:1">
+          <input type="text" name="task_name" placeholder="<%- t('admin.task_name_ph') %>" class="inline-input" style="flex:1">
           <select name="task_role" class="inline-input" style="width:220px">
-            <option value="stall">স্টল পর্যবেক্ষণ</option>
-            <option value="reg">রেজিস্ট্রেশন</option>
-            <option value="qr">QR যাচাইকারী</option>
-            <option value="music">সংগীত ও মঞ্চ</option>
-            <option value="competition">প্রতিযোগিতা</option>
-            <option value="anchor">উপস্থাপনা (Anchoring)</option>
-            <option value="performer">সংগীতশিল্পী ও পরিবেশক</option>
-            <option value="controlRoom">কন্ট্রোল রুম</option>
+            <option value="stall"><%- t('admin.vt_stall') %></option>
+            <option value="reg"><%- t('admin.vt_reg') %></option>
+            <option value="qr"><%- t('admin.vt_qr') %></option>
+            <option value="music"><%- t('admin.vt_music') %></option>
+            <option value="competition"><%- t('admin.vt_competition') %></option>
+            <option value="anchor"><%- t('admin.vt_anchor') %></option>
+            <option value="performer"><%- t('admin.vt_performer') %></option>
+            <option value="controlRoom"><%- t('admin.vt_control_room') %></option>
           </select>
           <button type="button" class="btn btn-sm btn-danger remove-row" style="flex-shrink:0">&times;</button>
         </div>
       <% } else { %>
         <% tasks.forEach(task => { %>
           <div class="task-row" style="display:flex;gap:0.5rem;align-items:center">
-            <input type="text" name="task_name" value="<%= task.name %>" placeholder="কাজের নাম" class="inline-input" style="flex:1">
+            <input type="text" name="task_name" value="<%= task.name %>" placeholder="<%- t('admin.task_name_ph') %>" class="inline-input" style="flex:1">
             <select name="task_role" class="inline-input" style="width:220px">
-              <option value="stall" <%= task.role === 'stall' ? 'selected' : '' %>>স্টল পর্যবেক্ষণ</option>
-              <option value="reg" <%= task.role === 'reg' ? 'selected' : '' %>>রেজিস্ট্রেশন</option>
-              <option value="qr" <%= task.role === 'qr' ? 'selected' : '' %>>QR যাচাইকারী</option>
-              <option value="music" <%= task.role === 'music' ? 'selected' : '' %>>সংগীত ও মঞ্চ</option>
-              <option value="competition" <%= task.role === 'competition' ? 'selected' : '' %>>প্রতিযোগিতা</option>
-              <option value="anchor" <%= task.role === 'anchor' ? 'selected' : '' %>>উপস্থাপনা (Anchoring)</option>
-              <option value="performer" <%= task.role === 'performer' ? 'selected' : '' %>>সংগীতশিল্পী ও পরিবেশক</option>
-              <option value="controlRoom" <%= task.role === 'controlRoom' ? 'selected' : '' %>>কন্ট্রোল রুম</option>
+              <option value="stall" <%= task.role === 'stall' ? 'selected' : '' %>><%- t('admin.vt_stall') %></option>
+              <option value="reg" <%= task.role === 'reg' ? 'selected' : '' %>><%- t('admin.vt_reg') %></option>
+              <option value="qr" <%= task.role === 'qr' ? 'selected' : '' %>><%- t('admin.vt_qr') %></option>
+              <option value="music" <%= task.role === 'music' ? 'selected' : '' %>><%- t('admin.vt_music') %></option>
+              <option value="competition" <%= task.role === 'competition' ? 'selected' : '' %>><%- t('admin.vt_competition') %></option>
+              <option value="anchor" <%= task.role === 'anchor' ? 'selected' : '' %>><%- t('admin.vt_anchor') %></option>
+              <option value="performer" <%= task.role === 'performer' ? 'selected' : '' %>><%- t('admin.vt_performer') %></option>
+              <option value="controlRoom" <%= task.role === 'controlRoom' ? 'selected' : '' %>><%- t('admin.vt_control_room') %></option>
             </select>
             <button type="button" class="btn btn-sm btn-danger remove-row" style="flex-shrink:0">&times;</button>
           </div>
@@ -45,10 +45,10 @@
     </div>
 
     <div style="margin-bottom:1.5rem">
-      <button type="button" id="add-task" class="btn btn-outline btn-sm">+ কাজ যোগ করুন</button>
+      <button type="button" id="add-task" class="btn btn-outline btn-sm"><%- t('btn.add_task') %></button>
     </div>
 
-    <button type="submit" class="btn btn-primary">সংরক্ষণ করুন</button>
+    <button type="submit" class="btn btn-primary"><%- t('btn.save') %></button>
   </form>
 </main>
 
@@ -56,14 +56,14 @@
 (function () {
   const list = document.getElementById('task-list');
   const roleOptions = [
-    ['stall', 'স্টল পর্যবেক্ষণ'],
-    ['reg', 'রেজিস্ট্রেশন'],
-    ['qr', 'QR যাচাইকারী'],
-    ['music', 'সংগীত ও মঞ্চ'],
-    ['competition', 'প্রতিযোগিতা'],
-    ['anchor', 'উপস্থাপনা (Anchoring)'],
-    ['performer', 'সংগীতশিল্পী ও পরিবেশক'],
-    ['controlRoom', 'কন্ট্রোল রুম'],
+    ['stall', '<%= t("admin.vt_stall") %>'],
+    ['reg', '<%= t("admin.vt_reg") %>'],
+    ['qr', '<%= t("admin.vt_qr") %>'],
+    ['music', '<%= t("admin.vt_music") %>'],
+    ['competition', '<%= t("admin.vt_competition") %>'],
+    ['anchor', '<%= t("admin.vt_anchor") %>'],
+    ['performer', '<%= t("admin.vt_performer") %>'],
+    ['controlRoom', '<%= t("admin.vt_control_room") %>'],
   ].map(([v, l]) => '<option value="' + v + '">' + l + '</option>').join('');
 
   list.addEventListener('click', function (e) {
@@ -78,7 +78,7 @@
     row.className = 'task-row';
     row.style.cssText = 'display:flex;gap:0.5rem;align-items:center';
     row.innerHTML =
-      '<input type="text" name="task_name" placeholder="\u0995\u09be\u099c\u09c7\u09b0 \u09a8\u09be\u09ae" class="inline-input" style="flex:1">' +
+      '<input type="text" name="task_name" placeholder="<%= t("admin.task_name_ph") %>" class="inline-input" style="flex:1">' +
       '<select name="task_role" class="inline-input" style="width:220px">' + roleOptions + '</select>' +
       '<button type="button" class="btn btn-sm btn-danger remove-row" style="flex-shrink:0">\u00d7</button>';
     list.appendChild(row);

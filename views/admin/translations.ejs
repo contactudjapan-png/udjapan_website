@@ -5,45 +5,43 @@
 
 <main class="admin-container">
   <div class="section-header">
-    <h1>অনুবাদ পরিচালনা</h1>
+    <h1><%- t('admin.pg_translations') %></h1>
   </div>
 
   <p style="color:var(--text-muted);margin-bottom:1rem">
-    সব পাবলিক স্ট্রিং এখানে তিনটি ভাষায় সম্পাদনা করুন: <strong>বাংলা (bn)</strong>, <strong>English (en)</strong>, <strong>Deutsch (de)</strong>।
+    <%- t('admin.translations_hint') %> <strong>বাংলা (bn)</strong>, <strong>English (en)</strong>, <strong>Deutsch (de)</strong>।
     ব্যবহারকারীরা সাইটের নিচে ভাষা নির্বাচন করতে পারবেন।
   </p>
 
-  <!-- Add new key -->
   <details style="margin-bottom:1.5rem">
-    <summary class="btn btn-outline" style="cursor:pointer;display:inline-block">+ নতুন কী যোগ করুন</summary>
+    <summary class="btn btn-outline" style="cursor:pointer;display:inline-block"><%- t('btn.new_key') %></summary>
     <div style="padding:1rem;background:var(--bg);border-radius:var(--radius);margin-top:0.5rem;max-width:500px">
       <form action="/admin/translations/add-key" method="POST">
         <div class="form-group">
-          <label>কী (Key)</label>
-          <input type="text" name="key" required placeholder="যেমন: nav.new_link" class="form-control">
+          <label><%- t('admin.lbl_key') %></label>
+          <input type="text" name="key" required placeholder="nav.new_link" class="form-control">
         </div>
         <div class="form-group">
-          <label>বাংলা মান</label>
-          <input type="text" name="value" required placeholder="বাংলায় লিখুন" class="form-control">
+          <label><%- t('admin.lbl_bn_value') %></label>
+          <input type="text" name="value" required placeholder="<%- t('admin.set_value_ph') %>" class="form-control">
         </div>
-        <button type="submit" class="btn btn-primary">যোগ করুন</button>
+        <button type="submit" class="btn btn-primary"><%- t('btn.add_key') %></button>
       </form>
     </div>
   </details>
 
-  <!-- Search -->
   <div style="margin-bottom:1rem">
-    <input type="text" id="tr-search" placeholder="কী বা মান খুঁজুন..." style="padding:0.4rem 0.7rem;border:1px solid var(--border);border-radius:var(--radius);width:280px;font-size:0.9rem">
+    <input type="text" id="tr-search" placeholder="<%- t('admin.search_ph') %>" style="padding:0.4rem 0.7rem;border:1px solid var(--border);border-radius:var(--radius);width:280px;font-size:0.9rem">
   </div>
 
   <form action="/admin/translations" method="POST" id="tr-form">
     <div style="margin-bottom:1rem">
-      <button type="submit" class="btn btn-primary">সব পরিবর্তন সংরক্ষণ করুন</button>
+      <button type="submit" class="btn btn-primary"><%- t('btn.save_all') %></button>
     </div>
     <table class="admin-table" id="tr-table">
       <thead>
         <tr>
-          <th style="min-width:180px">কী</th>
+          <th style="min-width:180px"><%- t('tbl.key') %></th>
           <% SUPPORTED_LOCALES.forEach(loc => { %>
             <th>
               <% if (loc === 'bn') { %>বাংলা<% } else if (loc === 'en') { %>English<% } else if (loc === 'de') { %>Deutsch<% } else { %><%= loc %><% } %>
@@ -61,7 +59,7 @@
                   type="text"
                   name="t[<%= key %>][<%= loc %>]"
                   value="<%= (all[loc] && all[loc][key]) ? all[loc][key] : '' %>"
-                  placeholder="<%= loc === 'bn' ? '(সেট করুন)' : '(ঐচ্ছিক)' %>"
+                  placeholder="<%= loc === 'bn' ? t('admin.set_value_ph') : t('admin.opt_value_ph') %>"
                   style="width:100%;box-sizing:border-box;padding:0.3rem 0.5rem;border:1px solid var(--border);border-radius:4px;font-size:0.85rem;font-family:inherit"
                 >
               </td>
@@ -71,7 +69,7 @@
       </tbody>
     </table>
     <div style="margin-top:1rem">
-      <button type="submit" class="btn btn-primary">সব পরিবর্তন সংরক্ষণ করুন</button>
+      <button type="submit" class="btn btn-primary"><%- t('btn.save_all') %></button>
     </div>
   </form>
 </main>
