@@ -22,10 +22,13 @@
       <div class="form-group">
         <label for="event_id">ইভেন্ট *</label>
         <select id="event_id" name="event_id" required>
-          <% instruments.reduce((seen, i) => { %>
-            <% if (!seen.has(i.event_id)) { seen.add(i.event_id); %>
-              <option value="<%= i.event_id %>"><%= i.event_title %></option>
-            <% } return seen; %>, new Set()) %>
+          <%
+            const _seen = new Set();
+            instruments.forEach(i => {
+              if (!_seen.has(i.event_id)) { _seen.add(i.event_id); %>
+                <option value="<%= i.event_id %>"><%= i.event_title %></option>
+          <% }});
+          %>
           </select>
       </div>
       <% } else { %>
