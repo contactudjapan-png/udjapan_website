@@ -17,6 +17,10 @@
     <% if (event.location) { %><p style="color:var(--text-muted);margin:0.25rem 0 0">📍 <%= event.location %></p><% } %>
   </div>
 
+  <div style="margin-top:1rem;text-align:center">
+    <a href="/event/<%= event.id %>/volunteer" class="btn btn-outline"><%- t('event.volunteer_btn') %></a>
+  </div>
+
   <!-- ── Payment & Registration ─────────────────────── -->
   <% if (event.registration_open) { %>
   <div class="event-detail-card" style="margin-top:1.5rem">
@@ -322,12 +326,6 @@
     </div>
   </div>
   <% } %>
-
-  <div class="event-detail-card" style="margin-top:1.5rem;text-align:center">
-    <h2 style="margin-top:0"><%- t('event.volunteer_heading') %></h2>
-    <p style="color:var(--text-muted)"><%- t('event.volunteer_sub') %></p>
-    <a href="/event/<%= event.id %>/volunteer" class="btn btn-outline"><%- t('event.volunteer_btn') %></a>
-  </div>
 
 </main>
 
