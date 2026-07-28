@@ -161,14 +161,15 @@
       var a = parseInt(adultsEl.value) || 0;
       var c = parseInt(childrenEl.value) || 0;
       var subtotal = a * pricePerAdult;
-      var discount = (groupMinSize && groupDiscount && a >= groupMinSize) ? groupDiscount : 0;
+      var multiplier = (groupMinSize && groupDiscount && a >= groupMinSize) ? Math.floor(a / groupMinSize) : 0;
+      var discount = multiplier * (groupDiscount || 0);
       var total = Math.max(0, subtotal - discount).toFixed(2);
       valueEl.textContent = '€' + total;
       var parts = [];
       if (a > 0) parts.push(a + ' × €' + pricePerAdult.toFixed(2));
       if (c > 0) parts.push(c + ' child' + (c !== 1 ? 'ren' : '') + ' (free)');
       var hint = parts.join(' + ');
-      if (discount > 0) hint += ' − €' + groupDiscount.toFixed(2) + ' group discount';
+      if (discount > 0) hint += ' − ' + multiplier + ' × €' + groupDiscount.toFixed(2) + ' group discount';
       if (a > 0) hint += ' = €' + total;
       hintEl.textContent = hint;
     }
