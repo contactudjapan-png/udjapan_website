@@ -17,10 +17,6 @@
     <% if (event.location) { %><p style="color:var(--text-muted);margin:0.25rem 0 0">📍 <%= event.location %></p><% } %>
   </div>
 
-  <div style="margin-top:1rem;text-align:center">
-    <a href="/event/<%= event.id %>/volunteer" class="btn btn-outline"><%- t('event.volunteer_btn') %></a>
-  </div>
-
   <!-- ── Payment & Registration ─────────────────────── -->
   <% if (event.registration_open) { %>
   <div class="event-detail-card" style="margin-top:1.5rem">
@@ -72,6 +68,7 @@
             <p class="ticket-deadline"><%- t('event.mid_ends') %> <strong><%= new Date(event.mid_deadline).toLocaleDateString(_dateLocale, {month:'long',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'}) %></strong></p>
             <p id="tierCountdown" class="tier-countdown"></p>
           <% } %>
+        <a href="/event/<%= event.id %>/volunteer" class="btn btn-outline" style="margin-top:0.75rem;display:inline-block"><%- t('event.volunteer_btn') %></a>
         <% } else if (event.price_early_bird || event.price_mid || event.price_onspot) { %>
           <div class="ticket-tiers">
             <% if (event.price_early_bird) { %><div class="tier-row"><span><%- t('event.tier_early') %></span><span>€<%= parseFloat(event.price_early_bird).toFixed(2) %></span><% if(event.early_bird_deadline){%><small><%- t('event.until') %> <%= new Date(event.early_bird_deadline).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></small><%}%></div><% } %>
