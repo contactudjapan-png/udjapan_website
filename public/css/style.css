@@ -1040,10 +1040,22 @@ main { flex: 1; }
   .poll-header { flex-direction: column; }
   .inline-form { flex-direction: column; }
   .inline-input { width: 100%; }
-  .home-hero-title { font-size: 1.8rem; }
-  .home-hero-content { padding: 1.5rem 1rem; }
   .btn-full-mobile { width: 100%; text-align: center; }
   .poll-card, .event-detail-card, .success-card { padding: 1rem; }
+
+  /* Hero: stack image above content on mobile */
+  .home-hero { display: flex; flex-direction: column; overflow: visible; }
+  .home-hero-img { max-height: 220px; width: 100%; object-fit: cover; display: block; flex-shrink: 0; }
+  .home-hero-overlay { display: none; }
+  .home-hero-content {
+    position: static;
+    background: var(--green-dark, #004d38);
+    padding: 1.25rem 1rem 2rem;
+    max-width: 100%;
+    color: #fff;
+  }
+  .home-hero-title { font-size: 1.5rem; }
+  .home-hero--no-banner { min-height: 0; display: block; }
 }
 
 
