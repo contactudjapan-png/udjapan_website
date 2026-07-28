@@ -1224,4 +1224,73 @@ body.tier-kokila {
 .cr-section h3 { font-size: 1.05rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
 .cr-priority-urgent { color: #c62828; font-weight: 700; }
 .cr-priority-normal { color: var(--text-muted); }
-.cr-refresh-bar { font-size: 0.82rem; color: var(--text-muted); text-align: right; margin-bottom: 1rem; }
+.cr-refresh-bar { font-size: 0.82rem; color: var(--text-muted); white-space: nowrap; }
+
+/* ─── Generic Table ──────────────────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.table th { text-align: left; padding: 0.55rem 0.75rem; border-bottom: 2px solid var(--border); font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
+.table td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr:hover td { background: var(--bg); }
+
+/* ─── Home – About Full-Width ────────────────────────────────────────────────── */
+.home-about-full {
+  width: 100%;
+  padding: 3rem 2rem;
+  background: var(--surface-alt, #f5f5f5);
+  font-size: 1.15rem;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  box-sizing: border-box;
+}
+.home-about-full h2 { margin-bottom: 1rem; color: var(--primary); }
+
+/* ─── Home – Live Hero ───────────────────────────────────────────────────────── */
+.home-hero-live {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark, #a00) 100%);
+  color: #fff;
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.home-hero-live h1 { font-size: 2rem; margin: 1rem 0 0.5rem; }
+.home-hero-live .hero-meta { opacity: 0.85; margin-bottom: 1.5rem; }
+.home-hero-live .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.home-hero-live .btn-hero {
+  background: #fff;
+  color: var(--primary);
+  font-weight: 700;
+  padding: 0.75rem 1.75rem;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-block;
+}
+.home-hero-live .btn-hero:hover { background: #f0f0f0; }
+
+/* ─── Live Badge ─────────────────────────────────────────────────────────────── */
+.live-badge {
+  display: inline-block;
+  background: #c62828;
+  color: #fff;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  animation: live-pulse 1.5s ease-in-out infinite;
+}
+@keyframes live-pulse { 0%,100%{opacity:1} 50%{opacity:0.45} }
+
+/* ─── Datenschutz Notice ─────────────────────────────────────────────────────── */
+.datenschutz-notice {
+  color: #c62828;
+  font-size: 0.88rem;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+/* ─── Ad / Sponsor Sidebar Spacing ──────────────────────────────────────────── */
+#adBody .ad-card { margin-bottom: 1rem; }
+#adBody .ad-card:last-child { margin-bottom: 0; }

@@ -1,6 +1,6 @@
-<nav class="nav-public">
+<nav class="nav-public" id="pubNav">
   <a href="/" class="nav-logo"><%- t('nav.logo') %></a>
-  <button class="nav-pub-toggle" aria-label="Menu" onclick="this.closest('nav').querySelector('.nav-links').classList.toggle('open')">
+  <button class="nav-pub-toggle" id="navPubToggle" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
   <div class="nav-links" id="pubNavLinks">
@@ -15,3 +15,18 @@
     </div>
   </div>
 </nav>
+<script>
+(function() {
+  var btn = document.getElementById('navPubToggle');
+  var links = document.getElementById('pubNavLinks');
+  if (btn && links) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      links.classList.toggle('open');
+    });
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('#pubNav')) links.classList.remove('open');
+    });
+  }
+})();
+</script>

@@ -63,7 +63,7 @@ app.use(require('./middleware/i18n'));
 
 // Tier class — compute once per request for non-admin routes (1-min cache)
 const _eventSvc = require('./services/eventService');
-const _tierState = { cls: 'tier-bd', at: 0 };
+const _tierState = { cls: 'tier-bd', at: 0, ev: null, isLive: false };
 app.use(async (req, res, next) => {
   const now = Date.now();
   if (now - _tierState.at > 60 * 1000) {
@@ -79,10 +79,18 @@ app.use(async (req, res, next) => {
         else if (mid && now < mid && (!eb || now >= eb)) cls = 'tier-nilkantha';
         else if (evd && now < evd && (!mid || now >= mid)) cls = 'tier-kokila';
       }
-      _tierState.cls = cls; _tierState.at = now;
+      _tierState.cls = cls;
+      _tierState.ev = ev || null;
+      _tierState.isLive = ev && ev.event_date
+        ? (now >= +new Date(ev.event_date) - 2 * 3600000 && now <= +new Date(ev.event_date) + 12 * 3600000)
+        : false;
+      _tierState.at = now;
     } catch {}
   }
   res.locals.tierClass = _tierState.cls;
+  res.locals.currentEvent = _tierState.ev;
+  res.locals.isLive = _tierState.isLive;
+  res.locals.volunteerUser = req.session?.volunteerUser || null;
   next();
 });
 
