@@ -452,11 +452,15 @@ a:hover { text-decoration: underline; }
 }
 .panel-toggle:hover { background: var(--bg); color: var(--text); }
 .announcement-item {
-  padding: 0.6rem 0;
-  border-bottom: 1px solid var(--border);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
 }
-.announcement-item:last-child { border-bottom: none; }
-.announcement-item strong { font-size: 0.9rem; display: block; margin-bottom: 0.25rem; }
+.announcement-item:last-child { margin-bottom: 0; }
+.announcement-item strong { font-size: 0.95rem; display: block; margin-bottom: 0.25rem; }
 .announcement-item div { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
 .ann-link { display: inline-block; margin-top: 0.4rem; font-size: 0.82rem; color: var(--primary); text-decoration: none; font-weight: 500; }
 .ann-link:hover { text-decoration: underline; }
