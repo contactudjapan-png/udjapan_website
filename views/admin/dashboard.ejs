@@ -31,7 +31,7 @@
     <div style="display:flex;gap:8px;align-items:center">
       <a href="/admin/events/new" class="btn btn-primary"><%- t('btn.new_event') %></a>
       <% if (useMemoryDb) { %>
-      <form action="/admin/seed" method="POST" onsubmit="return confirm('পরীক্ষামূলক ডেটা যোগ করবেন? (৩টি ইভেন্ট, ২০০ নিবন্ধন, ৫০ খরচ, ২০ স্টল, ১৫ স্বেচ্ছাসেবী প্রতিটিতে)')">
+      <form action="/admin/seed" method="POST" data-confirm="পরীক্ষামূলক ডেটা যোগ করবেন? (৩টি ইভেন্ট, ২০০ নিবন্ধন, ৫০ খরচ, ২০ স্টল, ১৫ স্বেচ্ছাসেবী প্রতিটিতে)">
         <button type="submit" class="btn btn-outline"><%- t('btn.load_test_data') %></button>
       </form>
       <% } %>

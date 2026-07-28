@@ -32,7 +32,7 @@
           <td><span class="badge <%= ad.is_active ? 'badge-open' : 'badge-closed' %>"><%= ad.is_active ? t('admin.ad_active') : t('admin.ad_inactive') %></span></td>
           <td class="action-cell">
             <a href="/admin/ads/<%= ad.id %>/edit" class="btn btn-sm"><%- t('btn.edit') %></a>
-            <form action="/admin/ads/<%= ad.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('বিজ্ঞাপনটি মুছে ফেলবেন?')">
+            <form action="/admin/ads/<%= ad.id %>/delete" method="POST" style="display:inline" data-confirm="বিজ্ঞাপনটি মুছে ফেলবেন?">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>

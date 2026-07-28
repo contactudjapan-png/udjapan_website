@@ -25,10 +25,10 @@
           <td><%= entry.email %></td>
           <td><%= new Date(entry.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td class="action-cell">
-            <form action="/admin/waitlist/<%= entry.id %>/promote" method="POST" style="display:inline" onsubmit="return confirm('এই ব্যক্তিকে নিবন্ধনে নিয়ে যাবেন?')">
+            <form action="/admin/waitlist/<%= entry.id %>/promote" method="POST" style="display:inline" data-confirm="এই ব্যক্তিকে নিবন্ধনে নিয়ে যাবেন?">
               <button type="submit" class="btn btn-sm btn-success"><%- t('btn.promote') %></button>
             </form>
-            <form action="/admin/waitlist/<%= entry.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('ওয়েটলিস্ট থেকে সরাবেন?')">
+            <form action="/admin/waitlist/<%= entry.id %>/delete" method="POST" style="display:inline" data-confirm="ওয়েটলিস্ট থেকে সরাবেন?">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.remove') %></button>
             </form>
           </td>

@@ -64,7 +64,7 @@
           <td style="font-size:0.8rem;color:var(--text-muted)"><%= inst.volunteer_email || '—' %></td>
           <td style="font-size:0.8rem;white-space:nowrap"><%= new Date(inst.created_at).toLocaleString('bn-BD', { timeZone: 'Europe/Berlin' }) %></td>
           <td>
-            <form action="/validate/instruments/<%= inst.id %>/delete" method="POST" onsubmit="return confirm('যন্ত্রটি মুছবেন?')">
+            <form action="/validate/instruments/<%= inst.id %>/delete" method="POST" data-confirm="যন্ত্রটি মুছবেন?">
               <button type="submit" class="btn btn-sm btn-danger">মুছুন</button>
             </form>
           </td>

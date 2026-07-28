@@ -40,7 +40,7 @@
             <h3><%= q.question %></h3>
             <div class="poll-total-votes"><%= q.count %> <%- t('admin.fb_respondents') %> <%= q.type === 'rating' ? t('admin.fb_type_rating') : t('admin.fb_type_text') %></div>
           </div>
-          <form action="/admin/feedback-questions/<%= q.id %>/delete" method="POST" onsubmit="return confirm('এই প্রশ্ন মুছে ফেলবেন?')">
+          <form action="/admin/feedback-questions/<%= q.id %>/delete" method="POST" data-confirm="এই প্রশ্ন মুছে ফেলবেন?">
             <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
           </form>
         </div>

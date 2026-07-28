@@ -183,17 +183,10 @@ function toBerlinInput(dateStr) {
   <hr style="margin-top:3rem">
   <div class="danger-zone" style="margin-top:2rem">
     <h2><%- t('admin.danger_zone') %></h2>
-    <form action="/admin/events/<%= event.id %>/delete" method="POST" id="deleteEventForm">
-      <button type="button" class="btn btn-danger" onclick="confirmDeleteEvent()"><%- t('admin.btn_delete_event') %></button>
+    <form action="/admin/events/<%= event.id %>/delete" method="POST"
+      data-confirm="Delete &quot;<%= event.title.replace(/"/g, '&quot;') %>&quot;? This will permanently delete the event and ALL its data (registrations, expenses, polls, volunteers, etc.). This cannot be undone.">
+      <button type="submit" class="btn btn-danger"><%- t('admin.btn_delete_event') %></button>
     </form>
-    <script>
-    function confirmDeleteEvent() {
-      var title = '<%= event.title.replace(/'/g, "\\'") %>';
-      if (confirm('Delete "' + title + '"?\n\nThis will permanently delete the event and ALL its data (registrations, expenses, polls, volunteers, etc.).\n\nThis cannot be undone.')) {
-        document.getElementById('deleteEventForm').submit();
-      }
-    }
-    </script>
   </div>
   <% } %>
 </main>

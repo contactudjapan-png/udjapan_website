@@ -25,7 +25,7 @@
           <td><span class="badge <%= ann.is_active ? 'badge-open' : 'badge-closed' %>"><%= ann.is_active ? t('admin.ann_active') : t('admin.ann_inactive') %></span></td>
           <td class="action-cell">
             <a href="/admin/announcements/<%= ann.id %>/edit" class="btn btn-sm"><%- t('btn.edit') %></a>
-            <form action="/admin/announcements/<%= ann.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('ঘোষণাটি মুছে ফেলবেন?')">
+            <form action="/admin/announcements/<%= ann.id %>/delete" method="POST" style="display:inline" data-confirm="ঘোষণাটি মুছে ফেলবেন?">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>

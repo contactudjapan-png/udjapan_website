@@ -41,7 +41,7 @@
             <% } %>
           </td>
           <td>
-            <form action="/admin/incomes/<%= inc.id %>/delete" method="POST" onsubmit="return confirm('এই আয় মুছে ফেলবেন?')">
+            <form action="/admin/incomes/<%= inc.id %>/delete" method="POST" data-confirm="এই আয় মুছে ফেলবেন?">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>

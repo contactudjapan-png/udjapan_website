@@ -28,7 +28,7 @@
           <td><% if (r.transaction_id) { %><code><%= r.transaction_id %></code><% } else { %>—<% } %></td>
           <td><%= new Date(r.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td>
-            <form action="/admin/refunds/<%= r.id %>/delete" method="POST" onsubmit="return confirm('এই রিফান্ড মুছে ফেলবেন?')">
+            <form action="/admin/refunds/<%= r.id %>/delete" method="POST" data-confirm="এই রিফান্ড মুছে ফেলবেন?">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>

@@ -26,7 +26,7 @@
                 <%= poll.is_active ? t('btn.inactive') : t('btn.activate') %>
               </button>
             </form>
-            <form action="/admin/polls/<%= poll.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই ভোট মুছে ফেলবেন?')">
+            <form action="/admin/polls/<%= poll.id %>/delete" method="POST" style="display:inline" data-confirm="এই ভোট মুছে ফেলবেন?">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </div>

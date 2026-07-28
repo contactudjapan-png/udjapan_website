@@ -55,7 +55,7 @@
               data-notes="<%= comp.notes || '' %>">
               <%- t('btn.edit') %>
             </button>
-            <form action="/admin/competitions/<%= comp.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('মুছে ফেলবেন?')">
+            <form action="/admin/competitions/<%= comp.id %>/delete" method="POST" style="display:inline" data-confirm="মুছে ফেলবেন?">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>

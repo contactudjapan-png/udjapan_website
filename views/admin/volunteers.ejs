@@ -86,7 +86,7 @@
                   <button type="submit" class="btn btn-sm btn-outline"><%- t('btn.pending') %></button>
                 </form>
               <% } %>
-              <form action="/admin/volunteers/<%= vol.id %>/delete" method="POST" onsubmit="return confirm('স্বেচ্ছাসেবী সরাবেন?')">
+              <form action="/admin/volunteers/<%= vol.id %>/delete" method="POST" data-confirm="স্বেচ্ছাসেবী সরাবেন?">
                 <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.remove') %></button>
               </form>
             </div>

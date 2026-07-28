@@ -52,7 +52,7 @@
                   <%= reg.is_paid ? t('btn.toggle_unpaid') : t('btn.toggle_paid') %>
                 </button>
               </form>
-              <form action="/admin/registrations/<%= reg.id %>/cancel" method="POST" style="display:inline" onsubmit="return confirm('নিবন্ধন বাতিল করবেন?')">
+              <form action="/admin/registrations/<%= reg.id %>/cancel" method="POST" style="display:inline" data-confirm="নিবন্ধন বাতিল করবেন?">
                 <button type="submit" class="btn btn-sm btn-outline"><%- t('btn.cancel_reg') %></button>
               </form>
             <% } else { %>
@@ -60,7 +60,7 @@
                 <button type="submit" class="btn btn-sm btn-success"><%- t('btn.reinstate') %></button>
               </form>
             <% } %>
-            <form action="/admin/registrations/<%= reg.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই নিবন্ধন মুছে ফেলবেন?')">
+            <form action="/admin/registrations/<%= reg.id %>/delete" method="POST" style="display:inline" data-confirm="এই নিবন্ধন মুছে ফেলবেন?">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>

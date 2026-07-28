@@ -33,7 +33,7 @@
           </td>
           <td><%= new Date(exp.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
           <td>
-            <form action="/admin/expenses/<%= exp.id %>/delete" method="POST" onsubmit="return confirm('এই খরচ মুছে ফেলবেন?')">
+            <form action="/admin/expenses/<%= exp.id %>/delete" method="POST" data-confirm="এই খরচ মুছে ফেলবেন?">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>

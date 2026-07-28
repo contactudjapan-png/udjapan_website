@@ -15,7 +15,7 @@
     <% } %>
   </div>
 
-  <form action="/admin/events/<%= event.id %>/emails/send" method="POST" class="admin-form" onsubmit="return confirm('Send this email to all attendees?')">
+  <form action="/admin/events/<%= event.id %>/emails/send" method="POST" class="admin-form" data-confirm="Send this email to all attendees?">
     <div class="form-group">
       <label for="subject"><%- t('admin.lbl_subject') %></label>
       <input type="text" id="subject" name="subject" required placeholder="Event Update: ...">

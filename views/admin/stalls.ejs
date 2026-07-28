@@ -44,7 +44,7 @@
             </button>
             <script type="application/json" id="obs-<%= stall.id %>"><%- JSON.stringify(stall.observations || []) %></script>
             <a href="/admin/stalls/<%= stall.id %>/edit" class="btn btn-sm"><%- t('admin.edit_assign') %></a>
-            <form action="/admin/stalls/<%= stall.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('এই স্টল মুছে ফেলবেন?')">
+            <form action="/admin/stalls/<%= stall.id %>/delete" method="POST" style="display:inline" data-confirm="এই স্টল মুছে ফেলবেন?">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>
