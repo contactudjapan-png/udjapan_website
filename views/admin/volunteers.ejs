@@ -70,7 +70,6 @@
           </td>
           <td>
           <%= vol.assigned_task || '—' %>
-          <% if (vol.stall_id && stalls) { const _vs = stalls.find(s=>s.id===vol.stall_id); if(_vs){ %><br><small style="color:var(--text-muted)">🏪 <%= _vs.name %></small><% } } %>
         </td>
           <td class="action-cell action-cell--wrap">
             <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px">
@@ -91,12 +90,6 @@
               </form>
             </div>
             <form action="/admin/volunteers/<%= vol.id %>/assign-task" method="POST" class="task-assign-form">
-              <% if (stalls && stalls.length > 0) { %>
-              <select name="stall_id" class="inline-input" style="margin-bottom:4px">
-                <option value=""><%- t('vol.no_stall') %></option>
-                <% stalls.forEach(s => { %><option value="<%= s.id %>" <%= vol.stall_id === s.id ? 'selected' : '' %>><%= s.name %></option><% }) %>
-              </select>
-              <% } %>
               <% const hasAnyTasks = taskGroups && (taskGroups.stall.length || taskGroups.reg.length || taskGroups.qr.length || (taskGroups.music && taskGroups.music.length) || (taskGroups.competition && taskGroups.competition.length) || (taskGroups.anchor && taskGroups.anchor.length) || (taskGroups.performer && taskGroups.performer.length) || (taskGroups.controlRoom && taskGroups.controlRoom.length)); %>
               <% if (hasAnyTasks) { %>
                 <select name="task" class="inline-input">

@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const db = require('../config/db');
 const { requireAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { compressImage } = require('../middleware/compress');
 
 const eventService = require('../services/eventService');
 const registrationService = require('../services/registrationService');
@@ -139,14 +140,16 @@ router.post('/events/:id/edit', upload.fields([
       if (req.files && req.files[slot.field]) {
         const f = req.files[slot.field][0];
         const ext = path.extname(f.originalname).toLowerCase();
-        const url = await eventService.uploadFileToBucket('banners', `${req.params.id}/${slot.slug}${ext}`, f.buffer, f.mimetype);
+        const { buffer, mimetype } = await compressImage(f.buffer, f.mimetype);
+        const url = await eventService.uploadFileToBucket('banners', `${req.params.id}/${slot.slug}${ext}`, buffer, mimetype);
         await eventService.updateBannerUrl(req.params.id, url, slot.dbField);
       }
     }
     if (req.files && req.files.popup_image) {
       const f = req.files.popup_image[0];
       const ext = path.extname(f.originalname).toLowerCase();
-      const url = await eventService.uploadFileToBucket('banners', `${req.params.id}/popup${ext}`, f.buffer, f.mimetype);
+      const { buffer, mimetype } = await compressImage(f.buffer, f.mimetype);
+      const url = await eventService.uploadFileToBucket('banners', `${req.params.id}/popup${ext}`, buffer, mimetype);
       await eventService.updatePopupUrl(req.params.id, url);
     }
     req.flash('success', 'ইভেন্ট তথ্য আপডেট হয়েছে।');
@@ -162,7 +165,8 @@ router.post('/events/:id/edit/payment', upload.single('paypal_qr'), async (req, 
     await eventService.updateEventPayment(req.params.id, convertEventDates(req.body));
     if (req.file) {
       const ext = path.extname(req.file.originalname).toLowerCase();
-      const url = await eventService.uploadFileToBucket('paypal-qr', `${req.params.id}/paypal-qr${ext}`, req.file.buffer, req.file.mimetype);
+      const { buffer, mimetype } = await compressImage(req.file.buffer, req.file.mimetype);
+      const url = await eventService.uploadFileToBucket('paypal-qr', `${req.params.id}/paypal-qr${ext}`, buffer, mimetype);
       await eventService.updatePaypalQrUrl(req.params.id, url);
     }
     req.flash('success', 'পেমেন্ট তথ্য আপডেট হয়েছে।');
@@ -186,7 +190,8 @@ router.post('/events/:id/banner', upload.single('banner'), async (req, res, next
     if (!req.file) { req.flash('error', 'No file uploaded.'); return res.redirect(`/admin/events/${req.params.id}/edit`); }
     const ext = path.extname(req.file.originalname).toLowerCase();
     const filePath = `${req.params.id}/banner${ext}`;
-    const url = await eventService.uploadFileToBucket('banners', filePath, req.file.buffer, req.file.mimetype);
+    const { buffer: bannerBuf, mimetype: bannerMime } = await compressImage(req.file.buffer, req.file.mimetype);
+    const url = await eventService.uploadFileToBucket('banners', filePath, bannerBuf, bannerMime);
     await eventService.updateBannerUrl(req.params.id, url);
     req.flash('success', 'Banner uploaded.');
     res.redirect(`/admin/events/${req.params.id}/edit`);
@@ -201,7 +206,8 @@ router.post('/events/:id/paypal-qr', upload.single('paypal_qr'), async (req, res
     if (!req.file) { req.flash('error', 'No file uploaded.'); return res.redirect(`/admin/events/${req.params.id}/edit`); }
     const ext = path.extname(req.file.originalname).toLowerCase();
     const filePath = `${req.params.id}/paypal-qr${ext}`;
-    const url = await eventService.uploadFileToBucket('paypal-qr', filePath, req.file.buffer, req.file.mimetype);
+    const { buffer: qrBuf, mimetype: qrMime } = await compressImage(req.file.buffer, req.file.mimetype);
+    const url = await eventService.uploadFileToBucket('paypal-qr', filePath, qrBuf, qrMime);
     await eventService.updatePaypalQrUrl(req.params.id, url);
     req.flash('success', 'PayPal QR uploaded.');
     res.redirect(`/admin/events/${req.params.id}/edit`);
@@ -570,7 +576,7 @@ router.post('/volunteers/:id/pending', async (req, res, next) => {
 
 router.post('/volunteers/:id/assign-task', async (req, res, next) => {
   try {
-    const vol = await volunteerService.assignTask(req.params.id, req.body.task, req.body.stall_id || null);
+    const vol = await volunteerService.assignTask(req.params.id, req.body.task);
     req.flash('success', 'Task assigned.');
     res.redirect(`/admin/events/${vol.event_id}/volunteers`);
   } catch (err) { next(err); }
@@ -744,8 +750,9 @@ router.post('/ads/new', upload.single('image'), async (req, res, next) => {
   try {
     let image_url = null;
     if (req.file) {
+      const { buffer: imgBuf, mimetype: imgMime } = await compressImage(req.file.buffer, req.file.mimetype);
       const { data, error } = await db.storage.from('ads').upload(
-        `${Date.now()}-${req.file.originalname}`, req.file.buffer, { contentType: req.file.mimetype }
+        `${Date.now()}-${req.file.originalname}`, imgBuf, { contentType: imgMime }
       );
       if (!error) image_url = `/storage/ads/${data.path}`;
     }
@@ -767,8 +774,9 @@ router.post('/ads/:id/edit', upload.single('image'), async (req, res, next) => {
     const existing = await advertisementService.getAdById(req.params.id);
     let image_url = existing.image_url;
     if (req.file) {
+      const { buffer: imgBuf, mimetype: imgMime } = await compressImage(req.file.buffer, req.file.mimetype);
       const { data, error } = await db.storage.from('ads').upload(
-        `${Date.now()}-${req.file.originalname}`, req.file.buffer, { contentType: req.file.mimetype }
+        `${Date.now()}-${req.file.originalname}`, imgBuf, { contentType: imgMime }
       );
       if (!error) image_url = `/storage/ads/${data.path}`;
     }

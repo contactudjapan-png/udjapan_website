@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const { uploadFileToBucket } = require('./eventService');
+const { compressImage } = require('../middleware/compress');
 const path = require('path');
 const crypto = require('crypto');
 
@@ -17,9 +18,10 @@ async function getTotalByEvent(eventId) {
 async function createExpense(eventId, { description, amount, category }, file) {
   let receipt_url = null;
   if (file) {
+    const { buffer, mimetype } = await compressImage(file.buffer, file.mimetype);
     const ext = path.extname(file.originalname).toLowerCase();
     const filePath = `${eventId}/${crypto.randomUUID()}${ext}`;
-    receipt_url = await uploadFileToBucket('receipts', filePath, file.buffer, file.mimetype);
+    receipt_url = await uploadFileToBucket('receipts', filePath, buffer, mimetype);
   }
 
   const { data, error } = await db.from('expenses').insert({

@@ -4,19 +4,16 @@
 <%- include('../partials/flash') %>
 
 <main class="admin-container">
-  <div class="section-header">
-    <h1><%= announcement ? t('admin.pg_edit_announcement') : t('admin.pg_new_announcement') %></h1>
-    <a href="/admin/announcements" class="btn btn-outline"><%- t('btn.back') %></a>
-  </div>
+  <h1><%= announcement ? t('admin.pg_edit_announcement') : t('admin.pg_new_announcement') %></h1>
 
-  <form action="<%= announcement ? `/admin/announcements/${announcement.id}/edit` : '/admin/announcements/new' %>" method="POST" class="admin-form" style="max-width:600px">
+  <form action="<%= announcement ? `/admin/announcements/${announcement.id}/edit` : '/admin/announcements/new' %>" method="POST" class="admin-form">
     <div class="form-group">
       <label for="title"><%- t('admin.lbl_title') %></label>
       <input type="text" id="title" name="title" required value="<%= announcement ? announcement.title : '' %>" placeholder="<%- t('admin.ann_content_ph') %>">
     </div>
     <div class="form-group">
       <label for="content"><%- t('admin.lbl_content_bn') %></label>
-      <textarea id="content" name="content" rows="5" required data-rich placeholder="<%- t('admin.ann_content_ph') %>"><%= announcement ? announcement.content : '' %></textarea>
+      <textarea id="content" name="content" rows="2" required data-rich><%= announcement ? announcement.content : '' %></textarea>
     </div>
     <div class="form-group">
       <label for="title_en">Title (English)</label>
@@ -24,7 +21,7 @@
     </div>
     <div class="form-group">
       <label for="content_en">Content (English)</label>
-      <textarea id="content_en" name="content_en" rows="4" data-rich placeholder="Announcement details..."><%= announcement ? (announcement.content_en || '') : '' %></textarea>
+      <textarea id="content_en" name="content_en" rows="2" data-rich><%= announcement ? (announcement.content_en || '') : '' %></textarea>
     </div>
     <div class="form-group">
       <label for="title_de">Titel (Deutsch)</label>
@@ -32,17 +29,15 @@
     </div>
     <div class="form-group">
       <label for="content_de">Inhalt (Deutsch)</label>
-      <textarea id="content_de" name="content_de" rows="4" data-rich placeholder="Ankündigungsdetails..."><%= announcement ? (announcement.content_de || '') : '' %></textarea>
+      <textarea id="content_de" name="content_de" rows="2" data-rich><%= announcement ? (announcement.content_de || '') : '' %></textarea>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label for="link_url"><%- t('admin.lbl_link_url') %></label>
-        <input type="url" id="link_url" name="link_url" value="<%= announcement ? (announcement.link_url || '') : '' %>" placeholder="https://...">
-      </div>
-      <div class="form-group">
-        <label for="link_text"><%- t('admin.lbl_link_text') %></label>
-        <input type="text" id="link_text" name="link_text" value="<%= announcement ? (announcement.link_text || '') : '' %>" placeholder="<%- t('admin.lbl_link_text_ph') %>">
-      </div>
+    <div class="form-group">
+      <label for="link_url"><%- t('admin.lbl_link_url') %></label>
+      <input type="url" id="link_url" name="link_url" value="<%= announcement ? (announcement.link_url || '') : '' %>" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label for="link_text"><%- t('admin.lbl_link_text') %></label>
+      <input type="text" id="link_text" name="link_text" value="<%= announcement ? (announcement.link_text || '') : '' %>" placeholder="<%- t('admin.lbl_link_text_ph') %>">
     </div>
     <div class="form-group">
       <label for="sort_order"><%- t('admin.lbl_sort_order') %></label>
@@ -51,13 +46,11 @@
     </div>
     <% if (announcement) { %>
     <div class="form-group">
-      <label>
-        <input type="checkbox" name="is_active" <%= announcement.is_active ? 'checked' : '' %>>
-        <%- t('admin.lbl_is_active') %>
-      </label>
+      <label><input type="checkbox" name="is_active" <%= announcement.is_active ? 'checked' : '' %>> <%- t('admin.lbl_is_active') %></label>
     </div>
     <% } %>
     <button type="submit" class="btn btn-primary"><%= announcement ? t('btn.update') : t('btn.create') %></button>
+    <a href="/admin/announcements" class="btn btn-outline"><%- t('btn.cancel') %></a>
   </form>
 </main>
 

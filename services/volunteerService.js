@@ -35,10 +35,8 @@ async function updateVolunteerStatus(id, status) {
   return data;
 }
 
-async function assignTask(id, task, stallId = null) {
-  const update = { assigned_task: task };
-  if (stallId !== undefined) update.stall_id = stallId || null;
-  const { data, error } = await db.from('volunteers').update(update).eq('id', id).select().single();
+async function assignTask(id, task) {
+  const { data, error } = await db.from('volunteers').update({ assigned_task: task }).eq('id', id).select().single();
   if (error) throw new Error(error.message);
   return data;
 }
