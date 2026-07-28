@@ -30,13 +30,14 @@
   <% if (registrations.length === 0) { %>
     <div class="empty-state"><p><%- t('admin.empty_regs') %></p></div>
   <% } else { %>
+    <div class="table-scroll-wrap">
     <table class="admin-table">
       <thead><tr>
         <th><%- t('tbl.name') %></th>
         <th><%- t('tbl.email') %></th>
         <th><%- t('tbl.phone') %></th>
-        <th><%- t('reg.adults') %></th>
-        <th><%- t('reg.children') %></th>
+        <th style="white-space:nowrap"><%- t('reg.adults') %></th>
+        <th style="white-space:nowrap"><%- t('reg.children') %></th>
         <th><%- t('tbl.amount') %></th>
         <th><%- t('tbl.transaction_id') %></th>
         <th><%- t('tbl.status') %></th>
@@ -46,16 +47,16 @@
       <tbody>
       <% registrations.forEach(reg => { %>
         <tr class="<%= reg.is_cancelled ? 'reg-row-cancelled' : '' %>">
-          <td>
+          <td style="white-space:nowrap">
             <%= reg.name %>
             <% if (reg.is_special_needs) { %><span class="badge-special" title="<%- t('reg.special_needs') %>">♿</span><% } %>
           </td>
-          <td><%= reg.email %></td>
-          <td><%= reg.phone || '—' %></td>
-          <td><%= reg.adults_count || 0 %></td>
-          <td><%= reg.children_count || 0 %></td>
-          <td><% if (reg.amount) { %>€<%= parseFloat(reg.amount).toFixed(2) %><% } else { %>—<% } %></td>
-          <td><% if (reg.transaction_id) { %><code style="font-size:0.78rem"><%= reg.transaction_id %></code><% } else { %><%= reg.payment_reference || '—' %><% } %></td>
+          <td style="font-size:0.82rem"><%= reg.email %></td>
+          <td style="white-space:nowrap"><%= reg.phone || '—' %></td>
+          <td style="text-align:center"><%= reg.adults_count || 0 %></td>
+          <td style="text-align:center"><%= reg.children_count || 0 %></td>
+          <td style="white-space:nowrap"><% if (reg.amount) { %>€<%= parseFloat(reg.amount).toFixed(2) %><% } else { %>—<% } %></td>
+          <td style="font-size:0.78rem;white-space:nowrap"><% if (reg.transaction_id) { %><code><%= reg.transaction_id %></code><% } else { %><%= reg.payment_reference || '—' %><% } %></td>
           <td>
             <% if (reg.is_cancelled) { %>
               <span class="badge badge-cancelled"><%- t('reg.cancelled') %></span>
@@ -90,6 +91,7 @@
       <% }) %>
       </tbody>
     </table>
+    </div>
   <% } %>
 </main>
 
