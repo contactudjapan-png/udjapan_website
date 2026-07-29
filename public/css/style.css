@@ -1232,11 +1232,11 @@ body.tier-nilkantha {
   --hero-tint: rgba(0,151,167,0.25);
 }
 body.tier-kokila {
-  --primary: #c62828; --primary-dark: #b71c1c; --primary-light: #ef5350;
-  --green: #4527a0;   --green-dark: #311b92;
-  --bg: #fce4e4;      --border: #ef9a9a;       --text-muted: #5e35b1;
+  --primary: #c62828; --primary-dark: #b71c1c; --primary-light: #e57373;
+  --green: #1c2331;   --green-dark: #0e1520;
+  --bg: #f0f0f5;      --border: #c8c8d4;       --text-muted: #555570;
   --accent: #e53935;
-  --hero-tint: rgba(69,39,160,0.25);
+  --hero-tint: rgba(198,40,40,0.25);
 }
 
 /* ─── SOS Help Button ────────────────────────────────────────────────────────── */
