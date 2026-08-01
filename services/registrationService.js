@@ -8,8 +8,10 @@ async function getRegistrationsByEvent(eventId) {
 }
 
 async function getRegistrationById(id) {
-  const { data, error } = await db.from('registrations').select('*').eq('id', id).single();
+  const { NotFoundError } = require('../middleware/errors');
+  const { data, error } = await db.from('registrations').select('*').eq('id', id).maybeSingle();
   if (error) throw new Error(error.message);
+  if (!data) throw new NotFoundError('Registration not found.', 'registration');
   return data;
 }
 

@@ -125,16 +125,23 @@ app.use('/validate', validatorRouter);
 app.use((req, res) => {
   if (!res.locals.t) res.locals.t = (k) => k;
   if (!res.locals.locale) res.locals.locale = 'bn';
-  res.status(404).render('public/404', { title: 'Page Not Found' });
+  const p = req.path;
+  let context = 'page';
+  if (/^\/event\/[^/]+$/.test(p) || /^\/event\/[^/]+\/(polls|volunteer|feedback)$/.test(p)) context = 'event';
+  else if (/^\/submit\/success\//.test(p)) context = 'submission';
+  else if (/^\/register\/success\//.test(p)) context = 'registration';
+  res.status(404).render('public/404', { title: '404', context });
 });
 
 // Error handler
 app.use((err, req, res, next) => {
-  console.error('APP ERROR:', err.message);
   if (!res.locals.t) res.locals.t = (k) => k;
   if (!res.locals.locale) res.locals.locale = 'bn';
-  // Send plain text error to avoid cascading template errors
-  res.status(500).type('text').send('Error: ' + err.message + '\n\n' + err.stack);
+  if (err.status === 404) {
+    return res.status(404).render('public/404', { title: '404', context: err.context || 'page' });
+  }
+  console.error('APP ERROR:', err.message, err.stack);
+  res.status(500).render('public/error', { title: 'Error', message: err.message });
 });
 
 // ── Auto-seed in-memory DB on startup ────────────────────────────────────────

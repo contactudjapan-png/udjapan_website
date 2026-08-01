@@ -2,11 +2,42 @@
 <body class="<%= tierClass %>">
 <%- include('../partials/nav-public') %>
 
+<%
+  const _ctx = context || 'page';
+  const _msgs = {
+    event: {
+      bn: { h: 'ইভেন্ট পাওয়া যায়নি', p: 'এই ইভেন্টটি বিদ্যমান নেই বা মুছে ফেলা হয়েছে।' },
+      en: { h: 'Event Not Found', p: 'This event does not exist or has been removed.' },
+      de: { h: 'Veranstaltung nicht gefunden', p: 'Diese Veranstaltung existiert nicht oder wurde entfernt.' },
+    },
+    submission: {
+      bn: { h: 'সাবমিশন পাওয়া যায়নি', p: 'এই সাবমিশন লিঙ্কটি আর বৈধ নয় — এটি ইতিমধ্যে অনুমোদিত বা মুছে ফেলা হয়েছে।' },
+      en: { h: 'Submission Not Found', p: 'This submission link is no longer valid — it may have already been approved or removed.' },
+      de: { h: 'Einreichung nicht gefunden', p: 'Dieser Einreichungslink ist nicht mehr gültig — er wurde möglicherweise bereits bearbeitet oder gelöscht.' },
+    },
+    registration: {
+      bn: { h: 'নিবন্ধন পাওয়া যায়নি', p: 'এই নিবন্ধনটি বিদ্যমান নেই।' },
+      en: { h: 'Registration Not Found', p: 'This registration does not exist.' },
+      de: { h: 'Registrierung nicht gefunden', p: 'Diese Registrierung existiert nicht.' },
+    },
+    page: {
+      bn: { h: 'পৃষ্ঠা পাওয়া যায়নি', p: 'আপনি যে পৃষ্ঠাটি খুঁজছেন তা বিদ্যমান নেই।' },
+      en: { h: 'Page Not Found', p: 'The page you are looking for does not exist.' },
+      de: { h: 'Seite nicht gefunden', p: 'Die gesuchte Seite existiert nicht.' },
+    },
+  };
+  const _l = (locale === 'en' || locale === 'de') ? locale : 'bn';
+  const _m = (_msgs[_ctx] || _msgs.page)[_l];
+%>
+
 <main class="container">
   <div class="error-card">
-    <h1>404 — Page Not Found</h1>
-    <p>The page you're looking for doesn't exist.</p>
-    <a href="/" class="btn btn-primary">Go Home</a>
+    <div class="error-code">404</div>
+    <h1><%= _m.h %></h1>
+    <p><%= _m.p %></p>
+    <a href="/" class="btn btn-primary">
+      <% if (_l === 'bn') { %>ইভেন্টসমূহে ফিরুন<% } else if (_l === 'de') { %>Zur Startseite<% } else { %>Back to Home<% } %>
+    </a>
   </div>
 </main>
 

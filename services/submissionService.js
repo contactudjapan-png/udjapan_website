@@ -7,9 +7,10 @@ async function getSubmissionsByEvent(eventId) {
 }
 
 async function getSubmissionById(id) {
+  const { NotFoundError } = require('../middleware/errors');
   const { data, error } = await db.from('submissions').select('*').eq('id', id).maybeSingle();
   if (error) throw new Error(error.message);
-  if (!data) throw new Error('Submission not found.');
+  if (!data) throw new NotFoundError('Submission not found.', 'submission');
   return data;
 }
 

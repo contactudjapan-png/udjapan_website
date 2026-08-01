@@ -13,8 +13,10 @@ async function getActiveEvents() {
 }
 
 async function getEventById(id) {
-  const { data, error } = await db.from('events').select('*').eq('id', id).single();
+  const { NotFoundError } = require('../middleware/errors');
+  const { data, error } = await db.from('events').select('*').eq('id', id).maybeSingle();
   if (error) throw new Error(error.message);
+  if (!data) throw new NotFoundError('Event not found.', 'event');
   return data;
 }
 
