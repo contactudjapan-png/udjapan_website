@@ -29,9 +29,13 @@
     </div>
 
     <p style="color:#c00;font-size:0.9rem;margin-top:1rem">
-      <strong>বাংলা:</strong> দয়া করে আপনার স্প্যাম/জাঙ্ক ফোল্ডার চেক করুন — নিশ্চিতকরণ ইমেইল সেখানে পৌঁছাতে পারে।<br>
-      <strong>English:</strong> Please check your spam / junk folder — the confirmation email may end up there.<br>
-      <strong>Deutsch:</strong> Bitte prüfen Sie Ihren Spam- / Junk-Ordner — die Bestätigungs-E-Mail kann dort landen.
+      <% if (locale === 'bn') { %>
+        দয়া করে আপনার স্প্যাম/জাঙ্ক ফোল্ডার চেক করুন — নিশ্চিতকরণ ইমেইল সেখানে পৌঁছাতে পারে।
+      <% } else if (locale === 'en') { %>
+        Please check your spam / junk folder — the confirmation email may end up there.
+      <% } else if (locale === 'de') { %>
+        Bitte prüfen Sie Ihren Spam- / Junk-Ordner — die Bestätigungs-E-Mail kann dort landen.
+      <% } %>
     </p>
 
     <a href="/" class="btn btn-outline">ইভেন্টসমূহে ফিরুন</a>
