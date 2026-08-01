@@ -858,6 +858,21 @@ small { color: var(--text-muted); font-size: 0.8rem; }
 .error-code { font-size: 4rem; font-weight: 800; color: var(--primary); opacity: 0.15; line-height: 1; margin-bottom: 0.5rem; }
 .content-card h1 { margin-bottom: 1.5rem; }
 .content-card h2 { margin: 1.5rem 0 0.5rem; }
+
+/* FAQ */
+.faq-category { margin: 2rem 0 0.75rem; font-size: 1.1rem; color: var(--primary); border-bottom: 2px solid var(--accent, var(--primary)); padding-bottom: 0.25rem; }
+.faq-list { display: flex; flex-direction: column; gap: 6px; }
+.faq-item { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card); overflow: hidden; }
+.faq-item[open] { border-color: var(--primary); }
+.faq-question { padding: 0.85rem 1rem; cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.faq-question::-webkit-details-marker { display: none; }
+.faq-question::after { content: '+'; font-size: 1.25rem; font-weight: 300; color: var(--primary); flex-shrink: 0; transition: transform 0.2s; }
+.faq-item[open] .faq-question::after { content: '−'; }
+.faq-answer { padding: 0 1rem 1rem; color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; }
+
+/* Admin fieldset */
+.admin-fieldset { border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1rem 0.5rem; margin-bottom: 1rem; }
+.admin-fieldset legend { font-weight: 600; padding: 0 0.4rem; color: var(--primary); font-size: 0.9rem; }
 .content-card ul { padding-left: 1.5rem; }
 .content-card li { margin-bottom: 0.25rem; }
 

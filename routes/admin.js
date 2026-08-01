@@ -849,6 +849,51 @@ router.post('/announcements/:id/delete', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// ─── FAQs ────────────────────────────────────────────────────────────────────
+const faqService = require('../services/faqService');
+
+router.get('/faqs', async (req, res, next) => {
+  try {
+    const faqs = await faqService.getAllFaqs();
+    res.render('admin/faqs', { title: 'FAQ', faqs });
+  } catch (err) { next(err); }
+});
+
+router.get('/faqs/new', (req, res) => {
+  res.render('admin/faq-form', { title: 'New FAQ', faq: null });
+});
+
+router.post('/faqs/new', async (req, res, next) => {
+  try {
+    await faqService.createFaq(req.body);
+    req.flash('success', 'FAQ created.');
+    res.redirect('/admin/faqs');
+  } catch (err) { next(err); }
+});
+
+router.get('/faqs/:id/edit', async (req, res, next) => {
+  try {
+    const faq = await faqService.getFaqById(req.params.id);
+    res.render('admin/faq-form', { title: 'Edit FAQ', faq });
+  } catch (err) { next(err); }
+});
+
+router.post('/faqs/:id/edit', async (req, res, next) => {
+  try {
+    await faqService.updateFaq(req.params.id, req.body);
+    req.flash('success', 'FAQ updated.');
+    res.redirect('/admin/faqs');
+  } catch (err) { next(err); }
+});
+
+router.post('/faqs/:id/delete', async (req, res, next) => {
+  try {
+    await faqService.deleteFaq(req.params.id);
+    req.flash('success', 'FAQ deleted.');
+    res.redirect('/admin/faqs');
+  } catch (err) { next(err); }
+});
+
 // ─── Incomes ─────────────────────────────────────────────────────────────────
 
 router.get('/events/:id/incomes', async (req, res, next) => {

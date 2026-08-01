@@ -10,6 +10,7 @@ const submissionService = require('../services/submissionService');
 const advertisementService = require('../services/advertisementService');
 const announcementService = require('../services/announcementService');
 const feedbackService = require('../services/feedbackService');
+const faqService = require('../services/faqService');
 
 
 
@@ -100,6 +101,14 @@ router.get('/register/success/:id', async (req, res, next) => {
 // Privacy page
 router.get('/privacy', (req, res) => {
   res.render('public/privacy', { title: 'Privacy Policy' });
+});
+
+// FAQ page
+router.get('/faq', async (req, res, next) => {
+  try {
+    const faqs = await faqService.getActiveFaqs();
+    res.render('public/faq', { title: 'FAQ', faqs });
+  } catch (err) { next(err); }
 });
 
 // Public polls

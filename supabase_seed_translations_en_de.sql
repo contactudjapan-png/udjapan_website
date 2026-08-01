@@ -2,6 +2,7 @@
 INSERT INTO translations (key, locale, value) VALUES
 ('nav.logo',              'en', 'Udjapan'),
 ('nav.events',            'en', 'Events'),
+('nav.faq',               'en', 'FAQ'),
 ('nav.privacy',           'en', 'Privacy'),
 ('nav.volunteer',         'en', 'Volunteer Corner'),
 ('nav.admin',             'en', 'Admin'),
@@ -64,6 +65,7 @@ ON CONFLICT (key, locale) DO NOTHING;
 INSERT INTO translations (key, locale, value) VALUES
 ('nav.logo',              'de', 'Udjapan'),
 ('nav.events',            'de', 'Veranstaltungen'),
+('nav.faq',               'de', 'FAQ'),
 ('nav.privacy',           'de', 'Datenschutz'),
 ('nav.volunteer',         'de', 'Freiwilligen-Ecke'),
 ('nav.admin',             'de', 'Admin'),

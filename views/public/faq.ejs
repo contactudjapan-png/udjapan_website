@@ -1,0 +1,61 @@
+<%- include('../partials/head') %>
+<body class="<%= tierClass %>">
+<%- include('../partials/nav-public') %>
+
+<%
+  const _l = (locale === 'en' || locale === 'de') ? locale : 'bn';
+
+  const _catLabels = {
+    general:      { bn: 'সাধারণ প্রশ্ন', en: 'General', de: 'Allgemein' },
+    registration: { bn: 'নিবন্ধন', en: 'Registration', de: 'Registrierung' },
+    payment:      { bn: 'পেমেন্ট', en: 'Payment', de: 'Zahlung' },
+    event:        { bn: 'ইভেন্ট', en: 'Event', de: 'Veranstaltung' },
+    entry:        { bn: 'প্রবেশ / QR কোড', en: 'Entry / QR Code', de: 'Einlass / QR-Code' },
+  };
+  const _catOrder = ['general', 'event', 'registration', 'payment', 'entry'];
+
+  function _q(item) { return (_l === 'en' && item.question_en) ? item.question_en : (_l === 'de' && item.question_de) ? item.question_de : item.question_bn; }
+  function _a(item) { return (_l === 'en' && item.answer_en) ? item.answer_en : (_l === 'de' && item.answer_de) ? item.answer_de : item.answer_bn; }
+
+  const _grouped = {};
+  faqs.forEach(f => {
+    if (!_grouped[f.category]) _grouped[f.category] = [];
+    _grouped[f.category].push(f);
+  });
+
+  const _heading = { bn: 'সাধারণ জিজ্ঞাসা', en: 'Frequently Asked Questions', de: 'Häufig gestellte Fragen' };
+  const _empty   = { bn: 'কোনো প্রশ্ন পাওয়া যায়নি।', en: 'No questions available yet.', de: 'Noch keine Fragen vorhanden.' };
+%>
+
+<main class="container">
+  <div class="content-card">
+    <h1><%= _heading[_l] %></h1>
+
+    <% if (faqs.length === 0) { %>
+      <p style="color:var(--text-muted)"><%= _empty[_l] %></p>
+    <% } else { %>
+      <%
+        const _cats = _catOrder.filter(c => _grouped[c]);
+        const _others = Object.keys(_grouped).filter(c => !_catOrder.includes(c));
+        const _allCats = [..._cats, ..._others];
+      %>
+      <% _allCats.forEach(cat => { %>
+        <% const _items = _grouped[cat] || []; %>
+        <% if (_items.length === 0) return; %>
+        <h2 class="faq-category"><%= (_catLabels[cat] || {})[_l] || cat %></h2>
+        <div class="faq-list">
+          <% _items.forEach(item => { %>
+            <details class="faq-item">
+              <summary class="faq-question"><%- _q(item) %></summary>
+              <div class="faq-answer"><%- _a(item) %></div>
+            </details>
+          <% }) %>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <h1><%= faq ? 'Edit FAQ' : 'New FAQ' %></h1>
+
+  <form action="<%= faq ? `/admin/faqs/${faq.id}/edit` : '/admin/faqs/new' %>" method="POST" class="admin-form">
+
+    <div class="form-group">
+      <label for="category">Category</label>
+      <select id="category" name="category">
+        <option value="general"      <%= (faq && faq.category === 'general')      ? 'selected' : '' %>>General / সাধারণ</option>
+        <option value="event"        <%= (faq && faq.category === 'event')        ? 'selected' : '' %>>Event / ইভেন্ট</option>
+        <option value="registration" <%= (faq && faq.category === 'registration') ? 'selected' : '' %>>Registration / নিবন্ধন</option>
+        <option value="payment"      <%= (faq && faq.category === 'payment')      ? 'selected' : '' %>>Payment / পেমেন্ট</option>
+        <option value="entry"        <%= (faq && faq.category === 'entry')        ? 'selected' : '' %>>Entry / QR Code</option>
+      </select>
+    </div>
+
+    <fieldset class="admin-fieldset">
+      <legend>বাংলা</legend>
+      <div class="form-group">
+        <label for="question_bn">প্রশ্ন *</label>
+        <input type="text" id="question_bn" name="question_bn" required value="<%= faq ? faq.question_bn : '' %>">
+      </div>
+      <div class="form-group">
+        <label for="answer_bn">উত্তর *</label>
+        <textarea id="answer_bn" name="answer_bn" rows="3" required data-rich><%= faq ? faq.answer_bn : '' %></textarea>
+      </div>
+    </fieldset>
+
+    <fieldset class="admin-fieldset">
+      <legend>English</legend>
+      <div class="form-group">
+        <label for="question_en">Question</label>
+        <input type="text" id="question_en" name="question_en" value="<%= faq ? (faq.question_en || '') : '' %>">
+      </div>
+      <div class="form-group">
+        <label for="answer_en">Answer</label>
+        <textarea id="answer_en" name="answer_en" rows="3" data-rich><%= faq ? (faq.answer_en || '') : '' %></textarea>
+      </div>
+    </fieldset>
+
+    <fieldset class="admin-fieldset">
+      <legend>Deutsch</legend>
+      <div class="form-group">
+        <label for="question_de">Frage</label>
+        <input type="text" id="question_de" name="question_de" value="<%= faq ? (faq.question_de || '') : '' %>">
+      </div>
+      <div class="form-group">
+        <label for="answer_de">Antwort</label>
+        <textarea id="answer_de" name="answer_de" rows="3" data-rich><%= faq ? (faq.answer_de || '') : '' %></textarea>
+      </div>
+    </fieldset>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="sort_order"><%- t('admin.lbl_sort_order') %></label>
+        <input type="number" id="sort_order" name="sort_order" value="<%= faq ? faq.sort_order : 0 %>" min="0">
+      </div>
+    </div>
+
+    <% if (faq) { %>
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" name="is_active" <%= faq.is_active ? 'checked' : '' %>>
+        <%- t('admin.lbl_is_active') %>
+      </label>
+    </div>
+    <% } %>
+
+    <button type="submit" class="btn btn-primary"><%= faq ? t('btn.update') : t('btn.create') %></button>
+    <a href="/admin/faqs" class="btn btn-outline"><%- t('btn.cancel') %></a>
+  </form>
+</main>
+
+<%- include('../partials/rich-editor') %>
+<%- include('../partials/footer') %>
+</body>
+</html>

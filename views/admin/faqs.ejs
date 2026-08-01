@@ -1,0 +1,41 @@
+<%- include('../partials/head') %>
+<body class="admin-page">
+<%- include('../partials/nav-admin') %>
+<%- include('../partials/flash') %>
+
+<main class="admin-container">
+  <div class="section-header">
+    <h1>FAQ</h1>
+    <a href="/admin/faqs/new" class="btn btn-primary">+ New FAQ</a>
+  </div>
+
+  <% if (faqs.length === 0) { %>
+    <div class="empty-state"><p>No FAQs yet.</p></div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead><tr>
+        <th>Category</th><th>Question (BN)</th><th>Order</th><th>Status</th><th><%- t('tbl.actions') %></th>
+      </tr></thead>
+      <tbody>
+      <% faqs.forEach(faq => { %>
+        <tr>
+          <td><span class="badge badge-pending"><%= faq.category %></span></td>
+          <td style="max-width:320px;font-size:0.9rem"><%= faq.question_bn ? faq.question_bn.slice(0, 120) : '—' %></td>
+          <td><%= faq.sort_order %></td>
+          <td><span class="badge <%= faq.is_active ? 'badge-open' : 'badge-closed' %>"><%= faq.is_active ? 'Active' : 'Hidden' %></span></td>
+          <td class="action-cell">
+            <a href="/admin/faqs/<%= faq.id %>/edit" class="btn btn-sm btn-outline"><%- t('btn.edit') %></a>
+            <form action="/admin/faqs/<%= faq.id %>/delete" method="POST" style="display:inline" data-confirm="Delete this FAQ?">
+              <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('../partials/footer') %>
+</body>
+</html>
