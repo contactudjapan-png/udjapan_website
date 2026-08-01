@@ -7,8 +7,9 @@ async function getSubmissionsByEvent(eventId) {
 }
 
 async function getSubmissionById(id) {
-  const { data, error } = await db.from('submissions').select('*').eq('id', id).single();
+  const { data, error } = await db.from('submissions').select('*').eq('id', id).maybeSingle();
   if (error) throw new Error(error.message);
+  if (!data) throw new Error('Submission not found.');
   return data;
 }
 

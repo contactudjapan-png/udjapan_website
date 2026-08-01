@@ -3,15 +3,21 @@ const { generateQRBuffer } = require('./qrService');
 
 const SMTP_CONFIGURED = !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
 
+function log(msg) {
+  console.log(`[Email] ${new Date().toISOString()} ${msg}`);
+}
+
 async function sendRegistrationConfirmation(registration, event, baseUrl) {
   if (!SMTP_CONFIGURED) {
-    console.log(`[Email] SMTP not configured — skipping confirmation email to ${registration.email}`);
+    log(`SMTP not configured — skipping confirmation to ${registration.email}`);
     return;
   }
   if (!registration.email || !registration.email.includes('@')) {
-    console.log(`[Email] Contact is a phone number — skipping QR email for ${registration.name}`);
+    log(`Phone-only contact — skipping QR email for ${registration.name}`);
     return;
   }
+
+  log(`Sending confirmation to ${registration.email} (reg ${registration.id}, event "${event.title}")`);
 
   const qrUrl = `${baseUrl}/api/validate/${registration.qr_token}`;
   const qrBuffer = await generateQRBuffer(qrUrl);
@@ -25,7 +31,7 @@ async function sendRegistrationConfirmation(registration, event, baseUrl) {
 
   const shortCode = registration.qr_token.slice(0, 8).toUpperCase();
 
-  await transporter.sendMail({
+  const info = await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: registration.email,
     subject: `নিবন্ধন নিশ্চিত / Registrierung bestätigt — ${event.title}`,
@@ -61,20 +67,25 @@ async function sendRegistrationConfirmation(registration, event, baseUrl) {
       cid: 'qrcode',
     }],
   });
+  log(`Confirmation sent to ${registration.email} — messageId: ${info.messageId}`);
 }
 
 async function sendPromotionEmail(recipients, subject, body, eventTitle, trackingUrl = null) {
   if (!SMTP_CONFIGURED) {
-    console.log(`[Email] SMTP not configured — skipping promotion email to ${recipients.length} recipients`);
+    log(`SMTP not configured — skipping promotion email to ${recipients.length} recipients`);
     return 0;
   }
 
+  log(`Starting promotion email "${subject}" to ${recipients.length} recipients (event "${eventTitle}")`);
   const pixel = trackingUrl ? `<img src="${trackingUrl}" width="1" height="1" style="display:none" alt="">` : '';
   let sent = 0;
   const batchSize = 50;
+  const totalBatches = Math.ceil(recipients.length / batchSize);
   for (let i = 0; i < recipients.length; i += batchSize) {
     const batch = recipients.slice(i, i + batchSize);
-    await transporter.sendMail({
+    const batchNum = Math.floor(i / batchSize) + 1;
+    log(`Sending batch ${batchNum}/${totalBatches} (${batch.length} recipients)`);
+    const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       bcc: batch,
       subject,
@@ -87,7 +98,9 @@ async function sendPromotionEmail(recipients, subject, body, eventTitle, trackin
       `,
     });
     sent += batch.length;
+    log(`Batch ${batchNum}/${totalBatches} sent — messageId: ${info.messageId}`);
   }
+  log(`Promotion email complete: ${sent} recipients`);
   return sent;
 }
 
