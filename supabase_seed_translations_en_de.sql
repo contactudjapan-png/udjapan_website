@@ -57,7 +57,7 @@ INSERT INTO translations (key, locale, value) VALUES
 ('success.pending',       'en', 'Pending Verification'),
 ('success.pay_ref',       'en', 'Payment Reference'),
 ('success.back',          'en', 'Back to Events'),
-('footer.brand',          'en', 'Udjapon'),
+('footer.brand',          'en', 'Udjapan'),
 ('footer.privacy',        'en', 'Privacy Policy')
 ON CONFLICT (key, locale) DO NOTHING;
 
@@ -120,6 +120,6 @@ INSERT INTO translations (key, locale, value) VALUES
 ('success.pending',       'de', 'Ausstehende Prüfung'),
 ('success.pay_ref',       'de', 'Zahlungsreferenz'),
 ('success.back',          'de', 'Zurück zu den Veranstaltungen'),
-('footer.brand',          'de', 'Udjapon'),
+('footer.brand',          'de', 'Udjapan'),
 ('footer.privacy',        'de', 'Datenschutzerklärung')
 ON CONFLICT (key, locale) DO NOTHING;

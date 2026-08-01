@@ -80,7 +80,7 @@ const SEEDS = [
   { key: 'success.pay_ref',       bn: 'পেমেন্ট রেফারেন্স',                                                                                                                                 en: 'Payment Reference',                                                                                    de: 'Zahlungsreferenz' },
   { key: 'success.back',          bn: 'ইভেন্টসমূহে ফিরুন',                                                                                                                                en: 'Back to Events',                                                                                       de: 'Zurück zu den Veranstaltungen' },
   // footer
-  { key: 'footer.brand',          bn: 'উদযাপন',             en: 'Udjapon',            de: 'Udjapon' },
+  { key: 'footer.brand',          bn: 'উদযাপন',             en: 'Udjapan',            de: 'Udjapan' },
   { key: 'footer.privacy',        bn: 'গোপনীয়তা নীতি',     en: 'Privacy Policy',     de: 'Datenschutzerklärung' },
   // admin sidebar nav
   { key: 'admin.group_main',      bn: 'প্রধান',             en: 'Main',               de: 'Hauptmenü' },
@@ -625,7 +625,7 @@ const SEEDS = [
   { key: 'admin.import_col_notes',  bn: 'বিবরণ',                   en: 'Notes',                  de: 'Beschreibung' },
 
   // ── login page ────────────────────────────────────────────────────────────
-  { key: 'admin.login_title',       bn: 'উদযাপন অ্যাডমিন',          en: 'Udjapon Admin',          de: 'Udjapon Admin' },
+  { key: 'admin.login_title',       bn: 'উদযাপন অ্যাডমিন',          en: 'Udjapan Admin',          de: 'Udjapan Admin' },
   { key: 'admin.lbl_login_email',   bn: 'ইমেইল',                   en: 'Email',                  de: 'E-Mail' },
   { key: 'admin.lbl_login_password',bn: 'পাসওয়ার্ড',               en: 'Password',               de: 'Passwort' },
 

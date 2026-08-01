@@ -24,7 +24,7 @@ router.get('/', async (req, res, next) => {
     ]);
     const currentEvent = events[0] || null;
     const otherEvents = events.slice(1);
-    res.render('public/home', { title: 'Udjapon', currentEvent, otherEvents, ads, announcements });
+    res.render('public/home', { title: 'Udjapan', currentEvent, otherEvents, ads, announcements });
   } catch (err) {
     next(err);
   }
