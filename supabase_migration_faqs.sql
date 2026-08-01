@@ -16,14 +16,6 @@ CREATE TABLE IF NOT EXISTS faqs (
 -- Seed: General
 INSERT INTO faqs (category, sort_order, question_bn, answer_bn, question_en, answer_en, question_de, answer_de) VALUES
 ('general', 10,
- 'উদযাপন কি?',
- 'উদযাপন হলো জার্মানির বাংলাদেশি সম্প্রদায়ের জন্য একটি বার্ষিক সাংস্কৃতিক অনুষ্ঠান।',
- 'What is Udjapan?',
- 'Udjapan is an annual cultural event for the Bangladeshi community in Germany.',
- 'Was ist Udjapan?',
- 'Udjapan ist eine jährliche Kulturveranstaltung für die bangladeschische Gemeinschaft in Deutschland.'
-),
-('general', 20,
  'কোথায় যোগাযোগ করতে পারি?',
  'আমাদের ফেসবুক পেজ বা হোয়াটসঅ্যাপ গ্রুপে যোগাযোগ করুন।',
  'Who can I contact for help?',
@@ -53,6 +45,14 @@ INSERT INTO faqs (category, sort_order, question_bn, answer_bn, question_en, ans
 
 -- Seed: Registration
 INSERT INTO faqs (category, sort_order, question_bn, answer_bn, question_en, answer_en, question_de, answer_de) VALUES
+('registration', 5,
+ 'ইমেইল না থাকলে কি নিবন্ধন করা যাবে?',
+ 'হ্যাঁ। ইমেইল না থাকলে ফোন / WhatsApp নম্বর দিয়ে নিবন্ধন করা যাবে। অ্যাডমিন আপনার নিবন্ধন নিশ্চিত করবেন এবং আপনার সাথে WhatsApp বা ফোনে যোগাযোগ করবেন।',
+ 'Can I register without an email address?',
+ 'Yes. If you do not have an email address, you can register using your phone or WhatsApp number. The admin will confirm your registration and contact you via WhatsApp or phone.',
+ 'Kann ich mich ohne E-Mail-Adresse anmelden?',
+ 'Ja. Ohne E-Mail-Adresse können Sie Ihre Telefon- oder WhatsApp-Nummer angeben. Der Admin bestätigt Ihre Registrierung und kontaktiert Sie per WhatsApp oder Telefon.'
+),
 ('registration', 10,
  'নিবন্ধন করতে কী কী তথ্য লাগবে?',
  'আপনার নাম, ইমেইল বা ফোন নম্বর, অংশগ্রহণকারীর সংখ্যা এবং পেমেন্টের রেফারেন্স নম্বর।',
@@ -114,6 +114,7 @@ INSERT INTO faqs (category, sort_order, question_bn, answer_bn, question_en, ans
 );
 
 -- Seed: Entry / QR
+-- (mobile-number-only users won't receive a QR email — admin contacts them directly)
 INSERT INTO faqs (category, sort_order, question_bn, answer_bn, question_en, answer_en, question_de, answer_de) VALUES
 ('entry', 10,
  'QR কোড কোথায় দেখাতে হবে?',

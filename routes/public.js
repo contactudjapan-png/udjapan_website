@@ -52,8 +52,12 @@ router.post(`/event/:id/register`, async (req, res, next) => {
     }
 
     const { name, email, phone, payment_reference, children_count, adults_count, is_special_needs } = req.body;
-    if (!name || !email || !phone) {
-      req.flash('error', 'Name, contact info and phone number are required.');
+    if (!name) {
+      req.flash('error', 'Name is required.');
+      return res.redirect(`/event/${req.params.id}`);
+    }
+    if (!email?.trim() && !phone?.trim()) {
+      req.flash('error', 'Please provide either an email address or a phone number.');
       return res.redirect(`/event/${req.params.id}`);
     }
 
