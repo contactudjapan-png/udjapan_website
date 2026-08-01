@@ -757,8 +757,9 @@ small { color: var(--text-muted); font-size: 0.8rem; }
 .admin-table tr:hover td { background: #faf8f5; }
 .action-cell { white-space: nowrap; }
 .action-cell .btn, .action-cell button { margin: 0 2px; }
-.action-cell--wrap { white-space: normal; min-width: 220px; }
-.action-cell--wrap .btn, .action-cell--wrap button { margin: 2px; }
+.action-cell--wrap { white-space: normal; min-width: 110px; }
+.action-cell--wrap .btn, .action-cell--wrap button, .action-cell--wrap a.btn { display: block; margin: 2px 0; width: 100%; box-sizing: border-box; text-align: center; }
+.action-cell--wrap form { display: block; margin: 2px 0; }
 .task-assign-form { display: flex; gap: 4px; margin-top: 4px; }
 .task-assign-form .inline-input { flex: 1; min-width: 0; }
 

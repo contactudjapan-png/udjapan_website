@@ -30,7 +30,6 @@
   <% if (registrations.length === 0) { %>
     <div class="empty-state"><p><%- t('admin.empty_regs') %></p></div>
   <% } else { %>
-    <div class="table-scroll-wrap">
     <table class="admin-table">
       <thead><tr>
         <th><%- t('tbl.name') %></th>
@@ -67,23 +66,28 @@
             <% } %>
           </td>
           <td><%= new Date(reg.created_at).toLocaleDateString(_dateLocale, { timeZone: 'Europe/Berlin' }) %></td>
-          <td class="action-cell">
+          <td class="action-cell action-cell--wrap">
             <a href="/admin/registrations/<%= reg.id %>/edit" class="btn btn-sm btn-outline"><%- t('btn.edit') %></a>
             <% if (!reg.is_cancelled) { %>
-              <form action="/admin/registrations/<%= reg.id %>/toggle-paid" method="POST" style="display:inline">
+              <form action="/admin/registrations/<%= reg.id %>/toggle-paid" method="POST">
                 <button type="submit" class="btn btn-sm <%= reg.is_paid ? 'btn-outline' : 'btn-success' %>">
                   <%= reg.is_paid ? t('btn.toggle_unpaid') : t('btn.toggle_paid') %>
                 </button>
               </form>
-              <form action="/admin/registrations/<%= reg.id %>/cancel" method="POST" style="display:inline" data-confirm="নিবন্ধন বাতিল করবেন?">
+              <form action="/admin/registrations/<%= reg.id %>/cancel" method="POST" data-confirm="নিবন্ধন বাতিল করবেন?">
                 <button type="submit" class="btn btn-sm btn-outline"><%- t('btn.cancel_reg') %></button>
               </form>
             <% } else { %>
-              <form action="/admin/registrations/<%= reg.id %>/reinstate" method="POST" style="display:inline">
+              <form action="/admin/registrations/<%= reg.id %>/reinstate" method="POST">
                 <button type="submit" class="btn btn-sm btn-success"><%- t('btn.reinstate') %></button>
               </form>
             <% } %>
-            <form action="/admin/registrations/<%= reg.id %>/delete" method="POST" style="display:inline" data-confirm="এই নিবন্ধন মুছে ফেলবেন?">
+            <% if (reg.email && reg.email.includes('@') && !reg.is_cancelled) { %>
+              <form action="/admin/registrations/<%= reg.id %>/resend-email" method="POST">
+                <button type="submit" class="btn btn-sm btn-outline">📧 Resend</button>
+              </form>
+            <% } %>
+            <form action="/admin/registrations/<%= reg.id %>/delete" method="POST" data-confirm="এই নিবন্ধন মুছে ফেলবেন?">
               <button type="submit" class="btn btn-sm btn-danger"><%- t('btn.delete') %></button>
             </form>
           </td>
@@ -91,7 +95,6 @@
       <% }) %>
       </tbody>
     </table>
-    </div>
   <% } %>
 </main>
 

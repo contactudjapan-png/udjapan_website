@@ -296,6 +296,17 @@ router.post('/registrations/:id/reinstate', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+router.post('/registrations/:id/resend-email', async (req, res, next) => {
+  try {
+    const reg = await registrationService.getRegistrationById(req.params.id);
+    const event = await eventService.getEventById(reg.event_id);
+    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    await emailService.sendRegistrationConfirmation(reg, event, baseUrl);
+    req.flash('success', `Confirmation email resent to ${reg.email}.`);
+    res.redirect(`/admin/events/${reg.event_id}/registrations`);
+  } catch (err) { next(err); }
+});
+
 router.post('/registrations/:id/delete', async (req, res, next) => {
   try {
     const reg = await registrationService.getRegistrationById(req.params.id);

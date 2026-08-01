@@ -1,6 +1,6 @@
 -- English (en) translations
 INSERT INTO translations (key, locale, value) VALUES
-('nav.logo',              'en', 'Udjapon'),
+('nav.logo',              'en', 'Udjapan'),
 ('nav.events',            'en', 'Events'),
 ('nav.privacy',           'en', 'Privacy'),
 ('nav.volunteer',         'en', 'Volunteer Corner'),
@@ -62,7 +62,7 @@ ON CONFLICT (key, locale) DO NOTHING;
 
 -- German (de) translations
 INSERT INTO translations (key, locale, value) VALUES
-('nav.logo',              'de', 'Udjapon'),
+('nav.logo',              'de', 'Udjapan'),
 ('nav.events',            'de', 'Veranstaltungen'),
 ('nav.privacy',           'de', 'Datenschutz'),
 ('nav.volunteer',         'de', 'Freiwilligen-Ecke'),

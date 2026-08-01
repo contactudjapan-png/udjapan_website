@@ -16,29 +16,44 @@ async function sendRegistrationConfirmation(registration, event, baseUrl) {
   const qrUrl = `${baseUrl}/api/validate/${registration.qr_token}`;
   const qrBuffer = await generateQRBuffer(qrUrl);
 
-  const eventDate = new Date(event.event_date).toLocaleDateString('en-US', {
+  const eventDateBn = new Date(event.event_date).toLocaleDateString('bn-BD', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin',
   });
+  const eventDateDe = new Date(event.event_date).toLocaleDateString('de-DE', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Europe/Berlin',
+  });
+
+  const shortCode = registration.qr_token.slice(0, 8).toUpperCase();
 
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: registration.email,
-    subject: `Registration Confirmed — ${event.title}`,
+    subject: `নিবন্ধন নিশ্চিত / Registrierung bestätigt — ${event.title}`,
     html: `
-      <h2>Registration Confirmed!</h2>
-      <p>Dear ${registration.name},</p>
-      <p>Your registration for <strong>${event.title}</strong> has been received.</p>
-      <table>
-        <tr><td><strong>Date:</strong></td><td>${eventDate}</td></tr>
-        <tr><td><strong>Location:</strong></td><td>${event.location}</td></tr>
-        <tr><td><strong>Payment Reference:</strong></td><td>${registration.payment_reference || 'N/A'}</td></tr>
-      </table>
-      <p>Please bring or show the QR code below at the entrance:</p>
-      <img src="cid:qrcode" alt="Entry QR Code" style="width:200px;height:200px;" />
-      <p style="margin-top:16px">If the QR code does not scan, show this code manually at the entrance:</p>
-      <p style="font-family:monospace;font-size:24px;font-weight:bold;letter-spacing:4px;background:#f4f4f4;padding:10px 16px;border-radius:6px;display:inline-block">${registration.qr_token.slice(0, 8).toUpperCase()}</p>
-      <p>Your payment status will be confirmed by our team.</p>
-      <p>See you at the event!</p>
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:24px">
+
+        <h2 style="color:#1a1a2e">নিবন্ধন নিশ্চিত হয়েছে! ✓</h2>
+        <p>প্রিয় <strong>${registration.name}</strong>,</p>
+        <p><strong>${event.title}</strong>-এ আপনার নিবন্ধন সফলভাবে নিশ্চিত হয়েছে।</p>
+        <table style="border-collapse:collapse;width:100%;margin:12px 0">
+          <tr><td style="padding:6px 12px 6px 0;color:#555">তারিখ / Datum</td><td style="padding:6px 0"><strong>${eventDateBn}</strong><br><small style="color:#888">${eventDateDe}</small></td></tr>
+          ${event.location ? `<tr><td style="padding:6px 12px 6px 0;color:#555">স্থান / Ort</td><td style="padding:6px 0"><strong>${event.location}</strong></td></tr>` : ''}
+          ${registration.payment_reference ? `<tr><td style="padding:6px 12px 6px 0;color:#555">পেমেন্ট রেফারেন্স</td><td style="padding:6px 0">${registration.payment_reference}</td></tr>` : ''}
+        </table>
+
+        <p>প্রবেশদ্বারে নিচের QR কোডটি দেখান:</p>
+        <img src="cid:qrcode" alt="Entry QR Code" style="width:200px;height:200px;display:block;margin:8px 0" />
+        <p>QR কোড কাজ না করলে এই কোডটি দেখান:</p>
+        <p style="font-family:monospace;font-size:24px;font-weight:bold;letter-spacing:4px;background:#f4f4f4;padding:10px 16px;border-radius:6px;display:inline-block">${shortCode}</p>
+
+        <hr style="margin:24px 0;border:none;border-top:1px solid #eee">
+
+        <h3 style="color:#1a1a2e">Registrierung bestätigt!</h3>
+        <p>Liebe/r <strong>${registration.name}</strong>,</p>
+        <p>Ihre Registrierung für <strong>${event.title}</strong> wurde bestätigt. Bitte zeigen Sie den QR-Code oben am Eingang.</p>
+        <p style="color:#888;font-size:0.85rem">Bitte prüfen Sie auch Ihren Spam-Ordner, falls Sie diese E-Mail nicht erwartet haben.</p>
+        <p style="color:#888;font-size:0.85rem">আপনি যদি এই ইমেইল না পান, স্প্যাম ফোল্ডার চেক করুন।</p>
+      </div>
     `,
     attachments: [{
       filename: 'qrcode.png',

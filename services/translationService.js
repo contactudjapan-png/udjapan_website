@@ -9,7 +9,7 @@ const SUPPORTED_LOCALES = ['bn', 'en', 'de'];
 // even before the Supabase translations table is populated.
 const SEEDS = [
   // nav
-  { key: 'nav.logo',              bn: 'উদযাপন',                                                                                                                                             en: 'Udjapon',                                                                                              de: 'Udjapon' },
+  { key: 'nav.logo',              bn: 'উদযাপন',                                                                                                                                             en: 'Udjapan',                                                                                              de: 'Udjapan' },
   { key: 'nav.events',            bn: 'ইভেন্টসমূহ',                                                                                                                                        en: 'Events',                                                                                               de: 'Veranstaltungen' },
   { key: 'nav.privacy',           bn: 'গোপনীয়তা',                                                                                                                                         en: 'Privacy',                                                                                              de: 'Datenschutz' },
   { key: 'nav.volunteer',         bn: 'স্বেচ্ছাসেবী কর্নার',                                                                                                                               en: 'Volunteer Corner',                                                                                     de: 'Freiwilligen-Ecke' },
