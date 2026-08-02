@@ -222,8 +222,23 @@ router.post('/events/:id/paypal-qr', upload.single('paypal_qr'), async (req, res
 router.get('/events/:id/registrations', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
-    const registrations = await registrationService.getRegistrationsByEvent(req.params.id);
-    res.render('admin/registrations', { title: `Registrations — ${event.title}`, event, registrations });
+    const all = await registrationService.getRegistrationsByEvent(req.params.id);
+
+    // Sort: pending first, then paid, then cancelled
+    const sortKey = r => r.is_cancelled ? 2 : r.is_paid ? 1 : 0;
+    all.sort((a, b) => sortKey(a) - sortKey(b) || new Date(b.created_at) - new Date(a.created_at));
+
+    const PAGE_SIZE = 25;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const totalPages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+    const currentPage = Math.min(page, totalPages);
+    const registrations = all.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    res.render('admin/registrations', {
+      title: `Registrations — ${event.title}`,
+      event, registrations, allRegistrations: all,
+      currentPage, totalPages, pageSize: PAGE_SIZE,
+    });
   } catch (err) { next(err); }
 });
 

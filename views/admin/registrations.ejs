@@ -11,14 +11,15 @@
     <a href="/admin/events/<%= event.id %>/registrations/new" class="btn btn-primary"><%- t('btn.add_manually') %></a>
   </div>
 
-  <% const _active = registrations.filter(r => !r.is_cancelled); const _cancelled = registrations.filter(r => r.is_cancelled); %>
+  <% const _all = locals.allRegistrations || registrations; %>
+  <% const _active = _all.filter(r => !r.is_cancelled); const _cancelled = _all.filter(r => r.is_cancelled); %>
   <%
     const _totalAdults   = _active.reduce((s, r) => s + (parseInt(r.adults_count)   || 0), 0);
     const _totalChildren = _active.reduce((s, r) => s + (parseInt(r.children_count) || 0), 0);
     const _specialCount  = _active.filter(r => r.is_special_needs).length;
   %>
   <div class="reg-summary">
-    <span><strong><%= registrations.length %></strong> <%- t('admin.total') %></span>
+    <span><strong><%= _all.length %></strong> <%- t('admin.total') %></span>
     <span><strong><%= _active.filter(r=>r.is_paid).length %></strong> <%- t('admin.status_paid') %></span>
     <span><strong><%= _active.filter(r=>!r.is_paid).length %></strong> <%- t('admin.status_pending') %></span>
     <span><strong><%= _totalAdults %></strong> <%- t('reg.total_adults') %></span>
@@ -27,7 +28,7 @@
     <% if (_cancelled.length > 0) { %><span><strong><%= _cancelled.length %></strong> <%- t('reg.cancelled') %></span><% } %>
   </div>
 
-  <% if (registrations.length === 0) { %>
+  <% if (_all.length === 0) { %>
     <div class="empty-state"><p><%- t('admin.empty_regs') %></p></div>
   <% } else { %>
     <table class="admin-table">
@@ -95,6 +96,36 @@
       <% }) %>
       </tbody>
     </table>
+
+    <% if (locals.totalPages && totalPages > 1) { %>
+      <nav class="pagination">
+        <% if (currentPage > 1) { %>
+          <a href="?page=<%= currentPage - 1 %>" class="btn btn-sm btn-outline">‹ Prev</a>
+        <% } else { %>
+          <span class="btn btn-sm btn-outline" style="opacity:0.4;cursor:default">‹ Prev</span>
+        <% } %>
+
+        <% for (let p = 1; p <= totalPages; p++) { %>
+          <% if (p === currentPage) { %>
+            <span class="btn btn-sm btn-primary"><%= p %></span>
+          <% } else if (p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2) { %>
+            <a href="?page=<%= p %>" class="btn btn-sm btn-outline"><%= p %></a>
+          <% } else if (Math.abs(p - currentPage) === 3) { %>
+            <span style="padding:0 4px;line-height:2">…</span>
+          <% } %>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+          <a href="?page=<%= currentPage + 1 %>" class="btn btn-sm btn-outline">Next ›</a>
+        <% } else { %>
+          <span class="btn btn-sm btn-outline" style="opacity:0.4;cursor:default">Next ›</span>
+        <% } %>
+
+        <span style="color:var(--text-muted);font-size:0.85rem;margin-left:0.5rem">
+          <%= (currentPage - 1) * pageSize + 1 %>–<%= Math.min(currentPage * pageSize, _all.length) %> of <%= _all.length %>
+        </span>
+      </nav>
+    <% } %>
   <% } %>
 </main>
 

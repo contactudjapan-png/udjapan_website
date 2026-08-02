@@ -931,6 +931,14 @@ small { color: var(--text-muted); font-size: 0.8rem; }
 .poll-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
 .poll-actions { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
 .stalls-summary, .reg-summary {
   display: flex;
   gap: 2rem;
