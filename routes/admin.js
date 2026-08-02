@@ -1087,6 +1087,19 @@ router.post('/events/:id/bulk-payment', uploadPayment.single('payment_file'), as
     }
 
     const results = await bulkPaymentService.processBulkPayment(req.params.id, rows, event);
+
+    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    for (const r of results.matched) {
+      if (r.email && r.email.includes('@')) {
+        const reg = await registrationService.getRegistrationById(r.id);
+        if (reg) {
+          emailService.sendRegistrationConfirmation(reg, event, baseUrl).catch(err => {
+            console.error(`[Email] Bulk payment confirmation failed for ${r.email}:`, err.message);
+          });
+        }
+      }
+    }
+
     res.render('admin/bulk-payment', { title: `বাল্ক পেমেন্ট — ${event.title}`, event, results });
   } catch (err) {
     req.flash('error', err.message);

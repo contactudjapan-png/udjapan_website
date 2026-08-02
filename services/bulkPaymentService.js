@@ -120,6 +120,7 @@ async function processBulkPayment(eventId, rows, event) {
       });
 
       results.matched.push({
+        id: match.id,
         name: match.name,
         email: match.email,
         phone: match.phone,
