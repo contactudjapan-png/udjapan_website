@@ -38,8 +38,8 @@
   <% } else { %>
     <table class="admin-table reg-table">
       <thead><tr>
-        <th style="min-width:120px;max-width:180px"><%- t('tbl.name') %></th>
-        <th style="min-width:140px;max-width:200px"><%- t('tbl.email') %></th>
+        <th style="width:100px;max-width:130px"><%- t('tbl.name') %></th>
+        <th style="width:120px;max-width:150px"><%- t('tbl.email') %></th>
         <th style="width:130px;white-space:nowrap"><%- t('tbl.phone') %></th>
         <th style="width:60px;white-space:nowrap;text-align:center"><%- t('reg.adults') %></th>
         <th style="width:60px;white-space:nowrap;text-align:center"><%- t('reg.children') %></th>
@@ -53,11 +53,11 @@
       <tbody>
       <% registrations.forEach(reg => { %>
         <tr class="<%= reg.is_cancelled ? 'reg-row-cancelled' : '' %>">
-          <td style="min-width:120px;max-width:180px;word-break:break-word;white-space:normal">
+          <td style="width:100px;max-width:130px;word-break:break-word;white-space:normal">
             <%= reg.name %>
             <% if (reg.is_special_needs) { %><span class="badge-special" title="<%- t('reg.special_needs') %>">♿</span><% } %>
           </td>
-          <td style="font-size:0.82rem;min-width:140px;max-width:200px;word-break:break-all;white-space:normal"><%= reg.email %></td>
+          <td style="font-size:0.82rem;width:120px;max-width:150px;word-break:break-all;white-space:normal"><%= reg.email %></td>
           <td style="width:130px;white-space:nowrap;font-size:0.82rem"><%= reg.phone || '—' %></td>
           <td style="width:60px;text-align:center"><%= reg.adults_count || 0 %></td>
           <td style="width:60px;text-align:center"><%= reg.children_count || 0 %></td>
