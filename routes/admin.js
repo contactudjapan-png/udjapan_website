@@ -291,7 +291,16 @@ router.post('/registrations/:id/edit', async (req, res, next) => {
 router.post('/registrations/:id/toggle-paid', async (req, res, next) => {
   try {
     const reg = await registrationService.togglePaid(req.params.id);
-    req.flash('success', `Payment status set to ${reg.is_paid ? 'Paid' : 'Unpaid'}.`);
+    if (reg.is_paid && reg.email && reg.email.includes('@')) {
+      const event = await eventService.getEventById(reg.event_id);
+      const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+      emailService.sendRegistrationConfirmation(reg, event, baseUrl).catch(err => {
+        console.error('[Email] Failed to send confirmation:', err.message);
+      });
+      req.flash('success', 'Payment marked as Paid — QR confirmation email sent.');
+    } else {
+      req.flash('success', `Payment status set to ${reg.is_paid ? 'Paid' : 'Unpaid'}.`);
+    }
     res.redirect(`/admin/events/${reg.event_id}/registrations`);
   } catch (err) { next(err); }
 });
@@ -664,12 +673,7 @@ router.post('/submissions/:id/approve', async (req, res, next) => {
       is_special_needs: submission.is_special_needs,
     });
     await submissionService.deleteSubmission(submission.id);
-    // Send confirmation email with QR (non-blocking)
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
-    emailService.sendRegistrationConfirmation(registration, event, baseUrl).catch(err => {
-      console.error('[Email] Failed to send confirmation:', err.message);
-    });
-    req.flash('success', `${submission.name} approved and added to registrations. QR email sent.`);
+    req.flash('success', `${submission.name} accepted. Mark as paid to send the QR confirmation email.`);
     res.redirect(`/admin/events/${submission.event_id}/submissions`);
   } catch (err) { next(err); }
 });
