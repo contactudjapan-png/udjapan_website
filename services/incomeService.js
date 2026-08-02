@@ -37,6 +37,14 @@ async function findByTransactionId(txnId) {
   return data || null;
 }
 
+async function updateIncomeAmount(id, amount, description) {
+  const update = { amount: parseFloat(amount) };
+  if (description) update.description = description;
+  const { data, error } = await db.from('incomes').update(update).eq('id', id).select().single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 async function deleteByRegistration(eventId, { transaction_id, payer_email, payer_name }) {
   const incomes = await getIncomesByEvent(eventId);
   const match = incomes.find(i =>
@@ -48,4 +56,4 @@ async function deleteByRegistration(eventId, { transaction_id, payer_email, paye
   return match || null;
 }
 
-module.exports = { getIncomesByEvent, getTotalByEvent, createIncome, deleteIncome, findByTransactionId, deleteByRegistration };
+module.exports = { getIncomesByEvent, getTotalByEvent, createIncome, deleteIncome, findByTransactionId, deleteByRegistration, updateIncomeAmount };

@@ -266,7 +266,7 @@ async function syncIncomeFromRegistrations() {
         if (reg.transaction_id && existingTxns.has(reg.transaction_id)) continue;
         if (reg.email && existingEmails.has(reg.email)) continue;
         const tierResult = computeExpectedAmount(reg, event);
-        const incomeAmount = reg.amount ? parseFloat(reg.amount) : (tierResult ? tierResult.amount : 0);
+        const incomeAmount = tierResult ? tierResult.amount : (reg.amount ? parseFloat(reg.amount) : 0);
         const tierLabel = tierResult ? tierResult.tier : 'Registration';
         await incomeService.createIncome(event.id, {
           category: 'নিবন্ধন ফি',

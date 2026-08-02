@@ -299,7 +299,7 @@ router.post('/registrations/:id/toggle-paid', async (req, res, next) => {
       const existingIncome = reg.transaction_id ? await incomeService.findByTransactionId(reg.transaction_id) : null;
       if (!existingIncome) {
         const tierResult = computeExpectedAmount(reg, event);
-        const incomeAmount = reg.amount ? parseFloat(reg.amount) : (tierResult ? tierResult.amount : 0);
+        const incomeAmount = tierResult ? tierResult.amount : (reg.amount ? parseFloat(reg.amount) : 0);
         const tierLabel = tierResult ? tierResult.tier : 'Registration';
         await incomeService.createIncome(reg.event_id, {
           category: 'নিবন্ধন ফি',
@@ -1030,22 +1030,28 @@ router.post('/events/:id/incomes/generate-from-registrations', async (req, res, 
     const event = await eventService.getEventById(req.params.id);
     const registrations = await registrationService.getRegistrationsByEvent(req.params.id);
     const paidRegs = registrations.filter(r => r.is_paid && !r.is_cancelled);
-    let created = 0, skipped = 0;
+    const allIncomes = await incomeService.getIncomesByEvent(req.params.id);
+    let created = 0, updated = 0;
     for (const reg of paidRegs) {
-      const existing = reg.transaction_id ? await incomeService.findByTransactionId(reg.transaction_id) : null;
-      if (existing) { skipped++; continue; }
-      // Check if income already exists by payer email
-      if (reg.email) {
-        const allIncomes = await incomeService.getIncomesByEvent(req.params.id);
-        const byEmail = allIncomes.find(i => i.payer_email === reg.email);
-        if (byEmail) { skipped++; continue; }
-      }
       const tierResult = computeExpectedAmount(reg, event);
-      const incomeAmount = reg.amount ? parseFloat(reg.amount) : (tierResult ? tierResult.amount : 0);
+      const incomeAmount = tierResult ? tierResult.amount : (reg.amount ? parseFloat(reg.amount) : 0);
       const tierLabel = tierResult ? tierResult.tier : 'Registration';
+      const desc = `${reg.name} (${reg.email || reg.phone || '—'}) — ${tierLabel}`;
+      // Find existing income by transaction_id or payer_email
+      const existing = allIncomes.find(i =>
+        (reg.transaction_id && i.transaction_id === reg.transaction_id) ||
+        (reg.email && i.payer_email === reg.email)
+      );
+      if (existing) {
+        if (Math.abs(parseFloat(existing.amount) - incomeAmount) > 0.001) {
+          await incomeService.updateIncomeAmount(existing.id, incomeAmount, desc);
+          updated++;
+        }
+        continue;
+      }
       await incomeService.createIncome(req.params.id, {
         category: 'নিবন্ধন ফি',
-        description: `${reg.name} (${reg.email || reg.phone || '—'}) — ${tierLabel}`,
+        description: desc,
         amount: incomeAmount,
         transaction_id: reg.transaction_id || null,
         payer_name: reg.name,
@@ -1054,7 +1060,7 @@ router.post('/events/:id/incomes/generate-from-registrations', async (req, res, 
       });
       created++;
     }
-    req.flash('success', `Generated ${created} income record(s). ${skipped} skipped (already exist).`);
+    req.flash('success', `Created ${created} income record(s), updated ${updated} amount(s).`);
     res.redirect(`/admin/events/${req.params.id}/incomes`);
   } catch (err) { next(err); }
 });
