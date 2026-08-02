@@ -139,13 +139,13 @@ router.post(`/event/:id/polls/:pollId/vote`, async (req, res, next) => {
       return res.redirect(`/event/${req.params.id}/polls`);
     }
     await pollService.castVote(req.params.pollId, option_id, voter_email.trim().toLowerCase());
+    if (req.xhr || req.get('Accept') === 'application/json') return res.json({ ok: true });
     req.flash('success', 'Your vote has been recorded!');
-    const ref = req.get('Referer') || '';
-    res.redirect(ref.includes('/polls') ? `/event/${req.params.id}/polls` : '/');
+    res.redirect(`/event/${req.params.id}/polls`);
   } catch (err) {
+    if (req.xhr || req.get('Accept') === 'application/json') return res.json({ ok: false, error: err.message || 'Failed to cast vote.' });
     req.flash('error', err.message || 'Failed to cast vote.');
-    const ref = req.get('Referer') || '';
-    res.redirect(ref.includes('/polls') ? `/event/${req.params.id}/polls` : '/');
+    res.redirect(`/event/${req.params.id}/polls`);
   }
 });
 

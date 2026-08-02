@@ -77,10 +77,10 @@
       <% }) %>
       <% if (locals.activePolls && activePolls.length > 0) { %>
         <% activePolls.forEach(function(poll) { %>
-          <div class="ad-card" style="margin-top:0.5rem">
+          <div class="ad-card" style="margin-top:0.5rem" id="poll-card-<%= poll.id %>">
             <div class="ad-card-body">
               <strong style="font-size:0.92rem">🗳️ <%= poll.question %></strong>
-              <form action="/event/<%= _event.id %>/polls/<%= poll.id %>/vote" method="POST" style="margin-top:0.5rem">
+              <form class="home-poll-form" data-poll-id="<%= poll.id %>" data-event-id="<%= _event.id %>" style="margin-top:0.5rem">
                 <div style="margin-bottom:0.4rem">
                   <input type="email" name="voter_email" required placeholder="your@email.com" style="width:100%;padding:0.3rem 0.5rem;font-size:0.82rem;border:1px solid var(--border);border-radius:4px;box-sizing:border-box">
                 </div>
@@ -90,17 +90,64 @@
                   <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.84rem;margin-bottom:0.25rem;cursor:pointer">
                     <input type="radio" name="option_id" value="<%= opt.id %>" required>
                     <span><%= opt.option_text %></span>
-                    <span style="margin-left:auto;color:var(--text-muted);font-size:0.78rem"><%= opt.vote_count||0 %></span>
+                    <span class="poll-count-<%= opt.id %>" style="margin-left:auto;color:var(--text-muted);font-size:0.78rem"><%= opt.vote_count||0 %></span>
                   </label>
                   <div style="height:3px;background:#eee;border-radius:2px;margin-bottom:0.35rem">
-                    <div style="height:100%;width:<%= _pct %>%;background:var(--primary);border-radius:2px"></div>
+                    <div class="poll-bar-<%= opt.id %>" style="height:100%;width:<%= _pct %>%;background:var(--primary);border-radius:2px;transition:width 0.4s"></div>
                   </div>
                 <% }); %>
+                <div class="poll-msg-<%= poll.id %>" style="font-size:0.8rem;min-height:1.2em;margin-bottom:0.25rem"></div>
                 <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.25rem;font-size:0.85rem;padding:0.35rem">ভোট দিন</button>
               </form>
             </div>
           </div>
         <% }); %>
+        <script>
+        (function() {
+          var eventId = '<%= _event.id %>';
+          function updateCounts() {
+            fetch('/api/events/' + eventId + '/polls')
+              .then(function(r) { return r.json(); })
+              .then(function(polls) {
+                polls.forEach(function(poll) {
+                  var total = poll.total_votes;
+                  poll.options.forEach(function(opt) {
+                    var countEl = document.querySelector('.poll-count-' + opt.id);
+                    if (countEl) countEl.textContent = opt.vote_count;
+                    var barEl = document.querySelector('.poll-bar-' + opt.id);
+                    if (barEl) barEl.style.width = (total > 0 ? Math.round(opt.vote_count / total * 100) : 0) + '%';
+                  });
+                });
+              }).catch(function() {});
+          }
+          document.querySelectorAll('.home-poll-form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+              e.preventDefault();
+              var pollId = form.dataset.pollId;
+              var msgEl = document.querySelector('.poll-msg-' + pollId);
+              var data = new FormData(form);
+              fetch('/event/' + eventId + '/polls/' + pollId + '/vote', {
+                method: 'POST',
+                headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(data),
+              }).then(function(r) { return r.json(); }).then(function(res) {
+                if (res.ok) {
+                  msgEl.style.color = 'var(--success)';
+                  msgEl.textContent = '✓ ভোট গৃহীত হয়েছে!';
+                  updateCounts();
+                } else {
+                  msgEl.style.color = 'var(--danger)';
+                  msgEl.textContent = res.error || 'ভোট দেওয়া যায়নি।';
+                }
+              }).catch(function() {
+                msgEl.style.color = 'var(--danger)';
+                msgEl.textContent = 'ভোট দেওয়া যায়নি।';
+              });
+            });
+          });
+          setInterval(updateCounts, 10000);
+        })();
+        </script>
       <% } %>
     </div>
   </aside>
