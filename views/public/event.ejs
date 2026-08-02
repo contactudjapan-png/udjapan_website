@@ -370,13 +370,6 @@
   </div>
   <% } %>
 
-  <% if (locals.activePolls && activePolls.length > 0) { %>
-  <div class="event-detail-card" style="margin-top:1.5rem;text-align:center">
-    <h2 style="margin-top:0">🗳️ <%- t('nav.polls') || 'Live Polls' %></h2>
-    <p style="color:var(--text-muted)"><%- activePolls.length %> active poll<%= activePolls.length !== 1 ? 's' : '' %> — share your voice!</p>
-    <a href="/event/<%= event.id %>/polls" class="btn btn-primary">Vote Now</a>
-  </div>
-  <% } %>
 
 </main>
 
