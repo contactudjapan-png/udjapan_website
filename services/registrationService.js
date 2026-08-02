@@ -51,6 +51,7 @@ async function getRegistrationByToken(token) {
 
 async function createRegistration(eventId, { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs }) {
   const qr_token = crypto.randomUUID();
+  const adultsNum = parseInt(adults_count) || 0;
   const { data, error } = await db.from('registrations').insert({
     event_id: eventId,
     name,
@@ -62,9 +63,44 @@ async function createRegistration(eventId, { name, email, phone, payment_referen
     is_paid: false,
     qr_token,
     children_count: parseInt(children_count) || 0,
-    adults_count: parseInt(adults_count) || 0,
+    adults_count: adultsNum,
     is_special_needs: is_special_needs === true || is_special_needs === 'true' || is_special_needs === '1',
   }).select().single();
+  if (error) throw new Error(error.message);
+  // Create per-person tickets (at least 1 even if adults_count is 0)
+  await createTicketsForRegistration(data.id, adultsNum);
+  return data;
+}
+
+async function createTicketsForRegistration(registrationId, adultsCount) {
+  const count = Math.max(1, parseInt(adultsCount) || 1);
+  const rows = Array.from({ length: count }, (_, i) => ({
+    registration_id: registrationId,
+    ticket_number: i + 1,
+    qr_token: crypto.randomUUID(),
+  }));
+  const { data, error } = await db.from('registration_tickets').insert(rows).select();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+async function getTicketsByRegistration(registrationId) {
+  const { data, error } = await db.from('registration_tickets')
+    .select('*').eq('registration_id', registrationId).order('ticket_number', { ascending: true });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+async function getTicketByToken(token) {
+  const { data, error } = await db.from('registration_tickets')
+    .select('*').eq('qr_token', token).maybeSingle();
+  if (error) throw new Error(error.message);
+  return data || null;
+}
+
+async function markTicketUsed(ticketId) {
+  const { data, error } = await db.from('registration_tickets')
+    .update({ used_at: new Date().toISOString() }).eq('id', ticketId).select().single();
   if (error) throw new Error(error.message);
   return data;
 }
@@ -137,6 +173,10 @@ module.exports = {
   getRegistrationById,
   getRegistrationByToken,
   createRegistration,
+  createTicketsForRegistration,
+  getTicketsByRegistration,
+  getTicketByToken,
+  markTicketUsed,
   updateRegistration,
   updateRegistrationPayment,
   togglePaid,

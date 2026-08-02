@@ -829,6 +829,7 @@ small { color: var(--text-muted); font-size: 0.8rem; }
 .result-status { font-size: 1.1rem; font-weight: 700; }
 .result-paid { color: var(--success); }
 .result-unpaid { color: var(--warning); }
+.result-denied { color: var(--danger); font-weight: 700; font-size: 1.1rem; letter-spacing: 0.03em; }
 .result-message { font-size: 1.1rem; }
 
 .or-divider { color: var(--text-muted); margin: 1.5rem 0 0.75rem; font-size: 0.85rem; }

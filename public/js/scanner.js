@@ -22,16 +22,35 @@ function showResult(data) {
   manual.style.display = 'none';
   box.classList.remove('result-box--hidden', 'result-box--valid', 'result-box--invalid');
 
-  if (!data.valid) {
+  if (!data.valid && data.already_used) {
+    box.classList.add('result-box--invalid');
+    icon.textContent = '⛔';
+    const usedTime = data.used_at
+      ? new Date(data.used_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : '';
+    const ticketInfo = data.ticket_number && data.total_tickets
+      ? `Ticket ${data.ticket_number} of ${data.total_tickets}`
+      : '';
+    content.innerHTML = `
+      <p class="result-name">${escapeHtml(data.name || '')}</p>
+      <p class="result-status result-denied">ALREADY SCANNED — ENTRY DENIED</p>
+      ${ticketInfo ? `<p class="result-message">${escapeHtml(ticketInfo)}</p>` : ''}
+      ${usedTime ? `<p class="result-message" style="color:#888;font-size:0.85rem">First scanned at ${usedTime}</p>` : ''}
+    `;
+  } else if (!data.valid) {
     box.classList.add('result-box--invalid');
     icon.textContent = '✗';
     content.innerHTML = `<p class="result-message">${data.message || 'Invalid QR code'}</p>`;
   } else if (data.is_paid) {
     box.classList.add('result-box--valid');
     icon.textContent = '✓';
+    const ticketTag = data.ticket_number && data.total_tickets
+      ? `<p class="result-message" style="font-weight:600">Ticket ${data.ticket_number} of ${data.total_tickets}</p>`
+      : '';
     content.innerHTML = `
       <p class="result-name">${escapeHtml(data.name)}</p>
       <p class="result-event">${escapeHtml(data.event)}</p>
+      ${ticketTag}
       <p class="result-persons">${personCountHtml(data)}</p>
       <p class="result-status result-paid">✓ PAID</p>
     `;

@@ -9,11 +9,59 @@ router.get('/validate/:token', async (req, res) => {
   try {
     const token = req.params.token;
     const db = require('../config/db');
+
+    // ── Per-person ticket lookup (new single-use path) ──────────────────────
+    const ticket = await registrationService.getTicketByToken(token);
+    if (ticket) {
+      const registration = await registrationService.getRegistrationById(ticket.registration_id);
+      const event = await eventService.getEventById(registration.event_id);
+      const alreadyUsed = !!ticket.used_at;
+
+      await db.from('scan_logs').insert({
+        qr_token: token,
+        registration_id: registration.id,
+        event_id: registration.event_id,
+        name: registration.name,
+        ticket_id: ticket.id,
+        result: alreadyUsed ? 'already_used' : 'valid',
+        scanned_at: new Date().toISOString(),
+      });
+
+      if (alreadyUsed) {
+        return res.json({
+          valid: false,
+          already_used: true,
+          name: registration.name,
+          ticket_number: ticket.ticket_number,
+          total_tickets: registration.adults_count || 1,
+          used_at: ticket.used_at,
+          message: 'Already scanned — entry denied',
+        });
+      }
+
+      await registrationService.markTicketUsed(ticket.id);
+
+      return res.json({
+        valid: true,
+        name: registration.name,
+        email: registration.email,
+        is_paid: registration.is_paid,
+        event: event ? event.title : 'Unknown Event',
+        event_date: event ? event.event_date : null,
+        adults_count: registration.adults_count || 0,
+        children_count: registration.children_count || 0,
+        is_special_needs: !!registration.is_special_needs,
+        ticket_number: ticket.ticket_number,
+        total_tickets: registration.adults_count || 1,
+      });
+    }
+
+    // ── Legacy fallback: registration-level token or phone/email lookup ──────
+    // (handles phone-only registrations and pre-migration registrations)
     const registration = await registrationService.getRegistrationByToken(token);
     const valid = !!registration;
     const event = valid ? await eventService.getEventById(registration.event_id) : null;
 
-    // Log the scan
     await db.from('scan_logs').insert({
       qr_token: token,
       registration_id: registration ? registration.id : null,
