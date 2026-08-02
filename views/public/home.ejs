@@ -52,7 +52,7 @@
 <!-- ── Body: left panel | main | right panel ───────── -->
 <div class="home-body container">
 
-  <% if (_announcements.length > 0) { %>
+  <% if (_announcements.length > 0 || (locals.activePolls && activePolls.length > 0)) { %>
   <aside class="home-panel" id="annPanel">
     <div class="home-panel-header">
       <h3 class="home-panel-title"><%- t('home.announcements') %></h3>
