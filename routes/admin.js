@@ -1028,18 +1028,37 @@ router.post('/events/:id/bulk-payment', uploadPayment.single('payment_file'), as
         result.push(cur.trim());
         return result;
       };
-      const header = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/^"|"$/g, ''));
+      const header = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/^"|"$/g, '').trim());
       const colIdx = {};
       header.forEach((h, i) => { colIdx[h] = i; });
+      // Support "email or phone" combined column
+      const contactCol = colIdx['email or phone'] !== undefined ? colIdx['email or phone']
+        : colIdx['email/phone'] !== undefined ? colIdx['email/phone'] : null;
+      const parseDate = s => {
+        if (!s) return null;
+        // DD/MM/YYYY → ISO
+        const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+        return s;
+      };
       for (let r = 1; r < lines.length; r++) {
-        const vals = parseCSVLine(lines[r]).map(v => v.replace(/^"|"$/g, ''));
+        const vals = parseCSVLine(lines[r]).map(v => v.replace(/^"|"$/g, '').trim());
+        let email = '', phone = '';
+        if (contactCol !== null) {
+          const contact = vals[contactCol] || '';
+          if (contact.includes('@')) email = contact;
+          else phone = contact;
+        } else {
+          email = (vals[colIdx.email] || '').trim();
+          phone = (vals[colIdx.phone] || '').trim();
+        }
         rows.push({
           name: (vals[colIdx.name] || '').trim(),
-          email: (vals[colIdx.email] || '').trim(),
-          phone: (vals[colIdx.phone] || '').trim(),
-          transaction_id: (vals[colIdx.transaction_id] || '').trim(),
+          email,
+          phone,
+          transaction_id: colIdx.transaction_id !== undefined ? (vals[colIdx.transaction_id] || '').trim() : '',
           amount: colIdx.amount !== undefined ? vals[colIdx.amount] || null : null,
-          date: colIdx.date !== undefined ? vals[colIdx.date] || null : null,
+          date: parseDate(colIdx.date !== undefined ? vals[colIdx.date] || null : null),
         });
       }
     } else {

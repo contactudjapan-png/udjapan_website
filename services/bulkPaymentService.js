@@ -66,9 +66,10 @@ async function processBulkPayment(eventId, rows, event) {
         }
       }
 
-      // Find matching registration: email → phone → name
+      // Find matching registration: email → phone → transaction_ref → name
       const emailLower = (email || '').toLowerCase().trim();
       const phoneDigits = normalizePhone(phone || '');
+      const txnNorm = (transaction_id || '').toLowerCase().trim();
       let match = null;
 
       if (emailLower) {
@@ -77,6 +78,15 @@ async function processBulkPayment(eventId, rows, event) {
       }
       if (!match && phoneDigits.length >= 6) {
         match = registrations.find(r => r.phone && normalizePhone(r.phone) === phoneDigits);
+      }
+      if (!match && txnNorm) {
+        match = registrations.find(r =>
+          (r.transaction_id && r.transaction_id.toLowerCase() === txnNorm) ||
+          (r.payment_reference && r.payment_reference.toLowerCase() === txnNorm)
+        );
+      }
+      if (!match && name) {
+        match = registrations.find(r => nameSimilar(r.name, name));
       }
 
       if (!match) {
