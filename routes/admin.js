@@ -1001,16 +1001,21 @@ router.post('/events/:id/bulk-payment', upload.single('payment_file'), async (re
       header.forEach((h, i) => { if (h) colIdx[String(h).trim().toLowerCase()] = i; });
       for (let r = 2; r <= sheet.rowCount; r++) {
         const row = sheet.getRow(r).values;
+        let dateVal = colIdx.date !== undefined ? row[colIdx.date] : null;
+        if (dateVal instanceof Date) dateVal = dateVal.toISOString();
+        else if (dateVal) dateVal = String(dateVal).trim();
         rows.push({
           name: colIdx.name !== undefined ? String(row[colIdx.name] || '').trim() : '',
           email: colIdx.email !== undefined ? String(row[colIdx.email] || '').trim() : '',
+          phone: colIdx.phone !== undefined ? String(row[colIdx.phone] || '').trim() : '',
           transaction_id: colIdx.transaction_id !== undefined ? String(row[colIdx.transaction_id] || '').trim() : '',
           amount: colIdx.amount !== undefined ? row[colIdx.amount] : null,
+          date: dateVal || null,
         });
       }
     }
 
-    const results = await bulkPaymentService.processBulkPayment(req.params.id, rows);
+    const results = await bulkPaymentService.processBulkPayment(req.params.id, rows, event);
     res.render('admin/bulk-payment', { title: `বাল্ক পেমেন্ট — ${event.title}`, event, results });
   } catch (err) {
     req.flash('error', err.message);

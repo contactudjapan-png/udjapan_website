@@ -8,10 +8,8 @@
   <h1><%- t('admin.pg_bulk_payment') %> — <%= event.title %></h1>
 
   <div class="info-box">
-    <strong><%- t('bulk.csv_format') %></strong> <%- t('bulk.csv_hint') %>
-    <% if (locals.results && results.matched.length > 0 && results.matched[0].created_at) { %>
-      <div style="margin-top:0.5rem"><strong><%- t('bulk.transaction_date') %>:</strong> <%= new Date(results.matched[0].created_at).toLocaleDateString(locale === 'de' ? 'de-DE' : locale === 'en' ? 'en-GB' : 'bn-BD', { timeZone: 'Europe/Berlin', year: 'numeric', month: 'long', day: 'numeric' }) %></div>
-    <% } %>
+    <strong><%- t('bulk.csv_format') %></strong>
+    Required columns: <code>name</code>, <code>email</code> or <code>phone</code>, <code>transaction_id</code>, <code>amount</code>, <code>date</code>
   </div>
 
   <div class="admin-form-card" style="margin-bottom:2rem">
@@ -44,13 +42,40 @@
       <% if (results.matched.length > 0) { %>
         <h2 style="margin-top:1.5rem"><%- t('bulk.section_paid') %> (<%= results.matched.length %>)</h2>
         <table class="admin-table">
-          <thead><tr><th><%- t('tbl.name') %></th><th><%- t('tbl.email') %></th><th><%- t('tbl.transaction_id') %></th><th><%- t('tbl.amount') %></th></tr></thead>
+          <thead><tr>
+            <th><%- t('tbl.name') %></th>
+            <th>Contact</th>
+            <th><%- t('tbl.transaction_id') %></th>
+            <th>Date</th>
+            <th>Tier</th>
+            <th>Paid</th>
+            <th>Expected</th>
+            <th>Check</th>
+          </tr></thead>
           <tbody>
           <% results.matched.forEach(r => { %>
             <tr>
-              <td><%= r.name %></td><td><%= r.email %></td>
+              <td><%= r.name %></td>
+              <td><%= r.email || r.phone || '—' %></td>
               <td><%= r.transaction_id || '—' %></td>
-              <td><% if (r.amount) { %>€<%= parseFloat(r.amount).toFixed(2) %><% } else { %>—<% } %></td>
+              <td><%= r.date ? new Date(r.date).toLocaleDateString('de-DE', { timeZone: 'Europe/Berlin' }) : '—' %></td>
+              <td><%= r.tier || '—' %></td>
+              <td><% if (r.amount != null) { %>€<%= parseFloat(r.amount).toFixed(2) %><% } else { %>—<% } %></td>
+              <td>
+                <% if (r.expected_amount != null) { %>
+                  €<%= parseFloat(r.expected_amount).toFixed(2) %>
+                  <span style="color:var(--text-muted);font-size:0.8rem">(<%= r.adults_count %>×)</span>
+                <% } else { %>—<% } %>
+              </td>
+              <td>
+                <% if (r.expected_amount == null || r.amount == null) { %>
+                  <span style="color:var(--text-muted)">—</span>
+                <% } else if (r.amount_mismatch) { %>
+                  <span style="color:var(--danger);font-weight:600">⚠ Mismatch</span>
+                <% } else { %>
+                  <span style="color:var(--success);font-weight:600">✓</span>
+                <% } %>
+              </td>
             </tr>
           <% }) %>
           </tbody>
@@ -60,10 +85,10 @@
       <% if (results.notFound.length > 0) { %>
         <h2 style="margin-top:1.5rem;color:var(--danger)"><%- t('bulk.section_not_found') %> (<%= results.notFound.length %>)</h2>
         <table class="admin-table">
-          <thead><tr><th><%- t('tbl.name') %></th><th><%- t('tbl.email') %></th><th><%- t('tbl.transaction_id') %></th></tr></thead>
+          <thead><tr><th><%- t('tbl.name') %></th><th><%- t('tbl.email') %></th><th>Phone</th><th><%- t('tbl.transaction_id') %></th></tr></thead>
           <tbody>
           <% results.notFound.forEach(r => { %>
-            <tr><td><%= r.name || '—' %></td><td><%= r.email || '—' %></td><td><%= r.transaction_id || '—' %></td></tr>
+            <tr><td><%= r.name || '—' %></td><td><%= r.email || '—' %></td><td><%= r.phone || '—' %></td><td><%= r.transaction_id || '—' %></td></tr>
           <% }) %>
           </tbody>
         </table>
