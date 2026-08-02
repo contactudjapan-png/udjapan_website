@@ -612,6 +612,33 @@ router.get('/events/:id/submissions', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+router.post('/events/:id/submissions/approve-all', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const submissions = await submissionService.getSubmissionsByEvent(req.params.id);
+    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    let approved = 0;
+    for (const submission of submissions) {
+      const registration = await registrationService.createRegistration(submission.event_id, {
+        name: submission.name,
+        email: submission.email,
+        phone: submission.phone,
+        payment_reference: submission.payment_reference,
+        children_count: submission.children_count,
+        adults_count: submission.adults_count,
+        is_special_needs: submission.is_special_needs,
+      });
+      await submissionService.deleteSubmission(submission.id);
+      emailService.sendRegistrationConfirmation(registration, event, baseUrl).catch(err => {
+        console.error('[Email] Failed to send confirmation:', err.message);
+      });
+      approved++;
+    }
+    req.flash('success', `${approved} submission(s) approved and QR emails sent.`);
+    res.redirect(`/admin/events/${req.params.id}/submissions`);
+  } catch (err) { next(err); }
+});
+
 router.post('/submissions/:id/approve', async (req, res, next) => {
   try {
     const submission = await submissionService.getSubmissionById(req.params.id);
