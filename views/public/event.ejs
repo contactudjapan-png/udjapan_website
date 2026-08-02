@@ -141,6 +141,17 @@
             <input type="tel" id="phone" name="phone" placeholder="+49 1XX XXXXXXXX" autocomplete="tel">
           </div>
           <p id="contactError" class="contact-error" style="display:none"><%- t('event.contact_err') %></p>
+          <div class="form-group">
+            <label><%- t('event.payment_method') || 'Payment Method' %></label>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.25rem">
+              <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer">
+                <input type="radio" name="payment_method" value="paypal" required> PayPal
+              </label>
+              <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer">
+                <input type="radio" name="payment_method" value="bank"> Bank Transfer
+              </label>
+            </div>
+          </div>
           <p class="datenschutz-notice"><%- t('event.privacy_consent') %> <a href="/privacy" target="_blank"><strong><%- t('event.privacy_policy') %></strong></a>.</p>
           <button type="submit" class="btn btn-primary"><%- t('event.submit') %></button>
         </form>

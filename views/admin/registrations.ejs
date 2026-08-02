@@ -73,7 +73,10 @@
               €<%= _paid.toFixed(2) %>
             <% } else { %>—<% } %>
           </td>
-          <td style="width:140px;font-size:0.78rem;word-break:break-all;white-space:normal"><% if (reg.transaction_id) { %><code><%= reg.transaction_id %></code><% } else { %><%= reg.payment_reference || '—' %><% } %></td>
+          <td style="width:140px;font-size:0.78rem;word-break:break-all;white-space:normal">
+            <% if (reg.payment_method) { %><span class="badge" style="font-size:0.7rem;margin-bottom:2px"><%= reg.payment_method === 'paypal' ? '🅿 PayPal' : '🏦 Bank' %></span><br><% } %>
+            <% if (reg.transaction_id) { %><code><%= reg.transaction_id %></code><% } else { %><%= reg.payment_reference || '—' %><% } %>
+          </td>
           <td>
             <% if (reg.is_cancelled) { %>
               <span class="badge badge-cancelled"><%- t('reg.cancelled') %></span>

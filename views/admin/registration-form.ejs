@@ -79,6 +79,13 @@
       <label for="payment_reference"><%- t('admin.lbl_pay_ref') %></label>
       <input type="text" id="payment_reference" name="payment_reference" placeholder="<%- t('admin.lbl_pay_ref_ph') %>">
     </div>
+    <div class="form-group">
+      <label>Payment Method</label>
+      <div style="display:flex;gap:1rem;margin-top:0.25rem">
+        <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer"><input type="radio" name="payment_method" value="paypal"> PayPal</label>
+        <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer"><input type="radio" name="payment_method" value="bank"> Bank Transfer</label>
+      </div>
+    </div>
     <button type="submit" class="btn btn-primary"><%- t('admin.btn_add_reg') %></button>
     <a href="/admin/events/<%= event.id %>/registrations" class="btn btn-outline"><%- t('btn.cancel') %></a>
   </form>

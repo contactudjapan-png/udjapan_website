@@ -49,7 +49,7 @@ async function getRegistrationByToken(token) {
   return null;
 }
 
-async function createRegistration(eventId, { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs }) {
+async function createRegistration(eventId, { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs, payment_method }) {
   const qr_token = crypto.randomUUID();
   const adultsNum = parseInt(adults_count) || 0;
   const { data, error } = await db.from('registrations').insert({
@@ -65,6 +65,7 @@ async function createRegistration(eventId, { name, email, phone, payment_referen
     children_count: parseInt(children_count) || 0,
     adults_count: adultsNum,
     is_special_needs: is_special_needs === true || is_special_needs === 'true' || is_special_needs === '1',
+    payment_method: payment_method || null,
   }).select().single();
   if (error) throw new Error(error.message);
   // Create per-person tickets (at least 1 even if adults_count is 0)
@@ -122,7 +123,7 @@ async function togglePaid(id) {
   return data;
 }
 
-async function updateRegistration(id, { name, email, phone, amount, payment_reference, transaction_id, is_paid, children_count, adults_count, is_special_needs }) {
+async function updateRegistration(id, { name, email, phone, amount, payment_reference, transaction_id, is_paid, children_count, adults_count, is_special_needs, payment_method }) {
   const update = {};
   if (name !== undefined) update.name = name;
   if (email !== undefined) update.email = email;
@@ -134,6 +135,7 @@ async function updateRegistration(id, { name, email, phone, amount, payment_refe
   if (children_count !== undefined) update.children_count = parseInt(children_count) || 0;
   if (adults_count !== undefined) update.adults_count = parseInt(adults_count) || 0;
   if (is_special_needs !== undefined) update.is_special_needs = is_special_needs === true || is_special_needs === 'true' || is_special_needs === '1';
+  if (payment_method !== undefined) update.payment_method = payment_method || null;
   const { data, error } = await db.from('registrations').update(update).eq('id', id).select().single();
   if (error) throw new Error(error.message);
   return data;
