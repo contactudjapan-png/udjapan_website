@@ -76,10 +76,31 @@
         <% if (ann.link_url) { %></a><% } else { %></div><% } %>
       <% }) %>
       <% if (locals.activePolls && activePolls.length > 0) { %>
-        <a href="/event/<%= _event.id %>/polls" class="ad-card" style="margin-top:0.5rem;display:block;text-align:center;background:var(--primary);color:#fff;border-radius:var(--radius);padding:0.75rem 1rem;text-decoration:none">
-          <strong>🗳️ Vote Now</strong>
-          <div style="font-size:0.82rem;opacity:0.9"><%= activePolls.length %> active poll<%= activePolls.length !== 1 ? 's' : '' %></div>
-        </a>
+        <% activePolls.forEach(function(poll) { %>
+          <div class="ad-card" style="margin-top:0.5rem">
+            <div class="ad-card-body">
+              <strong style="font-size:0.92rem">🗳️ <%= poll.question %></strong>
+              <form action="/event/<%= _event.id %>/polls/<%= poll.id %>/vote" method="POST" style="margin-top:0.5rem">
+                <div style="margin-bottom:0.4rem">
+                  <input type="email" name="voter_email" required placeholder="your@email.com" style="width:100%;padding:0.3rem 0.5rem;font-size:0.82rem;border:1px solid var(--border);border-radius:4px;box-sizing:border-box">
+                </div>
+                <% const _tot = poll.options.reduce((s,o) => s + (o.vote_count||0), 0); %>
+                <% poll.options.forEach(function(opt) { %>
+                  <% const _pct = _tot > 0 ? Math.round((opt.vote_count||0) / _tot * 100) : 0; %>
+                  <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.84rem;margin-bottom:0.25rem;cursor:pointer">
+                    <input type="radio" name="option_id" value="<%= opt.id %>" required>
+                    <span><%= opt.option_text %></span>
+                    <span style="margin-left:auto;color:var(--text-muted);font-size:0.78rem"><%= opt.vote_count||0 %></span>
+                  </label>
+                  <div style="height:3px;background:#eee;border-radius:2px;margin-bottom:0.35rem">
+                    <div style="height:100%;width:<%= _pct %>%;background:var(--primary);border-radius:2px"></div>
+                  </div>
+                <% }); %>
+                <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.25rem;font-size:0.85rem;padding:0.35rem">ভোট দিন</button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
       <% } %>
     </div>
   </aside>

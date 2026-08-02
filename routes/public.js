@@ -140,10 +140,12 @@ router.post(`/event/:id/polls/:pollId/vote`, async (req, res, next) => {
     }
     await pollService.castVote(req.params.pollId, option_id, voter_email.trim().toLowerCase());
     req.flash('success', 'Your vote has been recorded!');
-    res.redirect(`/event/${req.params.id}/polls`);
+    const ref = req.get('Referer') || '';
+    res.redirect(ref.includes('/polls') ? `/event/${req.params.id}/polls` : '/');
   } catch (err) {
     req.flash('error', err.message || 'Failed to cast vote.');
-    res.redirect(`/event/${req.params.id}/polls`);
+    const ref = req.get('Referer') || '';
+    res.redirect(ref.includes('/polls') ? `/event/${req.params.id}/polls` : '/');
   }
 });
 
