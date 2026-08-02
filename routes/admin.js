@@ -296,7 +296,6 @@ router.post('/registrations/:id/toggle-paid', async (req, res, next) => {
     const reg = await registrationService.togglePaid(req.params.id);
     const event = await eventService.getEventById(reg.event_id);
     if (reg.is_paid) {
-      // Auto-create income record if none exists for this transaction
       const existingIncome = reg.transaction_id ? await incomeService.findByTransactionId(reg.transaction_id) : null;
       if (!existingIncome) {
         const tierResult = computeExpectedAmount(reg, event);
@@ -317,7 +316,7 @@ router.post('/registrations/:id/toggle-paid', async (req, res, next) => {
         emailService.sendRegistrationConfirmation(reg, event, baseUrl).catch(err => {
           console.error('[Email] Failed to send confirmation:', err.message);
         });
-        req.flash('success', 'Payment marked as Paid — income recorded, QR confirmation email sent.');
+        req.flash('success', 'Payment marked as Paid — income recorded, QR email sent.');
       } else {
         req.flash('success', 'Payment marked as Paid — income recorded.');
       }
@@ -1022,6 +1021,41 @@ router.post('/incomes/:id/delete', async (req, res, next) => {
     await incomeService.deleteIncome(req.params.id);
     req.flash('success', 'আয় মুছে ফেলা হয়েছে।');
     res.redirect(income ? `/admin/events/${income.event_id}/incomes` : '/admin');
+  } catch (err) { next(err); }
+});
+
+// Generate income entries from all paid registrations (backfill)
+router.post('/events/:id/incomes/generate-from-registrations', async (req, res, next) => {
+  try {
+    const event = await eventService.getEventById(req.params.id);
+    const registrations = await registrationService.getRegistrationsByEvent(req.params.id);
+    const paidRegs = registrations.filter(r => r.is_paid && !r.is_cancelled);
+    let created = 0, skipped = 0;
+    for (const reg of paidRegs) {
+      const existing = reg.transaction_id ? await incomeService.findByTransactionId(reg.transaction_id) : null;
+      if (existing) { skipped++; continue; }
+      // Check if income already exists by payer email
+      if (reg.email) {
+        const allIncomes = await incomeService.getIncomesByEvent(req.params.id);
+        const byEmail = allIncomes.find(i => i.payer_email === reg.email);
+        if (byEmail) { skipped++; continue; }
+      }
+      const tierResult = computeExpectedAmount(reg, event);
+      const incomeAmount = reg.amount ? parseFloat(reg.amount) : (tierResult ? tierResult.amount : 0);
+      const tierLabel = tierResult ? tierResult.tier : 'Registration';
+      await incomeService.createIncome(req.params.id, {
+        category: 'নিবন্ধন ফি',
+        description: `${reg.name} (${reg.email || reg.phone || '—'}) — ${tierLabel}`,
+        amount: incomeAmount,
+        transaction_id: reg.transaction_id || null,
+        payer_name: reg.name,
+        payer_email: reg.email || null,
+        payment_date: reg.created_at,
+      });
+      created++;
+    }
+    req.flash('success', `Generated ${created} income record(s). ${skipped} skipped (already exist).`);
+    res.redirect(`/admin/events/${req.params.id}/incomes`);
   } catch (err) { next(err); }
 });
 

@@ -8,7 +8,12 @@
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
     <h1><%- t('admin.pg_incomes') %> — <%= event.title %></h1>
-    <a href="/admin/events/<%= event.id %>/incomes/new" class="btn btn-primary"><%- t('btn.add_income') %></a>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+      <a href="/admin/events/<%= event.id %>/incomes/new" class="btn btn-primary"><%- t('btn.add_income') %></a>
+      <form action="/admin/events/<%= event.id %>/incomes/generate-from-registrations" method="POST" data-confirm="Generate income from all paid registrations? Existing entries will be skipped.">
+        <button type="submit" class="btn btn-outline">⚡ Generate from Registrations</button>
+      </form>
+    </div>
   </div>
 
   <div class="total-banner"><%- t('admin.total_income') %> <strong>€<%= total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) %></strong></div>

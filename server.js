@@ -245,7 +245,50 @@ async function seedIfEmpty() {
   console.log('[Seed] Done.');
 }
 
+// Auto-sync income from paid registrations (runs at startup + every hour)
+async function syncIncomeFromRegistrations() {
+  try {
+    const eventService = require('./services/eventService');
+    const registrationService = require('./services/registrationService');
+    const incomeService = require('./services/incomeService');
+    const { computeExpectedAmount } = require('./services/tierUtils');
+
+    const events = await eventService.getAllEvents();
+    let total = 0;
+    for (const event of events) {
+      const registrations = await registrationService.getRegistrationsByEvent(event.id);
+      const paidRegs = registrations.filter(r => r.is_paid && !r.is_cancelled);
+      const allIncomes = await incomeService.getIncomesByEvent(event.id);
+      const existingEmails = new Set(allIncomes.map(i => i.payer_email).filter(Boolean));
+      const existingTxns = new Set(allIncomes.map(i => i.transaction_id).filter(Boolean));
+
+      for (const reg of paidRegs) {
+        if (reg.transaction_id && existingTxns.has(reg.transaction_id)) continue;
+        if (reg.email && existingEmails.has(reg.email)) continue;
+        const tierResult = computeExpectedAmount(reg, event);
+        const incomeAmount = reg.amount ? parseFloat(reg.amount) : (tierResult ? tierResult.amount : 0);
+        const tierLabel = tierResult ? tierResult.tier : 'Registration';
+        await incomeService.createIncome(event.id, {
+          category: 'নিবন্ধন ফি',
+          description: `${reg.name} (${reg.email || reg.phone || '—'}) — ${tierLabel}`,
+          amount: incomeAmount,
+          transaction_id: reg.transaction_id || null,
+          payer_name: reg.name,
+          payer_email: reg.email || null,
+          payment_date: reg.created_at,
+        });
+        total++;
+      }
+    }
+    if (total > 0) console.log(`[Income Sync] Created ${total} new income record(s).`);
+  } catch (err) {
+    console.error('[Income Sync] Error:', err.message);
+  }
+}
+
 app.listen(PORT, async () => {
   console.log(`UDJapon running at http://localhost:${PORT}`);
   await seedIfEmpty().catch(err => console.error('[Seed] Error:', err.message));
+  await syncIncomeFromRegistrations();
+  setInterval(syncIncomeFromRegistrations, 60 * 60 * 1000); // every hour
 });
