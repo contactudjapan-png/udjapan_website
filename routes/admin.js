@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const db = require('../config/db');
 const { requireAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { uploadPayment } = require('../middleware/upload');
 const { compressImage } = require('../middleware/compress');
 
 const eventService = require('../services/eventService');
@@ -997,7 +998,7 @@ router.get('/events/:id/bulk-payment', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-router.post('/events/:id/bulk-payment', upload.single('payment_file'), async (req, res, next) => {
+router.post('/events/:id/bulk-payment', uploadPayment.single('payment_file'), async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
     if (!req.file) {
