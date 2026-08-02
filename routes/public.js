@@ -34,8 +34,11 @@ router.get('/', async (req, res, next) => {
 router.get('/event/:id', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
-    const registrationCount = await registrationService.countByEvent(event.id);
-    res.render('public/event', { title: event.title, event, registrationCount });
+    const [registrationCount, activePolls] = await Promise.all([
+      registrationService.countByEvent(event.id),
+      pollService.getActivePollsByEvent(event.id),
+    ]);
+    res.render('public/event', { title: event.title, event, registrationCount, activePolls });
   } catch (err) {
     next(err);
   }
