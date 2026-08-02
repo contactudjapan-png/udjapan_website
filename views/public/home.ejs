@@ -75,6 +75,12 @@
           </div>
         <% if (ann.link_url) { %></a><% } else { %></div><% } %>
       <% }) %>
+      <% if (locals.activePolls && activePolls.length > 0) { %>
+        <a href="/event/<%= _event.id %>/polls" class="ad-card" style="margin-top:0.5rem;display:block;text-align:center;background:var(--primary);color:#fff;border-radius:var(--radius);padding:0.75rem 1rem;text-decoration:none">
+          <strong>🗳️ Vote Now</strong>
+          <div style="font-size:0.82rem;opacity:0.9"><%= activePolls.length %> active poll<%= activePolls.length !== 1 ? 's' : '' %></div>
+        </a>
+      <% } %>
     </div>
   </aside>
   <% } %>

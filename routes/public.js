@@ -24,7 +24,8 @@ router.get('/', async (req, res, next) => {
     ]);
     const currentEvent = events[0] || null;
     const otherEvents = events.slice(1);
-    res.render('public/home', { title: 'Udjapan', currentEvent, otherEvents, ads, announcements });
+    const activePolls = currentEvent ? await pollService.getActivePollsByEvent(currentEvent.id).catch(() => []) : [];
+    res.render('public/home', { title: 'Udjapan', currentEvent, otherEvents, ads, announcements, activePolls });
   } catch (err) {
     next(err);
   }
