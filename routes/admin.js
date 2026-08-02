@@ -1010,28 +1010,60 @@ router.post('/events/:id/bulk-payment', uploadPayment.single('payment_file'), as
       return res.redirect(`/admin/events/${req.params.id}/bulk-payment`);
     }
 
-    const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(req.file.buffer);
-
     const rows = [];
-    const sheet = workbook.worksheets[0];
-    if (sheet) {
-      const header = sheet.getRow(1).values;
+    const ext = require('path').extname(req.file.originalname).toLowerCase();
+
+    if (ext === '.csv') {
+      const text = req.file.buffer.toString('utf8');
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      if (lines.length < 2) throw new Error('CSV file is empty or has no data rows.');
+      const parseCSVLine = line => {
+        const result = []; let cur = ''; let inQ = false;
+        for (let i = 0; i < line.length; i++) {
+          const c = line[i];
+          if (c === '"') { inQ = !inQ; }
+          else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+          else { cur += c; }
+        }
+        result.push(cur.trim());
+        return result;
+      };
+      const header = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/^"|"$/g, ''));
       const colIdx = {};
-      header.forEach((h, i) => { if (h) colIdx[String(h).trim().toLowerCase()] = i; });
-      for (let r = 2; r <= sheet.rowCount; r++) {
-        const row = sheet.getRow(r).values;
-        let dateVal = colIdx.date !== undefined ? row[colIdx.date] : null;
-        if (dateVal instanceof Date) dateVal = dateVal.toISOString();
-        else if (dateVal) dateVal = String(dateVal).trim();
+      header.forEach((h, i) => { colIdx[h] = i; });
+      for (let r = 1; r < lines.length; r++) {
+        const vals = parseCSVLine(lines[r]).map(v => v.replace(/^"|"$/g, ''));
         rows.push({
-          name: colIdx.name !== undefined ? String(row[colIdx.name] || '').trim() : '',
-          email: colIdx.email !== undefined ? String(row[colIdx.email] || '').trim() : '',
-          phone: colIdx.phone !== undefined ? String(row[colIdx.phone] || '').trim() : '',
-          transaction_id: colIdx.transaction_id !== undefined ? String(row[colIdx.transaction_id] || '').trim() : '',
-          amount: colIdx.amount !== undefined ? row[colIdx.amount] : null,
-          date: dateVal || null,
+          name: (vals[colIdx.name] || '').trim(),
+          email: (vals[colIdx.email] || '').trim(),
+          phone: (vals[colIdx.phone] || '').trim(),
+          transaction_id: (vals[colIdx.transaction_id] || '').trim(),
+          amount: colIdx.amount !== undefined ? vals[colIdx.amount] || null : null,
+          date: colIdx.date !== undefined ? vals[colIdx.date] || null : null,
         });
+      }
+    } else {
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(req.file.buffer);
+      const sheet = workbook.worksheets[0];
+      if (sheet) {
+        const header = sheet.getRow(1).values;
+        const colIdx = {};
+        header.forEach((h, i) => { if (h) colIdx[String(h).trim().toLowerCase()] = i; });
+        for (let r = 2; r <= sheet.rowCount; r++) {
+          const row = sheet.getRow(r).values;
+          let dateVal = colIdx.date !== undefined ? row[colIdx.date] : null;
+          if (dateVal instanceof Date) dateVal = dateVal.toISOString();
+          else if (dateVal) dateVal = String(dateVal).trim();
+          rows.push({
+            name: colIdx.name !== undefined ? String(row[colIdx.name] || '').trim() : '',
+            email: colIdx.email !== undefined ? String(row[colIdx.email] || '').trim() : '',
+            phone: colIdx.phone !== undefined ? String(row[colIdx.phone] || '').trim() : '',
+            transaction_id: colIdx.transaction_id !== undefined ? String(row[colIdx.transaction_id] || '').trim() : '',
+            amount: colIdx.amount !== undefined ? row[colIdx.amount] : null,
+            date: dateVal || null,
+          });
+        }
       }
     }
 
