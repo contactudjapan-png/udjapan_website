@@ -44,6 +44,7 @@
         <th style="width:60px;white-space:nowrap;text-align:center"><%- t('reg.adults') %></th>
         <th style="width:60px;white-space:nowrap;text-align:center"><%- t('reg.children') %></th>
         <th style="width:70px;white-space:nowrap"><%- t('tbl.amount') %></th>
+        <th style="width:80px;white-space:nowrap">Payment</th>
         <th style="width:140px"><%- t('tbl.transaction_id') %></th>
         <th style="width:80px;white-space:nowrap"><%- t('tbl.status') %></th>
         <th style="width:90px;white-space:nowrap"><%- t('tbl.registered') %></th>
@@ -73,8 +74,10 @@
               €<%= _paid.toFixed(2) %>
             <% } else { %>—<% } %>
           </td>
+          <td style="width:80px;font-size:0.82rem">
+            <% if (reg.payment_method === 'paypal') { %>🅿 PayPal<% } else if (reg.payment_method === 'bank') { %>🏦 Bank<% } else { %>—<% } %>
+          </td>
           <td style="width:140px;font-size:0.78rem;word-break:break-all;white-space:normal">
-            <% if (reg.payment_method) { %><span class="badge" style="font-size:0.7rem;margin-bottom:2px"><%= reg.payment_method === 'paypal' ? '🅿 PayPal' : '🏦 Bank' %></span><br><% } %>
             <% if (reg.transaction_id) { %><code><%= reg.transaction_id %></code><% } else { %><%= reg.payment_reference || '—' %><% } %>
           </td>
           <td>
