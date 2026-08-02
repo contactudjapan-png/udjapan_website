@@ -22,9 +22,17 @@
       <div class="stat-number"><%= report.unpaidCount %></div>
       <div class="stat-label"><%- t('admin.stat_unpaid') %></div>
     </div>
-    <div class="stat-card">
-      <div class="stat-number">€<%= report.totalExpenses.toLocaleString('en-US', {minimumFractionDigits:2}) %></div>
+    <div class="stat-card" style="color:var(--success)">
+      <div class="stat-number">€<%= financial.totalIncome.toLocaleString('en-US', {minimumFractionDigits:2}) %></div>
+      <div class="stat-label">Total Income</div>
+    </div>
+    <div class="stat-card" style="color:var(--danger)">
+      <div class="stat-number">€<%= financial.totalExpenses.toLocaleString('en-US', {minimumFractionDigits:2}) %></div>
       <div class="stat-label"><%- t('admin.stat_total_exp') %></div>
+    </div>
+    <div class="stat-card" style="<%= financial.netProfit >= 0 ? 'color:var(--success)' : 'color:var(--danger)' %>">
+      <div class="stat-number">€<%= financial.netProfit.toLocaleString('en-US', {minimumFractionDigits:2}) %></div>
+      <div class="stat-label">Net Profit</div>
     </div>
     <div class="stat-card">
       <div class="stat-number"><%= report.pendingSubmissions %></div>
@@ -46,6 +54,88 @@
     </ul>
   </div>
   <% } %>
+
+  <div class="report-section">
+    <h2>Income &amp; Expense Overview</h2>
+    <div class="charts-row" style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
+      <div>
+        <h3 style="font-size:1rem;margin-bottom:0.75rem">Income by Category</h3>
+        <% if (financial.incomeByCategory.length > 0) { %>
+          <div class="chart-container" style="max-height:280px"><canvas id="incomePieChart"></canvas></div>
+          <table class="admin-table" style="margin-top:1rem;font-size:0.85rem">
+            <thead><tr><th>Category</th><th>Amount</th><th>%</th></tr></thead>
+            <tbody>
+            <% financial.incomeByCategory.forEach(c => { %>
+              <tr><td><%= c.category %></td><td>€<%= c.total.toFixed(2) %></td><td><%= c.pct.toFixed(1) %>%</td></tr>
+            <% }) %>
+              <tr class="total-row"><td><strong>Total</strong></td><td><strong>€<%= financial.totalIncome.toFixed(2) %></strong></td><td></td></tr>
+            </tbody>
+          </table>
+        <% } else { %>
+          <div class="empty-state"><p>No income recorded yet.</p></div>
+        <% } %>
+      </div>
+      <div>
+        <h3 style="font-size:1rem;margin-bottom:0.75rem">Expenses by Category</h3>
+        <% if (financial.expenseByCategory.length > 0) { %>
+          <div class="chart-container" style="max-height:280px"><canvas id="expensePieChart"></canvas></div>
+          <table class="admin-table" style="margin-top:1rem;font-size:0.85rem">
+            <thead><tr><th>Category</th><th>Amount</th><th>%</th></tr></thead>
+            <tbody>
+            <% financial.expenseByCategory.forEach(c => { %>
+              <tr><td><%= c.category %></td><td>€<%= c.total.toFixed(2) %></td><td><%= c.pct.toFixed(1) %>%</td></tr>
+            <% }) %>
+              <tr class="total-row"><td><strong>Total</strong></td><td><strong>€<%= financial.totalExpenses.toFixed(2) %></strong></td><td></td></tr>
+            </tbody>
+          </table>
+        <% } else { %>
+          <div class="empty-state"><p>No expenses recorded yet.</p></div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <h2>Income by Date</h2>
+    <% if (incomeByDate.length === 0) { %>
+      <div class="empty-state"><p>No income entries yet.</p></div>
+    <% } else { %>
+      <table class="admin-table">
+        <thead><tr><th>Date</th><th>Entries</th><th>Total</th></tr></thead>
+        <tbody>
+        <% let _incomeGrandTotal = 0; %>
+        <% incomeByDate.forEach(row => { _incomeGrandTotal += row.total; %>
+          <tr>
+            <td><%= new Date(row.date + 'T12:00:00Z').toLocaleDateString('de-DE') %></td>
+            <td><%= row.count %></td>
+            <td>€<%= row.total.toFixed(2) %></td>
+          </tr>
+        <% }) %>
+          <tr class="total-row">
+            <td><strong>Total</strong></td>
+            <td><strong><%= financial.incomes.length %></strong></td>
+            <td><strong>€<%= _incomeGrandTotal.toFixed(2) %></strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:1.5rem;font-size:1rem">Income Detail</h3>
+      <table class="admin-table" style="font-size:0.85rem">
+        <thead><tr><th>Date</th><th>Description</th><th>Payer</th><th>Transaction ID</th><th>Amount</th></tr></thead>
+        <tbody>
+        <% financial.incomes.slice().sort((a,b) => (b.payment_date||b.created_at).localeCompare(a.payment_date||a.created_at)).forEach(inc => { %>
+          <tr>
+            <td style="white-space:nowrap"><%= new Date((inc.payment_date || inc.created_at).substring(0,10) + 'T12:00:00Z').toLocaleDateString('de-DE') %></td>
+            <td><%= inc.description || inc.category || '—' %></td>
+            <td><%= inc.payer_name || inc.payer_email || '—' %></td>
+            <td style="font-size:0.78rem"><%= inc.transaction_id || '—' %></td>
+            <td style="white-space:nowrap">€<%= parseFloat(inc.amount).toFixed(2) %></td>
+          </tr>
+        <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
 
   <div class="report-section">
     <h2><%- t('admin.reg_trend') %></h2>
@@ -174,6 +264,30 @@
 
 <script>
 (function() {
+  const PIE_COLORS = ['#4f86f7','#27ae60','#e74c3c','#f39c12','#9b59b6','#1abc9c','#e67e22','#2c3e50','#16a085','#c0392b'];
+
+  <% if (financial.incomeByCategory.length > 0) { %>
+  new Chart(document.getElementById('incomePieChart'), {
+    type: 'pie',
+    data: {
+      labels: <%- JSON.stringify(financial.incomeByCategory.map(c => c.category)) %>,
+      datasets: [{ data: <%- JSON.stringify(financial.incomeByCategory.map(c => c.total)) %>, backgroundColor: PIE_COLORS }],
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } },
+  });
+  <% } %>
+
+  <% if (financial.expenseByCategory.length > 0) { %>
+  new Chart(document.getElementById('expensePieChart'), {
+    type: 'pie',
+    data: {
+      labels: <%- JSON.stringify(financial.expenseByCategory.map(c => c.category)) %>,
+      datasets: [{ data: <%- JSON.stringify(financial.expenseByCategory.map(c => c.total)) %>, backgroundColor: PIE_COLORS.slice().reverse() }],
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } },
+  });
+  <% } %>
+
   <% if (report.registrationByDate.length > 0) { %>
   const regLabels = <%- JSON.stringify(report.registrationByDate.map(r => r.date)) %>;
   const regValues = <%- JSON.stringify(report.registrationByDate.map(r => r.count)) %>;

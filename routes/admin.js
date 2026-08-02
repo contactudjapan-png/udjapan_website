@@ -25,6 +25,7 @@ const settingsService = require('../services/settingsService');
 const translationService = require('../services/translationService');
 const incomeService = require('../services/incomeService');
 const bulkPaymentService = require('../services/bulkPaymentService');
+const { computeExpectedAmount } = require('../services/tierUtils');
 const waitlistService = require('../services/waitlistService');
 const refundService = require('../services/refundService');
 const feedbackService = require('../services/feedbackService');
@@ -229,15 +230,17 @@ router.get('/events/:id/registrations', async (req, res, next) => {
     const sortKey = r => r.is_cancelled ? 2 : r.is_paid ? 1 : 0;
     all.sort((a, b) => sortKey(a) - sortKey(b) || new Date(b.created_at) - new Date(a.created_at));
 
+    const allWithComputed = all.map(r => ({ ...r, computed: computeExpectedAmount(r, event) }));
+
     const PAGE_SIZE = 25;
     const page = Math.max(1, parseInt(req.query.page) || 1);
-    const totalPages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+    const totalPages = Math.max(1, Math.ceil(allWithComputed.length / PAGE_SIZE));
     const currentPage = Math.min(page, totalPages);
-    const registrations = all.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+    const registrations = allWithComputed.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
     res.render('admin/registrations', {
       title: `Registrations — ${event.title}`,
-      event, registrations, allRegistrations: all,
+      event, registrations, allRegistrations: allWithComputed,
       currentPage, totalPages, pageSize: PAGE_SIZE,
     });
   } catch (err) { next(err); }
@@ -291,15 +294,40 @@ router.post('/registrations/:id/edit', async (req, res, next) => {
 router.post('/registrations/:id/toggle-paid', async (req, res, next) => {
   try {
     const reg = await registrationService.togglePaid(req.params.id);
-    if (reg.is_paid && reg.email && reg.email.includes('@')) {
-      const event = await eventService.getEventById(reg.event_id);
-      const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
-      emailService.sendRegistrationConfirmation(reg, event, baseUrl).catch(err => {
-        console.error('[Email] Failed to send confirmation:', err.message);
-      });
-      req.flash('success', 'Payment marked as Paid — QR confirmation email sent.');
+    const event = await eventService.getEventById(reg.event_id);
+    if (reg.is_paid) {
+      // Auto-create income record if none exists for this transaction
+      const existingIncome = reg.transaction_id ? await incomeService.findByTransactionId(reg.transaction_id) : null;
+      if (!existingIncome) {
+        const tierResult = computeExpectedAmount(reg, event);
+        const incomeAmount = reg.amount ? parseFloat(reg.amount) : (tierResult ? tierResult.amount : 0);
+        const tierLabel = tierResult ? tierResult.tier : 'Registration';
+        await incomeService.createIncome(reg.event_id, {
+          category: 'নিবন্ধন ফি',
+          description: `${reg.name} (${reg.email || reg.phone || '—'}) — ${tierLabel}`,
+          amount: incomeAmount,
+          transaction_id: reg.transaction_id || null,
+          payer_name: reg.name,
+          payer_email: reg.email || null,
+          payment_date: new Date().toISOString(),
+        });
+      }
+      if (reg.email && reg.email.includes('@')) {
+        const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+        emailService.sendRegistrationConfirmation(reg, event, baseUrl).catch(err => {
+          console.error('[Email] Failed to send confirmation:', err.message);
+        });
+        req.flash('success', 'Payment marked as Paid — income recorded, QR confirmation email sent.');
+      } else {
+        req.flash('success', 'Payment marked as Paid — income recorded.');
+      }
     } else {
-      req.flash('success', `Payment status set to ${reg.is_paid ? 'Paid' : 'Unpaid'}.`);
+      await incomeService.deleteByRegistration(reg.event_id, {
+        transaction_id: reg.transaction_id,
+        payer_email: reg.email,
+        payer_name: reg.name,
+      });
+      req.flash('success', 'Payment status set to Unpaid — income entry removed.');
     }
     res.redirect(`/admin/events/${reg.event_id}/registrations`);
   } catch (err) { next(err); }
@@ -335,6 +363,13 @@ router.post('/registrations/:id/resend-email', async (req, res, next) => {
 router.post('/registrations/:id/delete', async (req, res, next) => {
   try {
     const reg = await registrationService.getRegistrationById(req.params.id);
+    if (reg.is_paid) {
+      await incomeService.deleteByRegistration(reg.event_id, {
+        transaction_id: reg.transaction_id,
+        payer_email: reg.email,
+        payer_name: reg.name,
+      });
+    }
     await registrationService.deleteRegistration(req.params.id);
     req.flash('success', 'Registration deleted.');
     res.redirect(`/admin/events/${reg.event_id}/registrations`);
@@ -766,11 +801,23 @@ router.post('/events/:id/import', upload.single('excel_file'), async (req, res, 
 router.get('/events/:id/reports', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
-    const [report, attendance] = await Promise.all([
+    const [report, attendance, financial] = await Promise.all([
       reportService.getEventReport(req.params.id),
       reportService.getAttendanceStats(req.params.id),
+      reportService.getFinancialSummary(req.params.id),
     ]);
-    res.render('admin/reports', { title: `Reports — ${event.title}`, event, report, attendance });
+
+    // Build income grouped by date (from incomes table)
+    const incomeDateMap = {};
+    for (const inc of financial.incomes) {
+      const d = (inc.payment_date || inc.created_at || '').substring(0, 10);
+      if (!incomeDateMap[d]) incomeDateMap[d] = { date: d, total: 0, count: 0 };
+      incomeDateMap[d].total += parseFloat(inc.amount || 0);
+      incomeDateMap[d].count++;
+    }
+    const incomeByDate = Object.values(incomeDateMap).sort((a, b) => a.date.localeCompare(b.date));
+
+    res.render('admin/reports', { title: `Reports — ${event.title}`, event, report, attendance, financial, incomeByDate });
   } catch (err) { next(err); }
 });
 

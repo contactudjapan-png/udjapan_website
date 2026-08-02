@@ -37,4 +37,15 @@ async function findByTransactionId(txnId) {
   return data || null;
 }
 
-module.exports = { getIncomesByEvent, getTotalByEvent, createIncome, deleteIncome, findByTransactionId };
+async function deleteByRegistration(eventId, { transaction_id, payer_email, payer_name }) {
+  const incomes = await getIncomesByEvent(eventId);
+  const match = incomes.find(i =>
+    (transaction_id && i.transaction_id === transaction_id) ||
+    (payer_email && i.payer_email === payer_email) ||
+    (payer_name && i.payer_name === payer_name && !i.payer_email)
+  );
+  if (match) await deleteIncome(match.id);
+  return match || null;
+}
+
+module.exports = { getIncomesByEvent, getTotalByEvent, createIncome, deleteIncome, findByTransactionId, deleteByRegistration };

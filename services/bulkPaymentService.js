@@ -1,6 +1,7 @@
 const registrationService = require('./registrationService');
 const incomeService = require('./incomeService');
 const db = require('../config/db');
+const { getTierForDate, computeExpectedAmount } = require('./tierUtils');
 
 function normalize(str) {
   return (str || '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -12,34 +13,6 @@ function normalizePhone(str) {
 
 function nameSimilar(a, b) {
   return normalize(a) === normalize(b);
-}
-
-function getTierForDate(paymentDate, event) {
-  if (!paymentDate) return null;
-  const d = new Date(paymentDate);
-  if (isNaN(d.getTime())) return null;
-  if (event.early_bird_deadline && d <= new Date(event.early_bird_deadline) && event.price_early_bird != null) {
-    return { tier: 'Early Bird', price: parseFloat(event.price_early_bird) };
-  }
-  if (event.mid_deadline && d <= new Date(event.mid_deadline) && event.price_mid != null) {
-    return { tier: 'Standard', price: parseFloat(event.price_mid) };
-  }
-  if (event.price_onspot != null) {
-    return { tier: 'On-spot', price: parseFloat(event.price_onspot) };
-  }
-  return null;
-}
-
-function computeExpected(registration, pricePerAdult, event) {
-  const adults = registration.adults_count || 0;
-  if (adults === 0 || pricePerAdult == null) return null;
-  const subtotal = adults * pricePerAdult;
-  const { group_min_size, group_discount } = event;
-  let discount = 0;
-  if (group_min_size && group_discount && adults >= group_min_size) {
-    discount = Math.floor(adults / group_min_size) * parseFloat(group_discount);
-  }
-  return Math.max(0, subtotal - discount);
 }
 
 async function processBulkPayment(eventId, rows, event) {
@@ -96,7 +69,8 @@ async function processBulkPayment(eventId, rows, event) {
 
       // Tier check against payment date
       const tierInfo = event ? getTierForDate(date, event) : null;
-      const expectedAmount = tierInfo ? computeExpected(match, tierInfo.price, event) : null;
+      const tierResult = tierInfo ? computeExpectedAmount({ ...match, created_at: date }, event) : null;
+      const expectedAmount = tierResult ? tierResult.amount : null;
       const parsedAmount = amount ? parseFloat(amount) : null;
       const amountMismatch = expectedAmount != null && parsedAmount != null
         ? Math.abs(parsedAmount - expectedAmount) > 0.01
