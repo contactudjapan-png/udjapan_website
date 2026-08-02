@@ -11,12 +11,7 @@ function normalizePhone(str) {
 }
 
 function nameSimilar(a, b) {
-  a = normalize(a); b = normalize(b);
-  if (a === b) return true;
-  if (a.startsWith(b) || b.startsWith(a)) return true;
-  const wa = a.split(' '), wb = b.split(' ');
-  const common = wa.filter(w => wb.includes(w) && w.length > 2);
-  return common.length >= Math.min(wa.length, wb.length) - 1 && common.length > 0;
+  return normalize(a) === normalize(b);
 }
 
 function getTierForDate(paymentDate, event) {
