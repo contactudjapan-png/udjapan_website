@@ -31,32 +31,32 @@
   <% if (_all.length === 0) { %>
     <div class="empty-state"><p><%- t('admin.empty_regs') %></p></div>
   <% } else { %>
-    <table class="admin-table">
+    <table class="admin-table reg-table">
       <thead><tr>
-        <th><%- t('tbl.name') %></th>
-        <th><%- t('tbl.email') %></th>
-        <th><%- t('tbl.phone') %></th>
-        <th style="white-space:nowrap"><%- t('reg.adults') %></th>
-        <th style="white-space:nowrap"><%- t('reg.children') %></th>
-        <th><%- t('tbl.amount') %></th>
-        <th><%- t('tbl.transaction_id') %></th>
-        <th><%- t('tbl.status') %></th>
-        <th><%- t('tbl.registered') %></th>
+        <th style="min-width:120px;max-width:180px"><%- t('tbl.name') %></th>
+        <th style="min-width:140px;max-width:200px"><%- t('tbl.email') %></th>
+        <th style="width:130px;white-space:nowrap"><%- t('tbl.phone') %></th>
+        <th style="width:60px;white-space:nowrap;text-align:center"><%- t('reg.adults') %></th>
+        <th style="width:60px;white-space:nowrap;text-align:center"><%- t('reg.children') %></th>
+        <th style="width:70px;white-space:nowrap"><%- t('tbl.amount') %></th>
+        <th style="width:140px"><%- t('tbl.transaction_id') %></th>
+        <th style="width:80px;white-space:nowrap"><%- t('tbl.status') %></th>
+        <th style="width:90px;white-space:nowrap"><%- t('tbl.registered') %></th>
         <th><%- t('tbl.actions') %></th>
       </tr></thead>
       <tbody>
       <% registrations.forEach(reg => { %>
         <tr class="<%= reg.is_cancelled ? 'reg-row-cancelled' : '' %>">
-          <td style="white-space:nowrap">
+          <td style="min-width:120px;max-width:180px;word-break:break-word;white-space:normal">
             <%= reg.name %>
             <% if (reg.is_special_needs) { %><span class="badge-special" title="<%- t('reg.special_needs') %>">♿</span><% } %>
           </td>
-          <td style="font-size:0.82rem"><%= reg.email %></td>
-          <td style="white-space:nowrap"><%= reg.phone || '—' %></td>
-          <td style="text-align:center"><%= reg.adults_count || 0 %></td>
-          <td style="text-align:center"><%= reg.children_count || 0 %></td>
-          <td style="white-space:nowrap"><% if (reg.amount) { %>€<%= parseFloat(reg.amount).toFixed(2) %><% } else { %>—<% } %></td>
-          <td style="font-size:0.78rem;white-space:nowrap"><% if (reg.transaction_id) { %><code><%= reg.transaction_id %></code><% } else { %><%= reg.payment_reference || '—' %><% } %></td>
+          <td style="font-size:0.82rem;min-width:140px;max-width:200px;word-break:break-all;white-space:normal"><%= reg.email %></td>
+          <td style="width:130px;white-space:nowrap;font-size:0.82rem"><%= reg.phone || '—' %></td>
+          <td style="width:60px;text-align:center"><%= reg.adults_count || 0 %></td>
+          <td style="width:60px;text-align:center"><%= reg.children_count || 0 %></td>
+          <td style="width:70px;white-space:nowrap"><% if (reg.amount) { %>€<%= parseFloat(reg.amount).toFixed(2) %><% } else { %>—<% } %></td>
+          <td style="width:140px;font-size:0.78rem;word-break:break-all;white-space:normal"><% if (reg.transaction_id) { %><code><%= reg.transaction_id %></code><% } else { %><%= reg.payment_reference || '—' %><% } %></td>
           <td>
             <% if (reg.is_cancelled) { %>
               <span class="badge badge-cancelled"><%- t('reg.cancelled') %></span>
