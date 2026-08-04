@@ -4,6 +4,20 @@ const crypto = require('crypto');
 const db = require('../config/db');
 const { getTierForDate } = require('./tierUtils');
 
+// Extract plain text from an ExcelJS cell value (handles strings, numbers, hyperlinks, rich text)
+function cellText(val) {
+  if (val === null || val === undefined) return '';
+  if (typeof val === 'string') return val;
+  if (typeof val === 'number' || typeof val === 'boolean') return String(val);
+  if (val instanceof Date) return val.toISOString();
+  // Hyperlink object: { text, hyperlink }
+  if (typeof val === 'object' && val.text) return String(val.text);
+  // Rich text object: { richText: [{ text }] }
+  if (typeof val === 'object' && Array.isArray(val.richText))
+    return val.richText.map(r => r.text || '').join('');
+  return String(val);
+}
+
 // Parse Bengali or Latin digit strings to integer
 function parseBengaliInt(val) {
   if (val === null || val === undefined || val === '') return 0;
@@ -65,11 +79,11 @@ async function importFromFormResponse(eventId, buffer, event) {
     const row = sheet.getRow(r).values; // 1-indexed, index 0 = undefined
 
     const timestampRaw = row[1];
-    const nameRaw   = String(row[2] || '').trim();
+    const nameRaw   = cellText(row[2]).trim();
     const children  = parseBengaliInt(row[3]);
     const adults    = parseBengaliInt(row[4]);
-    const payRef    = String(row[5] || '').trim();
-    const contact   = String(row[6] || '').trim();
+    const payRef    = cellText(row[5]).trim();
+    const contact   = cellText(row[6]).trim();
 
     if (!nameRaw && !contact) continue; // blank row
 
