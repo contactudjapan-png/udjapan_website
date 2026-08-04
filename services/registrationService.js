@@ -27,22 +27,17 @@ async function getRegistrationByToken(token) {
   }
 
   // Phone number lookup — validator types phone number at entrance
-  const digits = token.replace(/[\s\-().]/g, '');
-  if (/^\+?\d{6,}$/.test(digits)) {
-    // Check phone field first
-    const { data: data3p } = await db.from('registrations').select('*').eq('phone', token).single();
-    if (data3p) return data3p;
-    if (digits !== token) {
-      const { data: data3pn } = await db.from('registrations').select('*').eq('phone', digits).single();
-      if (data3pn) return data3pn;
+  const digits = token.replace(/[\s\-().+]/g, '');
+  if (/^\+?\d{6,}$/.test(token.replace(/[\s\-().]/g, ''))) {
+    // Try all reasonable phone formats
+    const phoneCandidates = [...new Set([token, token.replace(/[\s\-().]/g, ''), '+' + digits, digits])];
+    for (const ph of phoneCandidates) {
+      const { data: pd } = await db.from('registrations').select('*').eq('phone', ph).maybeSingle();
+      if (pd) return pd;
     }
     // Fallback: email field (legacy)
-    const { data: data3 } = await db.from('registrations').select('*').eq('email', token).single();
+    const { data: data3 } = await db.from('registrations').select('*').eq('email', token).maybeSingle();
     if (data3) return data3;
-    if (digits !== token) {
-      const { data: data4 } = await db.from('registrations').select('*').eq('email', digits).single();
-      if (data4) return data4;
-    }
   }
 
   if (error && error.code !== 'PGRST116') console.error('[getRegistrationByToken] DB error:', error.message);

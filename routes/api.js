@@ -5,17 +5,13 @@ const eventService = require('../services/eventService');
 const pollService = require('../services/pollService');
 
 // Validate QR token — POST (preferred, avoids URL encoding issues with +)
-router.post('/validate', async (req, res) => {
-  req.params = { token: req.body.token || '' };
-  return validateToken(req, res);
-});
+router.post('/validate', (req, res) => handleValidate(req.body.token || '', req, res));
 
-// Validate QR token — GET fallback (for legacy QR URLs)
-router.get('/validate/:token', async (req, res) => validateToken(req, res));
+// Validate QR token — GET fallback (for legacy QR URLs / backward compat)
+router.get('/validate/:token', (req, res) => handleValidate(req.params.token || '', req, res));
 
-async function validateToken(req, res) {
+async function handleValidate(token, req, res) {
   try {
-    const token = req.params.token;
     const db = require('../config/db');
 
     // ── Per-person ticket lookup (new single-use path) ──────────────────────
@@ -96,7 +92,7 @@ async function validateToken(req, res) {
     console.error('[validate] error:', err.message, err.stack);
     res.status(500).json({ valid: false, message: 'Server error: ' + err.message });
   }
-});
+}
 
 // Active polls JSON for live refresh
 router.get('/events/:id/polls', async (req, res) => {
