@@ -11,13 +11,13 @@ router.get('/validate/:token', async (req, res) => {
     const db = require('../config/db');
 
     // ── Per-person ticket lookup (new single-use path) ──────────────────────
-    const ticket = await registrationService.getTicketByToken(token);
+    const ticket = await registrationService.getTicketByToken(token).catch(() => null);
     if (ticket) {
       const registration = await registrationService.getRegistrationById(ticket.registration_id);
       const event = await eventService.getEventById(registration.event_id);
       const alreadyUsed = !!ticket.used_at;
 
-      await db.from('scan_logs').insert({
+      db.from('scan_logs').insert({
         qr_token: token,
         registration_id: registration.id,
         event_id: registration.event_id,
@@ -25,7 +25,7 @@ router.get('/validate/:token', async (req, res) => {
         ticket_id: ticket.id,
         result: alreadyUsed ? 'already_used' : 'valid',
         scanned_at: new Date().toISOString(),
-      });
+      }).catch(() => {});
 
       if (alreadyUsed) {
         return res.json({
@@ -62,14 +62,14 @@ router.get('/validate/:token', async (req, res) => {
     const valid = !!registration;
     const event = valid ? await eventService.getEventById(registration.event_id) : null;
 
-    await db.from('scan_logs').insert({
+    db.from('scan_logs').insert({
       qr_token: token,
       registration_id: registration ? registration.id : null,
       event_id: registration ? registration.event_id : null,
       name: registration ? registration.name : null,
       result: valid ? 'valid' : 'invalid',
       scanned_at: new Date().toISOString(),
-    });
+    }).catch(() => {});
 
     if (!valid) return res.json({ valid: false, message: 'Invalid QR code' });
 
