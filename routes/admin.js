@@ -702,6 +702,7 @@ router.post('/submissions/:id/approve', async (req, res, next) => {
       email: submission.email,
       phone: submission.phone,
       payment_reference: submission.payment_reference,
+      payment_method: submission.payment_method,
       children_count: submission.children_count,
       adults_count: submission.adults_count,
       is_special_needs: submission.is_special_needs,

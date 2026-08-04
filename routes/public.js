@@ -55,7 +55,7 @@ router.post(`/event/:id/register`, async (req, res, next) => {
       return res.redirect(`/event/${req.params.id}`);
     }
 
-    const { name, email, phone, payment_reference, children_count, adults_count, is_special_needs } = req.body;
+    const { name, email, phone, payment_reference, payment_method, children_count, adults_count, is_special_needs } = req.body;
     if (!name) {
       req.flash('error', 'Name is required.');
       return res.redirect(`/event/${req.params.id}`);
@@ -64,12 +64,17 @@ router.post(`/event/:id/register`, async (req, res, next) => {
       req.flash('error', 'Please provide either an email address or a phone number.');
       return res.redirect(`/event/${req.params.id}`);
     }
+    if (!payment_method || !['paypal', 'bank'].includes(payment_method)) {
+      req.flash('error', 'Please select a payment method.');
+      return res.redirect(`/event/${req.params.id}`);
+    }
 
     const submission = await submissionService.createSubmission(req.params.id, {
       name: name.trim(),
       email: email.trim(),
       phone: phone.trim(),
       payment_reference: payment_reference ? payment_reference.trim() : '',
+      payment_method: payment_method || null,
       children_count: parseInt(children_count) || 0,
       adults_count: parseInt(adults_count) || 0,
       is_special_needs,
