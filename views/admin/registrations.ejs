@@ -36,6 +36,7 @@
   <% if (_all.length === 0) { %>
     <div class="empty-state"><p><%- t('admin.empty_regs') %></p></div>
   <% } else { %>
+    <div class="table-scroll-wrap">
     <table class="admin-table reg-table">
       <thead><tr>
         <th style="width:100px;max-width:130px"><%- t('tbl.name') %></th>
@@ -119,6 +120,7 @@
       <% }) %>
       </tbody>
     </table>
+    </div>
 
     <% if (locals.totalPages && totalPages > 1) { %>
       <nav class="pagination">

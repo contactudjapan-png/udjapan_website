@@ -755,8 +755,8 @@ small { color: var(--text-muted); font-size: 0.8rem; }
 
 .admin-table tr:last-child td { border-bottom: none; }
 .admin-table tr:hover td { background: #faf8f5; }
-.reg-table { table-layout: fixed; }
-.reg-table td, .reg-table th { overflow: hidden; }
+.reg-table { table-layout: auto; }
+.reg-table td, .reg-table th { overflow: visible; }
 .action-cell { white-space: nowrap; }
 .action-cell .btn, .action-cell button { margin: 0 2px; }
 .action-cell--wrap { white-space: normal; min-width: 110px; }
