@@ -775,20 +775,49 @@ router.get('/events/:id/import', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-router.post('/events/:id/import', upload.single('excel_file'), async (req, res, next) => {
+router.post('/events/:id/import', uploadPayment.single('excel_file'), async (req, res, next) => {
   try {
     if (!req.file) {
       req.flash('error', 'No file uploaded.');
       return res.redirect(`/admin/events/${req.params.id}/import`);
     }
-    const result = await importService.importFromExcel(req.params.id, req.file.buffer);
-    const msg = `Imported ${result.registrationsImported} registration(s) and ${result.expensesImported} expense(s).`;
+    const event = await eventService.getEventById(req.params.id);
+    const result = await importService.importAuto(req.params.id, req.file.buffer, event);
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+    let msg;
+    if (result.mode === 'form') {
+      msg = `Imported ${result.imported.length} registration(s)`;
+      if (result.skipped > 0) msg += `, skipped ${result.skipped} duplicate(s)`;
+      msg += '.';
+    } else {
+      msg = `Imported ${result.registrationsImported} registration(s) and ${result.expensesImported} expense(s).`;
+    }
+
     if (result.errors.length > 0) {
       req.flash('error', `${msg} Errors: ${result.errors.slice(0, 5).join('; ')}`);
     } else {
       req.flash('success', msg);
     }
-    res.redirect(`/admin/events/${req.params.id}/import`);
+    res.redirect(`/admin/events/${req.params.id}/registrations`);
+
+    // Send confirmation emails in background after response is sent
+    if (result.imported && result.imported.length > 0) {
+      const regsWithEmail = result.imported.filter(r => r.email && r.email.includes('@'));
+      if (regsWithEmail.length > 0) {
+        console.log(`[Import] Sending confirmation emails to ${regsWithEmail.length} registrant(s) in background`);
+        (async () => {
+          for (const reg of regsWithEmail) {
+            try {
+              await emailService.sendRegistrationConfirmation(reg, event, baseUrl);
+            } catch (err) {
+              console.error(`[Import] Email failed for ${reg.email}: ${err.message}`);
+            }
+          }
+          console.log(`[Import] Background email sending complete`);
+        })();
+      }
+    }
   } catch (err) {
     req.flash('error', `Import failed: ${err.message}`);
     res.redirect(`/admin/events/${req.params.id}/import`);

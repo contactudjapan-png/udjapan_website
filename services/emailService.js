@@ -63,6 +63,8 @@ async function sendRegistrationConfirmation(registration, event, baseUrl) {
     `;
   }).join('');
 
+  log(`Connecting to SMTP to send to ${registration.email}…`);
+  const _t0 = Date.now();
   const info = await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: registration.email,
@@ -104,7 +106,7 @@ async function sendRegistrationConfirmation(registration, event, baseUrl) {
     `,
     attachments,
   });
-  log(`Confirmation sent to ${registration.email} (${total} ticket(s)) — messageId: ${info.messageId}`);
+  log(`Confirmation sent to ${registration.email} (${total} ticket(s)) — messageId: ${info.messageId} — SMTP took ${Date.now() - _t0}ms`);
 }
 
 async function sendPromotionEmail(recipients, subject, body, eventTitle, trackingUrl = null) {
@@ -122,6 +124,7 @@ async function sendPromotionEmail(recipients, subject, body, eventTitle, trackin
     const batch = recipients.slice(i, i + batchSize);
     const batchNum = Math.floor(i / batchSize) + 1;
     log(`Sending batch ${batchNum}/${totalBatches} (${batch.length} recipients)`);
+    const _tb = Date.now();
     const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       bcc: batch,
@@ -135,7 +138,7 @@ async function sendPromotionEmail(recipients, subject, body, eventTitle, trackin
       `,
     });
     sent += batch.length;
-    log(`Batch ${batchNum}/${totalBatches} sent — messageId: ${info.messageId}`);
+    log(`Batch ${batchNum}/${totalBatches} sent — messageId: ${info.messageId} — ${Date.now() - _tb}ms`);
   }
   log(`Promotion email complete: ${sent} recipients`);
   return sent;
