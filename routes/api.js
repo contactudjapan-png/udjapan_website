@@ -4,8 +4,16 @@ const registrationService = require('../services/registrationService');
 const eventService = require('../services/eventService');
 const pollService = require('../services/pollService');
 
-// Validate QR token — returns JSON
-router.get('/validate/:token', async (req, res) => {
+// Validate QR token — POST (preferred, avoids URL encoding issues with +)
+router.post('/validate', async (req, res) => {
+  req.params = { token: req.body.token || '' };
+  return validateToken(req, res);
+});
+
+// Validate QR token — GET fallback (for legacy QR URLs)
+router.get('/validate/:token', async (req, res) => validateToken(req, res));
+
+async function validateToken(req, res) {
   try {
     const token = req.params.token;
     const db = require('../config/db');
@@ -25,7 +33,7 @@ router.get('/validate/:token', async (req, res) => {
         ticket_id: ticket.id,
         result: alreadyUsed ? 'already_used' : 'valid',
         scanned_at: new Date().toISOString(),
-      }).catch(() => {});
+      }).then(null, () => {});
 
       if (alreadyUsed) {
         return res.json({
@@ -69,7 +77,7 @@ router.get('/validate/:token', async (req, res) => {
       name: registration ? registration.name : null,
       result: valid ? 'valid' : 'invalid',
       scanned_at: new Date().toISOString(),
-    }).catch(() => {});
+    }).then(null, () => {});
 
     if (!valid) return res.json({ valid: false, message: 'Invalid QR code' });
 

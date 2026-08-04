@@ -3,7 +3,11 @@ let scanning = false;
 
 async function validateToken(token) {
   try {
-    const res = await fetch(`/api/validate/${encodeURIComponent(token)}`);
+    const res = await fetch('/api/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
     const data = await res.json();
     showResult(data);
   } catch (err) {
