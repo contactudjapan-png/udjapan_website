@@ -85,7 +85,8 @@ router.get('/validate/:token', async (req, res) => {
       is_special_needs: !!registration.is_special_needs,
     });
   } catch (err) {
-    res.status(500).json({ valid: false, message: 'Server error' });
+    console.error('[validate] error:', err.message, err.stack);
+    res.status(500).json({ valid: false, message: 'Server error: ' + err.message });
   }
 });
 
