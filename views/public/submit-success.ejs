@@ -22,14 +22,11 @@
         <% } %>
       <% } else { %>
         <% if (locale === 'en') { %>
-          <p>The admin will verify your payment and confirm your registration. You will be contacted by phone once confirmed.</p>
-          <p>At the entrance, your mobile number <strong><%= _contact %></strong> will be used to verify your identity.</p>
+          <p>The admin will verify your payment and confirm your registration. At the entrance, your mobile number <strong><%= _contact %></strong> will be used to verify your identity.</p>
         <% } else if (locale === 'de') { %>
-          <p>Der Admin wird Ihre Zahlung prüfen und die Registrierung bestätigen. Sie werden nach der Bestätigung telefonisch kontaktiert.</p>
-          <p>Am Einlass wird Ihre Mobilnummer <strong><%= _contact %></strong> zur Identifikation verwendet.</p>
+          <p>Der Admin wird Ihre Zahlung prüfen und die Registrierung bestätigen. Am Einlass wird Ihre Mobilnummer <strong><%= _contact %></strong> zur Identifikation verwendet.</p>
         <% } else { %>
-          <p>অ্যাডমিন আপনার পেমেন্ট যাচাই করবেন এবং নিবন্ধন নিশ্চিত করবেন। নিশ্চিত হওয়ার পর অ্যাডমিন আপনার সাথে ফোনে যোগাযোগ করবেন।</p>
-          <p>প্রবেশদ্বারে আপনার মোবাইল নম্বর <strong><%= _contact %></strong> দিয়ে পরিচয় যাচাই করা হবে।</p>
+          <p>অ্যাডমিন আপনার পেমেন্ট যাচাই করবেন এবং নিবন্ধন নিশ্চিত করবেন। প্রবেশদ্বারে আপনার মোবাইল নম্বর <strong><%= _contact %></strong> দিয়ে পরিচয় যাচাই করা হবে।</p>
         <% } %>
       <% } %>
     </div>
