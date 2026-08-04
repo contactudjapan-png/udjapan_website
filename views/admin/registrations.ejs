@@ -8,7 +8,10 @@
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
     <h1><%- t('admin.pg_registrations') %> — <%= event.title %></h1>
-    <a href="/admin/events/<%= event.id %>/registrations/new" class="btn btn-primary"><%- t('btn.add_manually') %></a>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+      <a href="/admin/events/<%= event.id %>/import" class="btn btn-outline">⬆ Import</a>
+      <a href="/admin/events/<%= event.id %>/registrations/new" class="btn btn-primary"><%- t('btn.add_manually') %></a>
+    </div>
   </div>
 
   <% const _all = locals.allRegistrations || registrations; %>
