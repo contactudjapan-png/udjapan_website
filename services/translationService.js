@@ -669,6 +669,7 @@ const SEEDS = [
   { key: 'reg.adults',             bn: 'প্রাপ্তবয়স্ক (১৫+)',         en: 'Adults (15+)',           de: 'Erwachsene (15+)' },
   { key: 'reg.children',          bn: 'শিশু (<১৫)',                  en: 'Children (<15)',         de: 'Kinder (<15)' },
   { key: 'reg.special_needs',     bn: 'বিশেষ চাহিদাপন্ন',            en: 'Special needs',          de: 'Sonderbedarf' },
+  { key: 'reg.student_card',     bn: 'ছাত্র/সুযোগ কার্ড',           en: 'Student / Opportunity Card', de: 'Studierendenausweis / Chancenkarte' },
   { key: 'reg.total_adults',      bn: 'মোট প্রাপ্তবয়স্ক',            en: 'Total adults',           de: 'Erwachsene gesamt' },
   { key: 'reg.total_children',    bn: 'মোট শিশু',                   en: 'Total children',         de: 'Kinder gesamt' },
 ];

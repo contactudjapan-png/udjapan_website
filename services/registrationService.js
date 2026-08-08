@@ -44,7 +44,7 @@ async function getRegistrationByToken(token) {
   return null;
 }
 
-async function createRegistration(eventId, { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs, payment_method }) {
+async function createRegistration(eventId, { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs, is_student, payment_method }) {
   const qr_token = crypto.randomUUID();
   const adultsNum = parseInt(adults_count) || 0;
   const { data, error } = await db.from('registrations').insert({
@@ -60,6 +60,7 @@ async function createRegistration(eventId, { name, email, phone, payment_referen
     children_count: parseInt(children_count) || 0,
     adults_count: adultsNum,
     is_special_needs: is_special_needs === true || is_special_needs === 'true' || is_special_needs === '1',
+    is_student: is_student === true || is_student === 'true' || is_student === '1',
     payment_method: payment_method || null,
   }).select().single();
   if (error) throw new Error(error.message);

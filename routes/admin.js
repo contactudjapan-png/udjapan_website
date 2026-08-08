@@ -232,15 +232,18 @@ router.get('/events/:id/registrations', async (req, res, next) => {
 
     const allWithComputed = all.map(r => ({ ...r, computed: computeExpectedAmount(r, event) }));
 
+    const search = (req.query.search || '').trim().toLowerCase();
+    const filtered = search ? allWithComputed.filter(r => r.name.toLowerCase().includes(search)) : allWithComputed;
+
     const PAGE_SIZE = 25;
     const page = Math.max(1, parseInt(req.query.page) || 1);
-    const totalPages = Math.max(1, Math.ceil(allWithComputed.length / PAGE_SIZE));
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
     const currentPage = Math.min(page, totalPages);
-    const registrations = allWithComputed.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+    const registrations = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
     res.render('admin/registrations', {
       title: `Registrations — ${event.title}`,
-      event, registrations, allRegistrations: allWithComputed,
+      event, registrations, allRegistrations: filtered, search,
       currentPage, totalPages, pageSize: PAGE_SIZE,
     });
   } catch (err) { next(err); }
@@ -666,8 +669,10 @@ router.post('/volunteers/:id/delete', async (req, res, next) => {
 router.get('/events/:id/submissions', async (req, res, next) => {
   try {
     const event = await eventService.getEventById(req.params.id);
-    const submissions = await submissionService.getSubmissionsByEvent(req.params.id);
-    res.render('admin/submissions', { title: `Submissions — ${event.title}`, event, submissions });
+    const all = await submissionService.getSubmissionsByEvent(req.params.id);
+    const search = (req.query.search || '').trim().toLowerCase();
+    const submissions = search ? all.filter(s => s.name.toLowerCase().includes(search)) : all;
+    res.render('admin/submissions', { title: `Submissions — ${event.title}`, event, submissions, search });
   } catch (err) { next(err); }
 });
 
@@ -684,6 +689,7 @@ router.post('/events/:id/submissions/approve-all', async (req, res, next) => {
         children_count: submission.children_count,
         adults_count: submission.adults_count,
         is_special_needs: submission.is_special_needs,
+        is_student: submission.is_student,
       });
       await submissionService.deleteSubmission(submission.id);
       approved++;
@@ -706,6 +712,7 @@ router.post('/submissions/:id/approve', async (req, res, next) => {
       children_count: submission.children_count,
       adults_count: submission.adults_count,
       is_special_needs: submission.is_special_needs,
+      is_student: submission.is_student,
     });
     await submissionService.deleteSubmission(submission.id);
     req.flash('success', `${submission.name} accepted. Mark as paid to send the QR confirmation email.`);

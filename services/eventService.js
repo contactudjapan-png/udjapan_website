@@ -29,6 +29,7 @@ function parsePricingFields(eventData) {
     price_onspot: eventData.price_onspot ? parseFloat(eventData.price_onspot) : null,
     group_min_size: eventData.group_min_size ? parseInt(eventData.group_min_size) : null,
     group_discount: eventData.group_discount ? parseFloat(eventData.group_discount) : null,
+    price_student: eventData.price_student ? parseFloat(eventData.price_student) : null,
   };
 }
 

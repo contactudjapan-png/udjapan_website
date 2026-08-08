@@ -8,7 +8,12 @@
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
     <h1><%- t('admin.pg_registrations') %> — <%= event.title %></h1>
-    <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
+      <form method="GET" style="display:flex;gap:0.5rem;align-items:center">
+        <input type="text" name="search" value="<%= locals.search || '' %>" placeholder="Search by name…" class="form-control" style="width:180px">
+        <button class="btn btn-outline">🔍</button>
+        <% if (locals.search) { %><a href="?" class="btn btn-outline">✕</a><% } %>
+      </form>
       <a href="/admin/events/<%= event.id %>/import" class="btn btn-outline">⬆ Import</a>
       <a href="/admin/events/<%= event.id %>/registrations/new" class="btn btn-primary"><%- t('btn.add_manually') %></a>
     </div>
@@ -60,6 +65,7 @@
           <td style="width:100px;max-width:130px;word-break:break-word;white-space:normal">
             <%= reg.name %>
             <% if (reg.is_special_needs) { %><span class="badge-special" title="<%- t('reg.special_needs') %>">♿</span><% } %>
+            <% if (reg.is_student) { %><span class="badge-special" title="<%- t('reg.student_card') %>" style="font-size:0.75rem">🎓</span><% } %>
           </td>
           <td style="font-size:0.82rem;width:120px;max-width:150px;word-break:break-all;white-space:normal"><%= reg.email %></td>
           <td style="width:130px;white-space:nowrap;font-size:0.82rem"><%= reg.phone || '—' %></td>
@@ -127,8 +133,9 @@
 
     <% if (locals.totalPages && totalPages > 1) { %>
       <nav class="pagination">
+        <% const _sq = locals.search ? '&search=' + encodeURIComponent(locals.search) : ''; %>
         <% if (currentPage > 1) { %>
-          <a href="?page=<%= currentPage - 1 %>" class="btn btn-sm btn-outline">‹ Prev</a>
+          <a href="?page=<%= currentPage - 1 %><%= _sq %>" class="btn btn-sm btn-outline">‹ Prev</a>
         <% } else { %>
           <span class="btn btn-sm btn-outline" style="opacity:0.4;cursor:default">‹ Prev</span>
         <% } %>
@@ -137,14 +144,14 @@
           <% if (p === currentPage) { %>
             <span class="btn btn-sm btn-primary"><%= p %></span>
           <% } else if (p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2) { %>
-            <a href="?page=<%= p %>" class="btn btn-sm btn-outline"><%= p %></a>
+            <a href="?page=<%= p %><%= _sq %>" class="btn btn-sm btn-outline"><%= p %></a>
           <% } else if (Math.abs(p - currentPage) === 3) { %>
             <span style="padding:0 4px;line-height:2">…</span>
           <% } %>
         <% } %>
 
         <% if (currentPage < totalPages) { %>
-          <a href="?page=<%= currentPage + 1 %>" class="btn btn-sm btn-outline">Next ›</a>
+          <a href="?page=<%= currentPage + 1 %><%= _sq %>" class="btn btn-sm btn-outline">Next ›</a>
         <% } else { %>
           <span class="btn btn-sm btn-outline" style="opacity:0.4;cursor:default">Next ›</span>
         <% } %>

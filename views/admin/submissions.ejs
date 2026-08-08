@@ -8,12 +8,19 @@
   <%- include('../partials/event-subnav') %>
   <div class="section-header">
     <h1><%- t('admin.pg_submissions') %> — <%= event.title %></h1>
-    <% if (submissions.length > 0) { %>
-      <form action="/admin/events/<%= event.id %>/submissions/approve-all" method="POST"
-            data-confirm="সব <%= submissions.length %> টি সাবমিশন অনুমোদন করবেন?">
-        <button type="submit" class="btn btn-success">✓ Accept All (<%= submissions.length %>)</button>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
+      <form method="GET" style="display:flex;gap:0.5rem;align-items:center">
+        <input type="text" name="search" value="<%= locals.search || '' %>" placeholder="Search by name…" class="form-control" style="width:180px">
+        <button class="btn btn-outline">🔍</button>
+        <% if (locals.search) { %><a href="?" class="btn btn-outline">✕</a><% } %>
       </form>
-    <% } %>
+      <% if (submissions.length > 0) { %>
+        <form action="/admin/events/<%= event.id %>/submissions/approve-all" method="POST"
+              data-confirm="সব <%= submissions.length %> টি সাবমিশন অনুমোদন করবেন?">
+          <button type="submit" class="btn btn-success">✓ Accept All (<%= submissions.length %>)</button>
+        </form>
+      <% } %>
+    </div>
   </div>
 
   <% if (submissions.length === 0) { %>

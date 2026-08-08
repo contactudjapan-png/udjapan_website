@@ -127,6 +127,14 @@
               <%- t('reg.special_needs') %>
             </label>
           </div>
+          <% if (event.price_student) { %>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="is_student" id="is_student" value="true">
+              <%- t('reg.student_card') %> — €<%= parseFloat(event.price_student).toFixed(2) %>
+            </label>
+          </div>
+          <% } %>
           <div class="form-group">
             <label for="payment_reference"><%- t('event.field_pay_ref') %></label>
             <input type="text" id="payment_reference" name="payment_reference" required placeholder="<%- t('event.field_pay_ref_ph') %>">
@@ -164,22 +172,26 @@
   <script>
   (function() {
     var pricePerAdult = <%= parseFloat(activePrice) %>;
+    var priceStudent  = <%- event.price_student ? parseFloat(event.price_student) : 'null' %>;
     var groupMinSize  = <%- event.group_min_size  ? parseInt(event.group_min_size)    : 'null' %>;
     var groupDiscount = <%- event.group_discount   ? parseFloat(event.group_discount)  : 'null' %>;
     var adultsEl = document.getElementById('adults_count');
     var childrenEl = document.getElementById('children_count');
     var valueEl = document.getElementById('totalPriceValue');
     var hintEl  = document.getElementById('totalPriceHint');
+    var studentEl = document.getElementById('is_student');
     function updatePrice() {
       var a = parseInt(adultsEl.value) || 0;
       var c = parseInt(childrenEl.value) || 0;
-      var subtotal = a * pricePerAdult;
-      var multiplier = (groupMinSize && groupDiscount && a >= groupMinSize) ? Math.floor(a / groupMinSize) : 0;
+      var useStudent = studentEl && studentEl.checked && priceStudent !== null;
+      var rate = useStudent ? priceStudent : pricePerAdult;
+      var subtotal = a * rate;
+      var multiplier = (!useStudent && groupMinSize && groupDiscount && a >= groupMinSize) ? Math.floor(a / groupMinSize) : 0;
       var discount = multiplier * (groupDiscount || 0);
       var total = Math.max(0, subtotal - discount).toFixed(2);
       valueEl.textContent = '€' + total;
       var parts = [];
-      if (a > 0) parts.push(a + ' × €' + pricePerAdult.toFixed(2));
+      if (a > 0) parts.push(a + ' × €' + rate.toFixed(2));
       if (c > 0) parts.push(c + ' child' + (c !== 1 ? 'ren' : '') + ' (free)');
       var hint = parts.join(' + ');
       if (discount > 0) hint += ' − ' + multiplier + ' × €' + groupDiscount.toFixed(2) + ' group discount';
@@ -189,6 +201,7 @@
     if (adultsEl && valueEl) {
       adultsEl.addEventListener('input', updatePrice);
       childrenEl.addEventListener('input', updatePrice);
+      if (studentEl) studentEl.addEventListener('change', updatePrice);
       updatePrice();
     }
   })();

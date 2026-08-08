@@ -55,7 +55,7 @@ router.post(`/event/:id/register`, async (req, res, next) => {
       return res.redirect(`/event/${req.params.id}`);
     }
 
-    const { name, email, phone, payment_reference, payment_method, children_count, adults_count, is_special_needs } = req.body;
+    const { name, email, phone, payment_reference, payment_method, children_count, adults_count, is_special_needs, is_student } = req.body;
     if (!name) {
       req.flash('error', 'Name is required.');
       return res.redirect(`/event/${req.params.id}`);
@@ -78,6 +78,7 @@ router.post(`/event/:id/register`, async (req, res, next) => {
       children_count: parseInt(children_count) || 0,
       adults_count: parseInt(adults_count) || 0,
       is_special_needs,
+      is_student,
     });
 
     res.redirect(`/submit/success/${submission.id}`);
