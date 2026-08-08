@@ -258,9 +258,9 @@ router.get('/events/:id/registrations/new', async (req, res, next) => {
 
 router.post('/events/:id/registrations/new', async (req, res, next) => {
   try {
-    const { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs } = req.body;
+    const { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs, is_student } = req.body;
     const event = await eventService.getEventById(req.params.id);
-    const registration = await registrationService.createRegistration(req.params.id, { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs });
+    const registration = await registrationService.createRegistration(req.params.id, { name, email, phone, payment_reference, amount, transaction_id, children_count, adults_count, is_special_needs, is_student });
     if (registration.email) {
       const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
       emailService.sendRegistrationConfirmation(registration, event, baseUrl).catch(err => {

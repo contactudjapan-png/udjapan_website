@@ -62,6 +62,14 @@
         বিশেষ চাহিদাপন্ন (Special needs)
       </label>
     </div>
+    <% if (event.price_student) { %>
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" name="is_student" id="is_student" value="true">
+        <%- t('reg.student_card') %> — €<%= parseFloat(event.price_student).toFixed(2) %>
+      </label>
+    </div>
+    <% } %>
     <div class="form-row">
       <div class="form-group">
         <label for="amount"><%- t('admin.lbl_ticket_price') %></label>
@@ -93,16 +101,21 @@
   <script>
   (function() {
     var pricePerAdult = <%= parseFloat(activePrice) %>;
+    var priceStudent  = <%- event.price_student ? parseFloat(event.price_student) : 'null' %>;
     var adultsInput = document.getElementById('adults_count');
     var amountInput = document.getElementById('amount');
     var hint = document.getElementById('priceHint');
+    var studentEl = document.getElementById('is_student');
     function update() {
       var a = parseInt(adultsInput.value) || 0;
-      var total = (a * pricePerAdult).toFixed(2);
+      var useStudent = studentEl && studentEl.checked && priceStudent !== null;
+      var rate = useStudent ? priceStudent : pricePerAdult;
+      var total = (a * rate).toFixed(2);
       amountInput.value = total;
-      hint.textContent = a + ' × €' + pricePerAdult.toFixed(2) + ' = €' + total;
+      hint.textContent = a + ' × €' + rate.toFixed(2) + ' = €' + total;
     }
     adultsInput.addEventListener('input', update);
+    if (studentEl) studentEl.addEventListener('change', update);
     update();
   })();
   </script>
